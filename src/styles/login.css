@@ -1,0 +1,280 @@
+.login-page {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  min-height: 100vh;
+  background-color: #111111;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* ---------- Left side ---------- */
+
+.login-left {
+  position: relative;
+  flex: 0 1 55%;
+  min-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: absolute;
+  top: -1rem;
+  left: 0;
+}
+
+.logo-image {
+  width: 40px;
+  height: 40px;
+}
+
+.logo-text {
+  font-family: "Inria Sans", sans-serif;
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.globe-wrapper {
+  position: relative;
+  width: 380px;
+  height: 380px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.globe-image {
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+}
+
+.orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px dashed rgba(248, 181, 13, 0.6);
+}
+
+.orbit-rotator {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: orbit-spin 8s linear infinite;
+}
+
+.orbit-marker {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f8b50d;
+  border: 3px solid #111111;
+}
+
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Right side ---------- */
+
+.login-right {
+  flex: 0 1 45%;
+  min-width: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-panel {
+  width: 490px;
+  max-width: 100%;
+  min-height: 570px;
+  border-radius: 80px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  box-sizing: border-box;
+}
+
+.welcome-banner {
+  width: 100%;
+  height: 120px;
+  border-radius: 15px;
+  background: rgba(248, 181, 13, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-banner h1 {
+  font-family: "Iskoola Pota", sans-serif;
+  color: #111111;
+  font-size: 48px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Gradient shading approximated from the reference image —
+   not in the written spec, so tweak these stops if you have exact values. */
+.form-card {
+  border-radius: 30px;
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(
+    135deg,
+    rgba(184, 138, 15, 0.55) 0%,
+    rgba(140, 128, 100, 0.4) 45%,
+    rgba(190, 190, 190, 0.3) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.login-form label {
+  font-family: "Inria Sans", sans-serif;
+  color: #111111;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  width: 100%;
+  height: 65px;
+  border-radius: 30px;
+  border: none;
+  background: #d9d9d9;
+  padding: 0 1.5rem;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+.login-form input[type="text"]:focus,
+.login-form input[type="password"]:focus {
+  outline: 2px solid #f8b50d;
+  outline-offset: 2px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Inria Sans", sans-serif;
+  color: #111111;
+  font-size: 16px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.forgot-password {
+  color: #111111;
+  text-decoration: none;
+}
+
+.forgot-password:hover,
+.forgot-password:focus {
+  text-decoration: underline;
+}
+
+.login-button {
+  width: 200px;
+  height: 75px;
+  border-radius: 15px;
+  background: #f8b50d;
+  border: none;
+  font-family: "Inria Sans", sans-serif;
+  color: #111111;
+  font-size: 40px;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: center;
+  margin-top: 0.5rem;
+}
+
+.login-button:hover {
+  background: #e0a30b;
+}
+
+.login-button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* ---------- Responsive (mobile only) ---------- */
+
+@media (max-width: 700px) {
+  .login-page {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+
+  .login-left {
+    min-width: 0;
+  }
+
+  .logo-row {
+    position: static;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .globe-wrapper {
+    width: min(320px, 80vw);
+    height: min(320px, 80vw);
+  }
+
+  .login-right {
+    min-width: 0;
+  }
+
+  .login-panel {
+    border-radius: 40px;
+    padding: 1.75rem;
+    min-height: auto;
+  }
+
+  .welcome-banner h1 {
+    font-size: 32px;
+  }
+
+  .login-button {
+    width: 100%;
+    font-size: 28px;
+  }
+}

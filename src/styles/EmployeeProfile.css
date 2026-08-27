@@ -1,0 +1,195 @@
+/* ==================================================
+   employee-profile-layout
+   ================================================== */
+.employee-profile-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #111111;
+}
+
+.employee-profile-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  gap: 1rem;
+}
+
+.employee-profile-heading {
+  color: #d9d9d9;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 16px;
+}
+
+/* ==================================================
+   page heading card ("My Profile")
+   Fills the content width, not capped small.
+   ================================================== */
+.employee-profile-page-heading-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 26px;
+  text-align: center;
+  padding: 1rem;
+  width: 100%;
+  max-width: 950px;
+  box-sizing: border-box;
+}
+
+/* ==================================================
+   main profile card: scales with available space
+   instead of being capped tight.
+   ================================================== */
+.employee-profile-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 2rem;
+  display: flex;
+  gap: 2.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 950px;
+}
+
+/* ==================================================
+   left column: photo, identifier pill, department
+   pill, current PAR cycle card
+   ================================================== */
+.employee-profile-left {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.6rem;
+  width: 190px;
+  flex-shrink: 0;
+}
+
+.employee-profile-photo {
+  width: 190px;
+  height: 190px;
+  border-radius: 15px;
+  object-fit: cover;
+  background: #1a1a1a;
+}
+
+.employee-profile-pill {
+  width: 100%;
+  background: #f8b50d;
+  color: #111111;
+  border-radius: 999px;
+  text-align: left;
+  padding: 0.45rem 1rem;
+  font-family: "Inria Sans", sans-serif;
+  font-style: italic;
+  font-size: 13px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.employee-profile-par-cycle {
+  width: 100%;
+  background: #f8b50d;
+  color: #111111;
+  border-radius: 15px;
+  text-align: left;
+  padding: 1rem;
+  font-family: "Inria Sans", sans-serif;
+  font-style: italic;
+  font-size: 14px;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+/* ==================================================
+   right column: profile fields
+   Takes up remaining space so the card isn't lopsided;
+   fields sized reasonably, not edge-to-edge.
+   ================================================== */
+.employee-profile-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.employee-profile-field label {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 15px;
+  display: block;
+  text-align: left;
+  margin-bottom: 0.3rem;
+}
+
+.employee-profile-value {
+  background: #f8b50d;
+  border-radius: 999px;
+  min-height: 30px;
+  padding: 0.35rem 1.1rem;
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+
+.employee-profile-address {
+  border-radius: 15px;
+  min-height: 55px;
+  max-width: 420px;
+}
+
+/* ==================================================
+   Sign Out button
+   ================================================== */
+.employee-profile-signout-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 950px;
+}
+
+.employee-profile-signout-button {
+  background: #f8b50d;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.75rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.employee-profile-signout-button:hover {
+  background: #e0a30b;
+}
+
+/* ==================================================
+   responsive adjustments
+   ================================================== */
+@media (max-width: 900px) {
+  .employee-profile-card {
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+  }
+
+  .employee-profile-left {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .employee-profile-right {
+    width: 100%;
+  }
+
+  .employee-profile-value,
+  .employee-profile-address {
+    max-width: 100%;
+  }
+}
