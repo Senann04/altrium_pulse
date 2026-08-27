@@ -21,8 +21,10 @@
 }
 
 .pulse-sidebar-brand img {
-  width: 34px;
-  height: 34px;
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  display: block;
 }
 
 .pulse-sidebar nav {
@@ -95,6 +97,10 @@
   .pulse-sidebar-brand,
   .pulse-sidebar nav button.active {
     justify-content: center;
+  }
+
+  .pulse-sidebar-brand img {
+    width: 48px;
   }
 
   .pulse-sidebar nav button.active {

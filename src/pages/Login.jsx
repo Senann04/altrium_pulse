@@ -26,8 +26,7 @@ function Login({ onLogin }) {
     <div className="login-page">
       <div className="login-left">
         <div className="logo-row">
-          <img src={logo} alt="Altrium" className="logo-image" />
-          <span className="logo-text">altrium</span>
+          <img src={logo} alt="Altrium Pulse" className="logo-image" />
         </div>
 
         <GlobeAnimation />
