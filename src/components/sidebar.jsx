@@ -14,8 +14,7 @@ function Sidebar({ role = "employee", activeItem = "profile", onNavigate }) {
   return (
     <aside className="pulse-sidebar">
       <div className="pulse-sidebar-brand">
-        <img src={logo} alt="" />
-        <span>altrium</span>
+        <img src={logo} alt="Altrium Pulse" />
       </div>
 
       <nav aria-label="Primary navigation">
