@@ -2,7 +2,7 @@ import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
 import WelcomeCard from "../components/welcomecard.jsx";
 import UpcomingEventCard from "../components/upcomingeventcard.jsx";
-import GoalPeriodPill from "../components/GoalPeriodPill";
+import GoalPeriodPill from "../components/GoalPeriodPill.jsx";
 import "../styles/immediatesupervisordashboard.css";
 
 // Temporary dashboard data until Supabase / Google Calendar are connected.

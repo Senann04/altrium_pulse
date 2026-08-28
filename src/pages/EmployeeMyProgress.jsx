@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
-import AssignedGoalRow from "../components/AssignedGoalRow";
-import EmployeeDevelopmentGoals, { employeeDevelopmentPlans } from "../components/EmployeeDevelopmentGoals";
-import GoalEvidenceSubmission from "../components/GoalEvidenceSubmission";
-import { getAssignedTimeGoals, subscribeToAssignedTimeGoals } from "../services/assignedTimeGoalsStorage";
+import AssignedGoalRow from "../components/AssignedGoalRow.jsx";
+import EmployeeDevelopmentGoals, { employeeDevelopmentPlans } from "../components/EmployeeDevelopmentGoals.jsx";
+import GoalEvidenceSubmission from "../components/GoalEvidenceSubmission.jsx";
+import { getAssignedTimeGoals, subscribeToAssignedTimeGoals } from "../services/assignedTimeGoalsStorage.js";
 import "../styles/employeemyprogress.css";
 
 /* temporary current-user identity until Supabase Auth/profile is connected */

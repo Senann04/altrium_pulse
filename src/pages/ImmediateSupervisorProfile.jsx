@@ -16,9 +16,9 @@ const profileData = {
   hrBusinessPartner: "",
 };
 
-// onSignOut is passed in by the parent — this page has no knowledge of
-// how sign-out actually works (no auth system exists yet). Later this
-// will call Supabase Auth's signOut() from wherever the real handler lives.
+/*onSignOut is passed in by the parent — this page has no knowledge of
+how sign-out actually works (no auth system exists yet). Later this
+will call Supabase Auth's signOut() from wherever the real handler lives.*/
 function ImmediateSupervisorProfile({ onSignOut }) {
   const handleSignOut = () => {
     if (onSignOut) onSignOut();

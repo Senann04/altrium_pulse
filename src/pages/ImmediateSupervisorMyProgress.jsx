@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
-import AssignedGoalRow from "../components/AssignedGoalRow";
-import { getAssignedTimeGoals, subscribeToAssignedTimeGoals } from "../services/assignedTimeGoalsStorage";
+import AssignedGoalRow from "../components/AssignedGoalRow.jsx";
+import { getAssignedTimeGoals, subscribeToAssignedTimeGoals } from "../services/assignedTimeGoalsStorage.js";
 import "../styles/immediatesupervisormyprogress.css";
 
 // Temporary current-user identity until Supabase Auth/profile is connected.
