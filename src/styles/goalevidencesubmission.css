@@ -1,0 +1,129 @@
+.goal-evidence-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.goal-evidence-panel {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+
+.goal-evidence-progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.goal-evidence-progress-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 14px;
+}
+
+.goal-evidence-plus-tag {
+  background: #ffffff;
+  color: #111111;
+  border-radius: 6px;
+  padding: 0.1rem 0.5rem;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.goal-evidence-progress-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: conic-gradient(#f8b50d 0deg 72deg, #ffffff 72deg 360deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.goal-evidence-content-box {
+  background: #ffffff;
+  border-radius: 12px;
+  min-height: 70px;
+  margin-bottom: 0.75rem;
+}
+
+.goal-evidence-instruction {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+  margin: 0 0 0.75rem 0;
+}
+
+.goal-evidence-field-row {
+  margin-bottom: 0.75rem;
+}
+
+.goal-evidence-field-row label {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.goal-evidence-file-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.goal-evidence-file-input {
+  background: #f8b50d;
+  color: #111111;
+  border-radius: 999px 0 0 999px;
+  padding: 0.4rem 0.9rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+}
+
+.goal-evidence-filename {
+  color: #d9d9d9;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 11px;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goal-evidence-submit-button {
+  background: #f8b50d;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.goal-evidence-submit-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

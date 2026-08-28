@@ -1,7 +1,7 @@
 import "../styles/EmployeeProfile.css";
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
-import woman2 from "../assets/woman2.jpg";
+
 
 // Temporary profile values until the user profile is loaded from Supabase.
 const profileData = {
@@ -34,16 +34,8 @@ function HRBPProfile({ onSignOut }) {
 
         <div className="employee-profile-card">
           <div className="employee-profile-left">
-            {/* PROFILE PICTURE: place your image file at
-                src/assets/employee-profile-photo.jpg and it will render
-                here automatically. No placeholder is rendered until that
-                file exists. */}
-            <img
-              src={woman2}
-              alt={profileData.name}
-              className="employee-profile-photo"
-            />
-
+            {/* No profile photo until real profile data from supabase is loaded*/}
+            <div className="employee-profile-photo" />
             <div className="employee-profile-pill">{profileData.identifier}</div>
             <div className="employee-profile-pill">{profileData.department}</div>
             <div className="employee-profile-par-cycle">{profileData.parCycle}</div>
