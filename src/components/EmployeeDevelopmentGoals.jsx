@@ -1,8 +1,7 @@
 import EmployeeDevelopmentGoalCard from "./EmployeeDevelopmentGoalCard";
 import "../styles/employeedevelopmentgoals.css";
 
-/* Temporary frontend values until assigned PDP/PIP records are loaded from Supabase. 
-These represent goals already assigned via the HR Assign Goals feature.*/
+/* temporary values until assigned PDP/PIP records are loaded from Supabase */
 export const employeeDevelopmentPlans = {
   PDP: [
     { id: "pdp-1", title: "Improve UI/UX Design Skills", status: "Ongoing", start_date: "2026-07-02", target_date: "2026-07-16", progress: 37 },
@@ -26,7 +25,6 @@ export const employeeDevelopmentPlans = {
   ],
 };
 
-/* Gold progress icon used at the top of each summary circle.*/
 function TargetIcon() {
   return (
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#f8b50d" strokeWidth="2">
@@ -37,16 +35,12 @@ function TargetIcon() {
   );
 }
 
-/*Reusable for both "PDP Goals" and "PIP Goals" — title and goals are
-passed in as props, no PDP/PIP branching inside this component.*/
-function EmployeeDevelopmentGoals({ title, goals }) {
-  // Summary values calculated live from the goals array.
+/* onSelectGoal is optional so this still works anywhere it isn't clickable */
+function EmployeeDevelopmentGoals({ title, goals, onSelectGoal }) {
   const activeGoals = goals.filter((g) => g.status === "Ongoing").length;
   const completed = goals.filter((g) => g.status === "Completed").length;
   const overdue = goals.filter((g) => g.status === "Overdue").length;
-  const averageProgress = Math.round(
-    goals.reduce((sum, g) => sum + g.progress, 0) / goals.length
-  );
+  const averageProgress = Math.round(goals.reduce((sum, g) => sum + g.progress, 0) / goals.length);
 
   const visibleGoals = goals.filter((g) => g.status === "Ongoing");
 
@@ -79,7 +73,7 @@ function EmployeeDevelopmentGoals({ title, goals }) {
 
       <div className="dev-goals-card-list">
         {visibleGoals.map((goal) => (
-          <EmployeeDevelopmentGoalCard key={goal.id} goal={goal} />
+          <EmployeeDevelopmentGoalCard key={goal.id} goal={goal} onClick={onSelectGoal} />
         ))}
       </div>
     </section>
