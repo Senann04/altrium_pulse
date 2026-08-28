@@ -20,7 +20,7 @@ function HRBPProfile({ onSignOut, profileData = emptyProfile }) {
 
   return (
     <div className="employee-profile-layout">
-      <Sidebar role="hrbp" activeItem="profile" onNavigate={() => {}} />
+      <Sidebar role="hrbp" activeItem="profile" onNavigate={onNavigate} />
 
       <div className="employee-profile-main">
         <Header />

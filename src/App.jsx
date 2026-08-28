@@ -1,17 +1,51 @@
 import { useCallback, useEffect, useState } from "react";
+import AssignGoals from "./pages/AssignGoals";
+import EmployeeDashboard from "./pages/EmployeeDashboard";
+import EmployeeMyFeedback from "./pages/EmployeeMyFeedback";
+import EmployeeMyProgress from "./pages/EmployeeMyProgress";
+import EmployeeMyCurrentReview from "./pages/EmployeeMycurrentReview";
 import EmployeeProfile from "./pages/EmployeeProfile";
+import HRBPDashboard from "./pages/HRBPDashboard";
 import HRBPProfile from "./pages/HRBPProfile";
+import HRReviewCycle from "./pages/HRReviewCycle";
+import ImmediateSupervisorDashboard from "./pages/ImmediateSupervisorDashboard";
+import ImmediateSupervisorFeedback from "./pages/ImmediateSupervisorFeedback";
+import ImmediateSupervisorMyCurrentReview from "./pages/ImmediateSupervisorMyCurrentReview";
+import ImmediateSupervisorMyProgress from "./pages/ImmediateSupervisorMyProgress";
 import ImmediateSupervisorProfile from "./pages/ImmediateSupervisorProfile";
+import LeadershipDashboard from "./pages/LeadershipDashboard";
 import LeadershipProfile from "./pages/LeadershipProfile";
 import Login from "./pages/Login";
+import MyTeam from "./pages/MyTeam";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import { loadProfileView } from "./services/profileAdapter";
 
-const profilePages = {
-  employee: EmployeeProfile,
-  supervisor: ImmediateSupervisorProfile,
-  hr_partner: HRBPProfile,
-  senior_management: LeadershipProfile,
+const rolePages = {
+  employee: {
+    dashboard: EmployeeDashboard,
+    "current-review": EmployeeMyCurrentReview,
+    feedback: EmployeeMyFeedback,
+    progress: EmployeeMyProgress,
+    profile: EmployeeProfile,
+  },
+  supervisor: {
+    dashboard: ImmediateSupervisorDashboard,
+    "current-review": ImmediateSupervisorMyCurrentReview,
+    feedback: ImmediateSupervisorFeedback,
+    progress: ImmediateSupervisorMyProgress,
+    team: MyTeam,
+    profile: ImmediateSupervisorProfile,
+  },
+  hr_partner: {
+    dashboard: HRBPDashboard,
+    "review-cycle": HRReviewCycle,
+    "assign-goals": AssignGoals,
+    profile: HRBPProfile,
+  },
+  senior_management: {
+    dashboard: LeadershipDashboard,
+    profile: LeadershipProfile,
+  },
 };
 
 function StatusScreen({ message, onSignOut }) {
@@ -56,6 +90,7 @@ function StatusScreen({ message, onSignOut }) {
 function App() {
   const [claims, setClaims] = useState(null);
   const [profileView, setProfileView] = useState(null);
+  const [activePage, setActivePage] = useState("dashboard");
   const [loading, setLoading] = useState(isSupabaseConfigured);
   const [error, setError] = useState("");
 
@@ -104,6 +139,7 @@ function App() {
         const view = await loadProfileView(claims.sub);
         if (mounted) {
           setProfileView(view);
+          setActivePage("dashboard");
           setError("");
         }
       } catch (profileError) {
@@ -125,7 +161,7 @@ function App() {
   const handleLogin = async ({ username, password }) => {
     if (!supabase) {
       throw new Error(
-        "Supabase is not configured. Add the project URL and publishable key to .env.local.",
+        "Supabase is not configured. Add the project URL and publishable key to the Vercel environment.",
       );
     }
 
@@ -140,7 +176,11 @@ function App() {
   const handleSignOut = async () => {
     if (!supabase) return;
     const { error: signOutError } = await supabase.auth.signOut();
-    if (signOutError) setError(signOutError.message);
+    if (signOutError) {
+      setError(signOutError.message);
+      return;
+    }
+    setActivePage("dashboard");
   };
 
   if (loading) return <StatusScreen message="Loading Altrium Pulse..." />;
@@ -158,13 +198,23 @@ function App() {
     );
   }
 
-  const ProfilePage = profilePages[profileView.role];
-
-  if (!ProfilePage) {
+  const pages = rolePages[profileView.role];
+  if (!pages) {
     return <StatusScreen message="This account has an unsupported role." onSignOut={handleSignOut} />;
   }
 
-  return <ProfilePage profileData={profileView.data} onSignOut={handleSignOut} />;
+  const Page = pages[activePage] || pages.dashboard;
+  const handleNavigate = (pageKey) => {
+    if (pages[pageKey]) setActivePage(pageKey);
+  };
+
+  return (
+    <Page
+      profileData={profileView.data}
+      onNavigate={handleNavigate}
+      onSignOut={handleSignOut}
+    />
+  );
 }
 
 export default App;

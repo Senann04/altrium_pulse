@@ -1,0 +1,77 @@
+/* dev-goals-section / title pill*/
+.dev-goals-section {
+  margin-bottom: 1.5rem;
+}
+
+.dev-goals-title-pill {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 999px;
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 18px;
+  text-align: center;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+/*summary circles row*/
+.dev-goals-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.dev-goals-summary-circle {
+  flex: 1;
+  min-width: 65px;
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.dev-goals-summary-label {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 9px;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.dev-goals-summary-value {
+  background: #ffffff;
+  color: #111111;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* card list*/
+.dev-goals-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* responsive*/
+@media (max-width: 500px) {
+  .dev-goals-summary-label {
+    font-size: 8px;
+  }
+}

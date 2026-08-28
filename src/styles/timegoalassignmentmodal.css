@@ -1,0 +1,75 @@
+.time-goal-assignment-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.time-goal-assignment-modal {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+
+.time-goal-assignment-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.time-goal-assignment-field label {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.time-goal-assignment-field select,
+.time-goal-assignment-field input {
+  background: #d9931a;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+}
+
+.time-goal-assignment-goal-field textarea {
+  background: #d9931a;
+  color: #111111;
+  border: none;
+  border-radius: 15px;
+  padding: 0.75rem 1rem;
+  min-height: 110px;
+  resize: vertical;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.time-goal-assignment-button {
+  display: block;
+  margin-left: auto;
+  background: #f8b50d;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.5rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.time-goal-assignment-button:hover {
+  background: #e0a30b;
+}

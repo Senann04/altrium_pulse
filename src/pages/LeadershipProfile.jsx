@@ -20,7 +20,7 @@ function LeadershipProfile({ onSignOut, profileData = emptyProfile }) {
 
   return (
     <div className="employee-profile-layout">
-      <Sidebar role="leadership" activeItem="profile" onNavigate={() => {}} />
+      <Sidebar role="leadership" activeItem="profile" onNavigate={onNavigate} />
 
       <div className="employee-profile-main">
         <Header />

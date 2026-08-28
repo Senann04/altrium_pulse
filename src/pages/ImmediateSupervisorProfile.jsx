@@ -21,7 +21,7 @@ function ImmediateSupervisorProfile({ onSignOut, profileData = emptyProfile }) {
 
   return (
     <div className="employee-profile-layout">
-      <Sidebar role="supervisor" activeItem="profile" onNavigate={() => {}} />
+      <Sidebar role="supervisor" activeItem="profile" onNavigate={onNavigate} />
 
       <div className="employee-profile-main">
         <Header />
