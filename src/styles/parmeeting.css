@@ -1,0 +1,62 @@
+.par-meeting-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.25rem 1.5rem;
+  box-sizing: border-box;
+  max-width: 950px;
+}
+
+.par-meeting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.par-meeting-header h2 {
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.par-meeting-status-pill {
+  background: #f8b50d;
+  color: #111111;
+  border-radius: 999px;
+  padding: 0.35rem 1.25rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.par-meeting-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  background: #ffffff;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.par-meeting-row:last-of-type {
+  margin-bottom: 0;
+}
+
+.par-meeting-row:disabled {
+  cursor: default;
+}
+
+.par-meeting-icon {
+  font-size: 14px;
+}

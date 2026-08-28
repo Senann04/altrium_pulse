@@ -1,0 +1,32 @@
+.upcoming-event-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 20px;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.upcoming-event-title {
+  font-family: "Inria Sans", sans-serif;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.upcoming-event-date {
+  font-family: "Inria Sans", sans-serif;
+  color: #d9d9d9;
+  font-size: 13px;
+}
+
+.upcoming-event-time {
+  font-family: "Inria Sans", sans-serif;
+  color: #d9d9d9;
+  font-size: 13px;
+}
