@@ -1,0 +1,91 @@
+.supervisor-feedback-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #111111;
+}
+
+.supervisor-feedback-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  gap: 1rem;
+}
+
+.supervisor-feedback-heading-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.25rem;
+}
+
+.supervisor-feedback-heading-card h1 {
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 26px;
+  font-weight: 400;
+  margin: 0;
+  text-align: center;
+}
+
+.supervisor-feedback-subheading {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 999px;
+  padding: 0.6rem;
+  text-align: center;
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 15px;
+}
+
+.supervisor-feedback-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.supervisor-feedback-row > * {
+  flex: 1;
+}
+
+.supervisor-feedback-bottom-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.supervisor-feedback-well-done-card,
+.supervisor-feedback-improve-card {
+  flex: 1;
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 20px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.supervisor-feedback-bottom-title {
+  background: #f8b50d;
+  color: #111111;
+  border-radius: 999px;
+  text-align: center;
+  padding: 0.6rem;
+  font-family: "Iskoola Pota", serif;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.supervisor-feedback-bottom-content {
+  background: #808080;
+  border-radius: 12px;
+  min-height: 60px;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .supervisor-feedback-row,
+  .supervisor-feedback-bottom-row {
+    flex-direction: column;
+  }
+}
