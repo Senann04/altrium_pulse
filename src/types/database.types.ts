@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -98,8 +98,10 @@ export type Database = {
           created_by: string
           employee_id: string
           end_date: string | null
+          evidence: string | null
           id: string
           owner_id: string | null
+          progress: number
           reason: string | null
           review_id: string | null
           start_date: string
@@ -113,8 +115,10 @@ export type Database = {
           created_by?: string
           employee_id: string
           end_date?: string | null
+          evidence?: string | null
           id?: string
           owner_id?: string | null
+          progress?: number
           reason?: string | null
           review_id?: string | null
           start_date: string
@@ -128,8 +132,10 @@ export type Database = {
           created_by?: string
           employee_id?: string
           end_date?: string | null
+          evidence?: string | null
           id?: string
           owner_id?: string | null
+          progress?: number
           reason?: string | null
           review_id?: string | null
           start_date?: string
@@ -240,6 +246,7 @@ export type Database = {
           description: string | null
           employee_id: string
           id: string
+          period: string | null
           progress: number
           review_id: string | null
           status: Database["public"]["Enums"]["goal_status"]
@@ -253,6 +260,7 @@ export type Database = {
           description?: string | null
           employee_id: string
           id?: string
+          period?: string | null
           progress?: number
           review_id?: string | null
           status?: Database["public"]["Enums"]["goal_status"]
@@ -266,6 +274,7 @@ export type Database = {
           description?: string | null
           employee_id?: string
           id?: string
+          period?: string | null
           progress?: number
           review_id?: string | null
           status?: Database["public"]["Enums"]["goal_status"]
@@ -341,6 +350,74 @@ export type Database = {
           },
         ]
       }
+      par_meetings: {
+        Row: {
+          created_at: string
+          created_by: string
+          employee_id: string
+          id: string
+          notes: string | null
+          review_id: string
+          scheduled_at: string
+          status: Database["public"]["Enums"]["par_meeting_status"]
+          supervisor_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          employee_id: string
+          id?: string
+          notes?: string | null
+          review_id: string
+          scheduled_at: string
+          status?: Database["public"]["Enums"]["par_meeting_status"]
+          supervisor_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          review_id?: string
+          scheduled_at?: string
+          status?: Database["public"]["Enums"]["par_meeting_status"]
+          supervisor_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "par_meetings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "par_meetings_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "par_meetings_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: true
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "par_meetings_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -410,6 +487,7 @@ export type Database = {
       }
       review_cycles: {
         Row: {
+          applies_to: string
           created_at: string
           created_by: string
           description: string | null
@@ -418,6 +496,7 @@ export type Database = {
           id: string
           name: string
           rating_scale_max: number | null
+          review_type: string | null
           self_review_due: string | null
           start_date: string
           status: Database["public"]["Enums"]["review_cycle_status"]
@@ -425,6 +504,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          applies_to?: string
           created_at?: string
           created_by: string
           description?: string | null
@@ -433,6 +513,7 @@ export type Database = {
           id?: string
           name: string
           rating_scale_max?: number | null
+          review_type?: string | null
           self_review_due?: string | null
           start_date: string
           status?: Database["public"]["Enums"]["review_cycle_status"]
@@ -440,6 +521,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          applies_to?: string
           created_at?: string
           created_by?: string
           description?: string | null
@@ -448,6 +530,7 @@ export type Database = {
           id?: string
           name?: string
           rating_scale_max?: number | null
+          review_type?: string | null
           self_review_due?: string | null
           start_date?: string
           status?: Database["public"]["Enums"]["review_cycle_status"]
@@ -754,6 +837,7 @@ export type Database = {
         | "management_only"
         | "confidential"
       goal_status: "not_started" | "in_progress" | "completed" | "blocked"
+      par_meeting_status: "scheduled" | "completed" | "cancelled"
       plan_status: "draft" | "active" | "completed" | "cancelled"
       plan_type: "pdp" | "pip"
       review_cycle_status: "draft" | "active" | "closed"
@@ -906,6 +990,7 @@ export const Constants = {
         "confidential",
       ],
       goal_status: ["not_started", "in_progress", "completed", "blocked"],
+      par_meeting_status: ["scheduled", "completed", "cancelled"],
       plan_status: ["draft", "active", "completed", "cancelled"],
       plan_type: ["pdp", "pip"],
       review_cycle_status: ["draft", "active", "closed"],
@@ -922,3 +1007,4 @@ export const Constants = {
     },
   },
 } as const
+
