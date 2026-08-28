@@ -1,0 +1,39 @@
+.review-cycle-section {
+  max-width: 500px;
+}
+
+.review-cycle-heading-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 20px;
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 26px;
+  text-align: center;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.review-cycle-add-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.review-cycle-add-button {
+  background: #ffffff;
+  color: #111111;
+  border: none;
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.review-cycle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

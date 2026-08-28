@@ -1,6 +1,4 @@
-/* ==================================================
-   employee-profile-layout
-   ================================================== */
+/*employee-profile-layout*/
 .employee-profile-layout {
   display: flex;
   min-height: 100vh;
@@ -22,10 +20,8 @@
   font-size: 16px;
 }
 
-/* ==================================================
-   page heading card ("My Profile")
-   Fills the content width, not capped small.
-   ================================================== */
+/*page heading card ("My Profile")
+   Fills the content width, not capped small.*/
 .employee-profile-page-heading-card {
   background: #111111;
   border: 2px solid #f8b50d;
@@ -40,10 +36,8 @@
   box-sizing: border-box;
 }
 
-/* ==================================================
-   main profile card: scales with available space
-   instead of being capped tight.
-   ================================================== */
+/*main profile card: scales with available space
+   instead of being capped tight.*/
 .employee-profile-card {
   background: #111111;
   border: 2px solid #f8b50d;
@@ -56,10 +50,8 @@
   max-width: 950px;
 }
 
-/* ==================================================
-   left column: photo, identifier pill, department
-   pill, current PAR cycle card
-   ================================================== */
+/*left column: photo, identifier pill, department
+   pill, current PAR cycle card*/
 .employee-profile-left {
   display: flex;
   flex-direction: column;
@@ -105,11 +97,9 @@
   box-sizing: border-box;
 }
 
-/* ==================================================
-   right column: profile fields
+/* right column: profile fields
    Takes up remaining space so the card isn't lopsided;
-   fields sized reasonably, not edge-to-edge.
-   ================================================== */
+   fields sized reasonably, not edge-to-edge.*/
 .employee-profile-right {
   flex: 1;
   display: flex;
@@ -143,9 +133,7 @@
   max-width: 420px;
 }
 
-/* ==================================================
-   Sign Out button
-   ================================================== */
+/*Sign Out button*/
 .employee-profile-signout-row {
   display: flex;
   justify-content: flex-end;
@@ -169,9 +157,7 @@
   background: #e0a30b;
 }
 
-/* ==================================================
-   responsive adjustments
-   ================================================== */
+/*responsive adjustments*/
 @media (max-width: 900px) {
   .employee-profile-card {
     flex-direction: column;

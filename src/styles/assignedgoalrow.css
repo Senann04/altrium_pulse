@@ -1,0 +1,28 @@
+.assigned-goal-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.assigned-goal-row-text {
+  flex: 1;
+  background: #808080;
+  color: #111111;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assigned-goal-row-pill {
+  background: #808080;
+  color: #111111;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+}

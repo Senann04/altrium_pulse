@@ -1,0 +1,31 @@
+.goal-period-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 999px;
+  padding: 0.6rem 1.25rem;
+  cursor: pointer;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.goal-period-pill-label {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.goal-period-pill-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: conic-gradient(
+    #f8b50d 0deg calc(var(--progress) * 3.6deg),
+    #ffffff calc(var(--progress) * 3.6deg) 360deg
+  );
+}

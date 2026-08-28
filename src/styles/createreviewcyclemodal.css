@@ -1,0 +1,101 @@
+.create-cycle-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.create-cycle-modal {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 20px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 480px;
+  box-sizing: border-box;
+}
+
+.create-cycle-title {
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 20px;
+  text-align: center;
+  margin: 0 0 1rem 0;
+}
+
+.create-cycle-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.9rem;
+}
+
+.create-cycle-field label {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.create-cycle-field input,
+.create-cycle-field select {
+  background: #ffffff;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+}
+
+.create-cycle-field textarea {
+  background: #ffffff;
+  color: #111111;
+  border: none;
+  border-radius: 12px;
+  padding: 0.6rem 0.9rem;
+  min-height: 80px;
+  resize: vertical;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.create-cycle-date-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.create-cycle-date-row .create-cycle-field {
+  flex: 1;
+}
+
+.create-cycle-bottom-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.create-cycle-type-field {
+  flex: 1;
+}
+
+.create-cycle-button {
+  background: #f8b50d;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.5rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 0.9rem;
+}
+
+.create-cycle-button:hover {
+  background: #e0a30b;
+}

@@ -1,0 +1,394 @@
+/* feedback-title-pill
+   Shared gold rounded title pill — used by both
+   Self-Assessment and Peer Review headers.
+*/
+.feedback-title-pill {
+  background: #f8b50d;
+  color: #111111;
+  border-radius: 999px;
+  text-align: center;
+  padding: 0.6rem 1rem;
+  font-family: "Inria Sans", serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+/* SELF ASSESSMENT FORM */
+
+.self-assessment-form {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.self-assessment-question {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.self-assessment-question label {
+  font-family: "Inria Sans", sans-serif;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.self-assessment-question textarea {
+  background: #808080;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem;
+  min-height: 65px;
+  resize: vertical;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  color: #111111;
+  box-sizing: border-box;
+}
+
+.self-assessment-question textarea:focus {
+  outline: 2px solid #f8b50d;
+  outline-offset: 1px;
+}
+
+/* self-assessment-submit-row
+   Submit button, right-aligned.*/
+.self-assessment-submit-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* feedback-submit-button
+   Shared gold submit button style, reused by both
+   Self-Assessment and Peer Review forms. */
+.feedback-submit-button {
+  background: #f8b50d;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.5rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.feedback-submit-button:hover {
+  background: #e0a30b;
+}
+
+.feedback-submitted-note {
+  color: #f8b50d;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+}
+
+/* PEER REVIEW FORM */
+
+/* peer-review-form
+   Outer card: black background, gold outline, rounded
+   corners, narrow vertical proportions.*/
+.peer-review-form {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* peer-review-dropdown
+   Target-selection dropdown: white background, dark text.*/
+.peer-review-dropdown {
+  width: 100%;
+  background: #ffffff;
+  color: #111111;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  margin-bottom: 1rem;
+}
+
+/* peer-review-profile-placeholder
+   Grey square placeholder for the selected person's
+   profile image (real image added later).*/
+.peer-review-profile-placeholder {
+  width: 110px;
+  height: 110px;
+  background: #808080;
+  border-radius: 10px;
+  margin: 0 auto 1.1rem auto;
+}
+
+/* peer-review-ratings / rating-row
+   One row per category: label, 5 stars, rating value.*/
+.peer-review-ratings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.peer-review-rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.peer-review-rating-label {
+  font-family: "Inria Sans", sans-serif;
+  color: #ffffff;
+  font-size: 12px;
+  flex: 1;
+}
+
+/* peer-review-stars / star
+   Star buttons: unfilled grey, filled gold, disabled
+   past the next allowed step in the sequence.*/
+.peer-review-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.peer-review-star {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #555555;
+  cursor: pointer;
+  padding: 0;
+}
+
+.peer-review-star.filled {
+  color: #f8b50d;
+}
+
+.peer-review-star:disabled {
+  cursor: default;
+}
+
+/* peer-review-rating-value
+   Small white pill showing "x/5".*/
+.peer-review-rating-value {
+  background: #ffffff;
+  color: #111111;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 34px;
+  text-align: center;
+}
+
+/*peer-review-question
+   Question label + textarea */
+.peer-review-question {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.peer-review-question label {
+  font-family: "Inria Sans", sans-serif;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.peer-review-question textarea {
+  background: #808080;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem;
+  min-height: 60px;
+  resize: vertical;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 13px;
+  color: #111111;
+  box-sizing: border-box;
+}
+
+.peer-review-question textarea:focus {
+  outline: 2px solid #f8b50d;
+  outline-offset: 1px;
+}
+
+/* peer-review-submit-row
+   Submit button, right-aligned, with confirmation note. */
+.peer-review-submit-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/*FEEDBACK SUMMARY*/
+
+/*feedback-summary-row / heading
+   "Feedback for Me" bar sitting above the two cards.*/
+.feedback-summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.feedback-summary-heading {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 20px;
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 22px;
+  text-align: center;
+  padding: 0.75rem;
+}
+
+/* feedback-summary-cards
+   Side-by-side layout: Overall Rating on the left,
+   Summary on the right.*/
+.feedback-summary-cards {
+  display: flex;
+  gap: 1rem;
+}
+
+/* overall-rating-card
+   Black card, gold outline, centred label + gold/white
+   display blocks.*/
+.overall-rating-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  max-width: 220px;
+  box-sizing: border-box;
+}
+
+.overall-rating-label {
+  font-family: "Iskoola Pota", serif;
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.overall-rating-gold {
+  width: 100%;
+  min-height: 50px;
+  background: #f8b50d;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111111;
+  font-family: "Inria Sans", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.overall-rating-white {
+  width: 100%;
+  height: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+/*summary-card
+   Black card, gold outline, holds the category rows.*/
+.summary-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.25rem 1.5rem;
+  flex: 2;
+  box-sizing: border-box;
+}
+
+.summary-title {
+  margin-bottom: 1rem;
+}
+
+/* summary-row
+   One category: name, progress bar, percentage.*/
+.summary-row {
+  margin-bottom: 0.9rem;
+}
+
+.summary-row:last-child {
+  margin-bottom: 0;
+}
+
+.summary-row-label {
+  font-family: "Inria Sans", sans-serif;
+  color: #ffffff;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.summary-row-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.summary-row-track {
+  flex: 1;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.summary-row-fill {
+  height: 100%;
+  background: #f8b50d;
+  border-radius: 999px;
+}
+
+.summary-row-value {
+  background: #ffffff;
+  color: #111111;
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 38px;
+  text-align: center;
+}
+
+/* responsive adjustments*/
+@media (max-width: 700px) {
+  .feedback-summary-cards {
+    flex-direction: column;
+  }
+
+  .overall-rating-card {
+    max-width: none;
+  }
+}

@@ -1,0 +1,14 @@
+.hr-review-cycle-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #111111;
+}
+
+.hr-review-cycle-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  gap: 1rem;
+}
