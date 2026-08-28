@@ -1,0 +1,112 @@
+.par-scheduler-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.par-scheduler-modal {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+
+.par-scheduler-title {
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 18px;
+  text-align: center;
+  margin: 0 0 1rem 0;
+}
+
+.par-scheduler-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.par-scheduler-weekday {
+  background: #f8b50d;
+  color: #111111;
+  border-radius: 8px;
+  text-align: center;
+  padding: 0.4rem 0;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.par-scheduler-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.par-scheduler-day {
+  background: #d9d9d9;
+  color: #111111;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.par-scheduler-day.selected {
+  background: #f8b50d;
+}
+
+.par-scheduler-day-empty {
+  visibility: hidden;
+}
+
+.par-scheduler-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.par-scheduler-time {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #111111;
+  border: 1.5px solid #f8b50d;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+}
+
+.par-scheduler-time select {
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+}
+
+.par-scheduler-ok {
+  background: #f8b50d;
+  color: #111111;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.5rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}

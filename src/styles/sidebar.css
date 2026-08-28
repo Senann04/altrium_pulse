@@ -1,0 +1,93 @@
+/*.sidebar
+   Outer panel: gold background, rounded shape, fixed
+   width, vertical flex container for the menu.*/
+.sidebar {
+  width: 260px;
+  min-height: 100%;
+  background: #f8b50d;
+  border-radius: 30px;
+  padding: 1.5rem 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/*.sidebar-menu
+   Vertical stack of menu buttons with spacing between
+   each pill-shaped item.*/
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/*.sidebar-item
+   Individual pill-shaped menu button: layout, border,
+   default (unselected) appearance, hover state.*/
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #111111;
+  background: transparent;
+  color: #111111;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sidebar-item:hover {
+  background: rgba(17, 17, 17, 0.08);
+}
+
+.sidebar-item:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 2px;
+}
+
+/*.sidebar-item.active
+   Selected item: WHITE background per the screenshot
+   (previously black — corrected here), dark text stays
+   readable on white, border matches for definition.*/
+.sidebar-item.active {
+  background: #ffffff;
+  color: #111111;
+  border-color: #111111;
+}
+
+/* .sidebar-icon / .sidebar-label
+   Icon sizing/alignment and label text handling
+   (prevents overflow on long labels).
+*/
+.sidebar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*Responsive
+   Keeps the sidebar usable on smaller desktop widths
+   without redesigning it.*/
+@media (max-width: 900px) {
+  .sidebar {
+    width: 220px;
+    padding: 1.25rem 0.75rem;
+  }
+
+  .sidebar-item {
+    font-size: 14px;
+    padding: 0.65rem 0.85rem;
+  }
+}

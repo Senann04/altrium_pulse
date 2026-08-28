@@ -1,0 +1,189 @@
+/* wrapper holds center circle, stage circles, and arrows via absolute positioning */
+.review-flow-wrapper {
+  position: relative;
+  width: 380px;
+  height: 380px;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.review-flow-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+}
+
+.review-flow-center-pie {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(#f8b50d 0deg 90deg, transparent 90deg 360deg);
+  z-index: -1;
+}
+
+.review-flow-center-label {
+  color: #111111;
+  font-family: "Iskoola Pota", serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 0 0.5rem;
+}
+
+.review-flow-stage {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #f8b50d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.4rem;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.review-flow-stage-label {
+  color: #111111;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.review-flow-stage-status {
+  background: #ffffff;
+  color: #111111;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  font-size: 8px;
+  font-family: "Inria Sans", sans-serif;
+  margin-top: 0.25rem;
+}
+
+/* 6-stage hexagon positions (Employee page) */
+.review-flow-pos-top-center {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.review-flow-pos-top-right {
+  top: 22%;
+  right: 0;
+}
+.review-flow-pos-bottom-right {
+  bottom: 22%;
+  right: 0;
+}
+.review-flow-pos-bottom-center {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.review-flow-pos-bottom-left {
+  bottom: 22%;
+  left: 0;
+}
+.review-flow-pos-top-left {
+  top: 22%;
+  left: 0;
+}
+
+/* 4-stage diamond positions (Immediate Supervisor page) */
+.review-flow-pos-right-center {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+.review-flow-pos-left-center {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.review-flow-arrow {
+  position: absolute;
+  color: #d9d9d9;
+  font-size: 22px;
+  z-index: 1;
+}
+
+/* hexagon arrows */
+.review-flow-arrow-1 {
+  top: 10%;
+  right: 20%;
+}
+.review-flow-arrow-2 {
+  top: 38%;
+  right: 4%;
+  transform: rotate(90deg);
+}
+.review-flow-arrow-3 {
+  bottom: 10%;
+  right: 20%;
+  transform: rotate(135deg);
+}
+.review-flow-arrow-4 {
+  bottom: 10%;
+  left: 20%;
+  transform: rotate(225deg);
+}
+.review-flow-arrow-5 {
+  top: 38%;
+  left: 4%;
+  transform: rotate(270deg);
+}
+.review-flow-arrow-6 {
+  top: 10%;
+  left: 20%;
+  transform: rotate(315deg);
+}
+
+/* diamond arrows, placed in the four diagonal gaps between stages */
+.review-flow-arrow-d1 {
+  top: 16%;
+  right: 10%;
+  transform: rotate(45deg);
+}
+.review-flow-arrow-d2 {
+  bottom: 16%;
+  right: 10%;
+  transform: rotate(135deg);
+}
+.review-flow-arrow-d3 {
+  bottom: 16%;
+  left: 10%;
+  transform: rotate(225deg);
+}
+.review-flow-arrow-d4 {
+  top: 16%;
+  left: 10%;
+  transform: rotate(315deg);
+}
+
+@media (max-width: 500px) {
+  .review-flow-wrapper {
+    width: 300px;
+    height: 300px;
+  }
+  .review-flow-stage {
+    width: 75px;
+    height: 75px;
+  }
+  .review-flow-center {
+    width: 95px;
+    height: 95px;
+  }
+}

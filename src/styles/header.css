@@ -1,0 +1,109 @@
+/*header container
+   Full-width row: logo on the left, notification/time/
+   date cluster on the right. Sits beside the Sidebar
+   (placed as a sibling in the layout, not here).*/
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #111111;
+  padding: 1.25rem 2rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+ /*logo*/
+    
+.header-logo {
+  height: 44px;
+  width: auto;
+}
+
+/*right-side cluster: notification, time pill, date*/
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/*notification circle
+   Small gold circle with bell icon.*/
+.notification-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f8b50d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/*time pill
+   Gold rounded pill with clock icon + time text.*/
+.time-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #b8860b;
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  color: #111111;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/*date circle
+   Large gold circle: calendar icon, big day number,
+   month/year, weekday — stacked and centered.*/
+.date-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #b8860b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #111111;
+  font-family: "Inria Sans", sans-serif;
+  flex-shrink: 0;
+}
+
+.date-day {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.date-month {
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.date-weekday {
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+/*responsive adjustments*/
+@media (max-width: 900px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .header-right {
+    gap: 0.75rem;
+  }
+
+  .date-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .date-day {
+    font-size: 22px;
+  }
+}

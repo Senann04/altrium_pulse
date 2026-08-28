@@ -1,0 +1,76 @@
+/* page shell: sidebar + main content side by side */
+.supervisor-current-review-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #111111;
+}
+
+.supervisor-current-review-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  gap: 1rem;
+}
+
+/* heading card */
+.supervisor-current-review-heading-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.25rem 1.5rem;
+  box-sizing: border-box;
+  max-width: 950px;
+}
+
+.supervisor-current-review-heading-card h1 {
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 26px;
+  font-weight: 400;
+  margin: 0 0 0.75rem 0;
+  text-align: center;
+}
+
+.supervisor-current-review-cycle-pill {
+  background: #f8b50d;
+  color: #111111;
+  border-radius: 999px;
+  text-align: center;
+  padding: 0.5rem;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* review progress card */
+.supervisor-current-review-progress-card {
+  background: #111111;
+  border: 2px solid #f8b50d;
+  border-radius: 25px;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  max-width: 950px;
+}
+
+.supervisor-current-review-progress-title {
+  color: #ffffff;
+  font-family: "Iskoola Pota", serif;
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0 0 0.5rem 0;
+}
+
+.supervisor-current-review-people-row {
+  color: #d9d9d9;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 12px;
+  margin-bottom: 1rem;
+}
+
+.supervisor-current-review-people-row strong {
+  color: #ffffff;
+}
