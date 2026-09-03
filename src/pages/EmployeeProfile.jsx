@@ -23,7 +23,7 @@ function EmployeeProfile({ onNavigate, onSignOut, profileData = emptyProfile }) 
 
   return (
     <div className="employee-profile-layout">
-      <Sidebar role="employee" activeItem="profile" onNavigate={onNavigate} />
+      <Sidebar role="employee" activeItem="profile" onNavigate={onNavigate} onSignOut={handleSignOut} profileData={profileData} />
 
       <div className="employee-profile-main">
         <Header title="My Profile" profileData={profileData} />

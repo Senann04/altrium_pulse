@@ -1,5 +1,5 @@
 .employee-profile-layout { display:flex; min-height:100vh; background:var(--ap-bg); }
-.employee-profile-main { width:calc(100% - 264px); max-width:1560px; min-width:0; margin:0 auto; padding:0 clamp(24px,4vw,60px) 48px; }
+.employee-profile-main { width:calc(100% - 270px); max-width:1560px; min-width:0; margin:0 auto; padding:0 clamp(24px,4vw,60px) 48px; }
 .employee-profile-page-heading-card {
   display:flex;
   align-items:flex-end;
