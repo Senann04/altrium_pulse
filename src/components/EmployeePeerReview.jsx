@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { StarIcon } from "./InterfaceIcons";
 import "../styles/employeepeerreview.css";
 
 /* Temporary peer options until user data comes from Supabase.
@@ -93,7 +94,7 @@ function EmployeePeerReview() {
                     aria-label={`${category}: ${star} stars`}
                     aria-pressed={star <= rating}
                   >
-                    ★
+                    <StarIcon />
                   </button>
                 ))}
               </div>

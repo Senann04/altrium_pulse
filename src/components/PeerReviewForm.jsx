@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { StarIcon } from "./InterfaceIcons";
 import "../styles/feedback.css";
 
 /* Reusable Peer Review form for every review type (employee-peer,
@@ -92,7 +93,7 @@ function PeerReviewForm({
                     disabled={starIndex > rating + 1}
                     aria-label={`${category} ${starIndex} star`}
                   >
-                    ★
+                    <StarIcon />
                   </button>
                 ))}
               </div>

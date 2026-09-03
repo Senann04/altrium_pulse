@@ -5,6 +5,10 @@ data changes, not the structure. overallRating maps to the existing
 `rating` field; categoryRatings are temporary until the backend/database
 supports per-category fields.*/
 function FeedbackSummary({ overallRating, categoryRatings = [] }) {
+  const normalizedRating = Math.max(0, Math.min(5, Number(overallRating) || 0));
+  const ratingPercent = Math.round((normalizedRating / 5) * 100);
+  const ratingMessage = normalizedRating >= 4 ? "Strong performance" : normalizedRating >= 3 ? "Solid performance" : "Needs attention";
+
   return (
     <div className="feedback-summary-row">
       <div className="feedback-summary-heading">Feedback for Me</div>
@@ -12,8 +16,21 @@ function FeedbackSummary({ overallRating, categoryRatings = [] }) {
       <div className="feedback-summary-cards">
         <div className="overall-rating-card">
           <span className="overall-rating-label">Overall rating</span>
-          <div className="overall-rating-gold">{overallRating}</div>
-          <div className="overall-rating-white">out of 5</div>
+          <div
+            className="overall-rating-ring"
+            role="img"
+            aria-label={`${normalizedRating} out of 5`}
+            style={{ "--rating-progress": `${ratingPercent}%` }}
+          >
+            <div>
+              <strong>{normalizedRating}</strong>
+              <span>out of 5</span>
+            </div>
+          </div>
+          <div className="overall-rating-caption">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 12.5 2.6 2.6L16.5 9" /><circle cx="12" cy="12" r="8.5" /></svg>
+            <span>{ratingMessage}</span>
+          </div>
         </div>
 
         <div className="summary-card">

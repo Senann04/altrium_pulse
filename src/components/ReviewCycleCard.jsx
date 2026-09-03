@@ -1,4 +1,5 @@
 import "../styles/reviewcyclecard.css";
+import { TrashIcon } from "./InterfaceIcons";
 /* Reusable for both HRBP and Leadership — the `cycle` prop contains all the data needed to render 
 the card, so this component never needs to know which dashboard it's rendering on. */
 function ReviewCycleCard({ cycle, onDelete }) {
@@ -28,7 +29,7 @@ function ReviewCycleCard({ cycle, onDelete }) {
           onClick={() => onDelete(cycle.id)}
           aria-label="Delete review cycle"
         >
-          🗑
+          <TrashIcon />
         </button>
       </div>
     </div>

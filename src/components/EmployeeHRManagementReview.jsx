@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { StarIcon } from "./InterfaceIcons";
 import "../styles/employeehrmanagementreview.css";
 
 /* Temporary review targets until HR/Management user data comes from Supabase. */
@@ -79,7 +80,7 @@ function EmployeeHRManagementReview() {
                     aria-label={`${category}: ${star} stars`}
                     aria-pressed={star <= rating}
                   >
-                    ★
+                    <StarIcon />
                   </button>
                 ))}
               </div>

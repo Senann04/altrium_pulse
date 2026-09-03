@@ -25,14 +25,17 @@ export const employeeDevelopmentPlans = {
   ],
 };
 
-function TargetIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fcb400" strokeWidth="2">
-      <circle cx="12" cy="12" r="9" />
-      <circle cx="12" cy="12" r="5" />
-      <circle cx="12" cy="12" r="1.5" fill="#fcb400" />
-    </svg>
-  );
+function PlanMetricIcon({ type }) {
+  if (type === "progress") {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18V6M4 18h16" /><path d="m7 14 3-3 3 2 5-6" /><path d="M15 7h3v3" /></svg>;
+  }
+  if (type === "completed") {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="m8 12.5 2.6 2.6L16.5 9" /></svg>;
+  }
+  if (type === "overdue") {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.1 4.4 3.2 17a2 2 0 0 0 1.8 3h14a2 2 0 0 0 1.8-3L13.9 4.4a2.2 2.2 0 0 0-3.8 0Z" /><path d="M12 9v4M12 16.5v.1" /></svg>;
+  }
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="4.5" /><path d="M12 3.5V6M20.5 12H18" /></svg>;
 }
 
 /* onSelectGoal is optional so this still works anywhere it isn't clickable */
@@ -48,7 +51,17 @@ function EmployeeDevelopmentGoals({ title, goals, onSelectGoal }) {
   );
   const averageProgress = goals.length ? Math.round(summary.progress / goals.length) : 0;
 
-  const visibleGoals = goals.filter((g) => g.status === "Ongoing");
+  const statusPriority = { Overdue: 0, Ongoing: 1, Completed: 2 };
+  const visibleGoals = [...goals]
+    .filter((goal) => goal.status !== "Completed")
+    .sort((left, right) => statusPriority[left.status] - statusPriority[right.status]);
+
+  const metrics = [
+    { type: "active", label: "Active goals", value: summary.active },
+    { type: "progress", label: "Average progress", value: `${averageProgress}%` },
+    { type: "completed", label: "Completed", value: summary.completed },
+    { type: "overdue", label: "Overdue", value: summary.overdue },
+  ];
 
   return (
     <section className="dev-goals-section">
@@ -58,26 +71,13 @@ function EmployeeDevelopmentGoals({ title, goals, onSelectGoal }) {
       </div>
 
       <div className="dev-goals-summary-row">
-        <div className="dev-goals-summary-circle">
-          <TargetIcon />
-          <span className="dev-goals-summary-label">Active Goals</span>
-          <span className="dev-goals-summary-value">{summary.active}</span>
-        </div>
-        <div className="dev-goals-summary-circle">
-          <TargetIcon />
-          <span className="dev-goals-summary-label">Average Progress</span>
-          <span className="dev-goals-summary-value">{averageProgress}%</span>
-        </div>
-        <div className="dev-goals-summary-circle">
-          <TargetIcon />
-          <span className="dev-goals-summary-label">Completed</span>
-          <span className="dev-goals-summary-value">{summary.completed}</span>
-        </div>
-        <div className="dev-goals-summary-circle">
-          <TargetIcon />
-          <span className="dev-goals-summary-label">Overdue</span>
-          <span className="dev-goals-summary-value">{summary.overdue}</span>
-        </div>
+        {metrics.map((metric) => (
+          <div className={`dev-goals-summary-circle dev-goals-summary-${metric.type}`} key={metric.type}>
+            <span className="dev-goals-summary-icon"><PlanMetricIcon type={metric.type} /></span>
+            <span className="dev-goals-summary-label">{metric.label}</span>
+            <span className="dev-goals-summary-value">{metric.value}</span>
+          </div>
+        ))}
       </div>
 
       <div className="dev-goals-card-list">
