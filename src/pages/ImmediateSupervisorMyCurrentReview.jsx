@@ -3,6 +3,7 @@ import Header from "../components/header.jsx";
 import ReviewProgressFlow from "../components/ReviewProgressFlow";
 import "../styles/immediatesupervisormycurrentreview.css";
 import PARMeeting from "../components/PARMeeting";
+import WorkspaceHeading from "../components/WorkspaceHeading";
 
 /* Temporary supervisor review data until Supabase records are connected. */
 const immediateSupervisorCurrentReviewData = {
@@ -20,28 +21,20 @@ const immediateSupervisorCurrentReviewData = {
   ],
 };
 
-const diamondPositions = ["top-center", "right-center", "bottom-center", "left-center"];
-const diamondArrows = [
-  "review-flow-arrow-d1",
-  "review-flow-arrow-d2",
-  "review-flow-arrow-d3",
-  "review-flow-arrow-d4",
-];
-
-function ImmediateSupervisorMyCurrentReview({ onNavigate }) {
+function ImmediateSupervisorMyCurrentReview({ onNavigate, onSignOut, profileData }) {
   return (
     <div className="supervisor-current-review-layout">
-      <Sidebar role="supervisor" activeItem="current-review" onNavigate={onNavigate} />
+      <Sidebar role="supervisor" activeItem="current-review" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="supervisor-current-review-main">
-        <Header />
+        <Header title="My Current Review" profileData={profileData} />
 
-        <div className="supervisor-current-review-heading-card">
-          <h1>My Current Review</h1>
-          <div className="supervisor-current-review-cycle-pill">
-            {immediateSupervisorCurrentReviewData.reviewCycle.name}
-          </div>
-        </div>
+        <WorkspaceHeading
+          eyebrow="Performance review"
+          title="My Current Review"
+          description="Follow your own review stages and schedule the conversation that closes the cycle."
+          meta={immediateSupervisorCurrentReviewData.reviewCycle.name}
+        />
 
         <div className="supervisor-current-review-progress-card">
           <h2 className="supervisor-current-review-progress-title">Review Progress</h2>
@@ -56,8 +49,6 @@ function ImmediateSupervisorMyCurrentReview({ onNavigate }) {
           <ReviewProgressFlow
             stages={immediateSupervisorCurrentReviewData.stages}
             centerStatus={immediateSupervisorCurrentReviewData.reviewCycle.status}
-            positions={diamondPositions}
-            arrowClasses={diamondArrows}
           />
         </div>
 

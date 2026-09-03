@@ -3,6 +3,7 @@ import Header from "../components/header.jsx";
 import ReviewProgressFlow from "../components/ReviewProgressFlow.jsx";
 import "../styles/employeemycurrentreview.css";
 import PARMeeting from "../components/PARMeeting";
+import WorkspaceHeading from "../components/WorkspaceHeading";
 
 // Temporary current-review data until Supabase provides the employee's
 // active Review Cycle (created by HR) and real stage statuses.
@@ -27,20 +28,20 @@ const currentReviewData = {
 
 // onNavigate is passed down from Sidebar's parent so clicking other menu
 // items can switch pages later once real routing exists.
-function EmployeeMyCurrentReview({ onNavigate }) {
+function EmployeeMyCurrentReview({ onNavigate, onSignOut, profileData }) {
   return (
     <div className="employee-current-review-layout">
-      <Sidebar role="employee" activeItem="current-review" onNavigate={onNavigate} />
+      <Sidebar role="employee" activeItem="current-review" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="employee-current-review-main">
-        <Header />
+        <Header title="My Current Review" profileData={profileData} />
 
-        <div className="employee-current-review-heading-card">
-          <h1>My Current Review</h1>
-          <div className="employee-current-review-cycle-pill">
-            {currentReviewData.reviewCycle.name}
-          </div>
-        </div>
+        <WorkspaceHeading
+          eyebrow="Performance review"
+          title="My Current Review"
+          description="See each review stage, the people supporting you and your next scheduled conversation."
+          meta={currentReviewData.reviewCycle.name}
+        />
 
         <div className="employee-current-review-progress-card">
           <h2 className="employee-current-review-progress-title">Review Progress</h2>

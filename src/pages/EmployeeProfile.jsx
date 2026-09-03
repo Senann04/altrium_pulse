@@ -1,6 +1,7 @@
 import "../styles/EmployeeProfile.css";
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
+import WorkspaceHeading from "../components/WorkspaceHeading";
 
 const emptyProfile = {
   identifier: "",
@@ -25,9 +26,14 @@ function EmployeeProfile({ onNavigate, onSignOut, profileData = emptyProfile }) 
       <Sidebar role="employee" activeItem="profile" onNavigate={onNavigate} />
 
       <div className="employee-profile-main">
-        <Header />
+        <Header title="My Profile" profileData={profileData} />
 
-        <div className="employee-profile-page-heading-card">My Profile</div>
+        <WorkspaceHeading
+          eyebrow="Account"
+          title="My Profile"
+          description="Review your employee details and current reporting relationships."
+          meta={profileData.identifier || "Employee record"}
+        />
 
         <div className="employee-profile-card">
           <div className="employee-profile-left">

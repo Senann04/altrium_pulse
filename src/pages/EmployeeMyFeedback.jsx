@@ -3,6 +3,7 @@ import Header from "../components/header.jsx";
 import SelfAssessmentForm from "../components/SelfAssessmentForm";
 import EmployeePeerReview from "../components/EmployeePeerReview";
 import FeedbackSummary from "../components/feedbacksummary.jsx";
+import WorkspaceHeading from "../components/WorkspaceHeading";
 import "../styles/employeemyfeedback.css";
 
 /* Temporary feedback values until Supabase provides real Feedback records.
@@ -21,17 +22,19 @@ const employeeFeedbackData = {
   improvements: "",
 };
 
-function EmployeeMyFeedback({ onNavigate }) {
+function EmployeeMyFeedback({ onNavigate, onSignOut, profileData }) {
   return (
     <div className="employee-feedback-layout">
-      <Sidebar role="employee" activeItem="feedback" onNavigate={onNavigate} />
+      <Sidebar role="employee" activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="employee-feedback-main">
-        <Header />
+        <Header title="My Feedback" profileData={profileData} />
 
-        <div className="employee-feedback-heading-card">
-          <h1>My Feedback</h1>
-        </div>
+        <WorkspaceHeading
+          eyebrow="Feedback workspace"
+          title="My Feedback"
+          description="Complete your assessments and review the feedback shared with you."
+        />
 
         <div className="employee-feedback-subheading">Provide Feedback</div>
 
@@ -49,13 +52,13 @@ function EmployeeMyFeedback({ onNavigate }) {
 
         <div className="employee-feedback-bottom-row">
           <div className="employee-feedback-well-done-card">
-            <div className="employee-feedback-bottom-title">WELL DONE!!!</div>
-            <div className="employee-feedback-bottom-content">{employeeFeedbackData.strengths}</div>
+            <div className="employee-feedback-bottom-title">Strengths</div>
+            <div className="employee-feedback-bottom-content">{employeeFeedbackData.strengths || "No strengths have been shared yet."}</div>
           </div>
 
           <div className="employee-feedback-improve-card">
-            <div className="employee-feedback-bottom-title">IMPROVE!</div>
-            <div className="employee-feedback-bottom-content">{employeeFeedbackData.improvements}</div>
+            <div className="employee-feedback-bottom-title">Development opportunities</div>
+            <div className="employee-feedback-bottom-content">{employeeFeedbackData.improvements || "No development feedback has been shared yet."}</div>
           </div>
         </div>
       </div>

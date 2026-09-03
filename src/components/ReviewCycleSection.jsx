@@ -47,8 +47,6 @@ function ReviewCycleSection() {
 
   return (
     <section className="review-cycle-section">
-      <div className="review-cycle-heading-card">Review Cycle</div>
-
       <div className="review-cycle-add-row">
         <button
           type="button"
@@ -56,7 +54,7 @@ function ReviewCycleSection() {
           onClick={() => setIsModalOpen(true)}
           aria-label="Create new review cycle"
         >
-          +
+          <span aria-hidden="true">+</span> Create cycle
         </button>
       </div>
 
