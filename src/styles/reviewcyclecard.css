@@ -1,13 +1,13 @@
 .review-cycle-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 20px;
   padding: 1.25rem;
   box-sizing: border-box;
 }
 
 .review-cycle-name-pill {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px;
   text-align: center;
@@ -55,8 +55,8 @@
 
 .review-cycle-active-label {
   background: #111111;
-  color: #f8b50d;
-  border: 1.5px solid #f8b50d;
+  color: #fcb400;
+  border: 1.5px solid #fcb400;
   border-radius: 999px;
   padding: 0.3rem 1rem;
   font-family: "Inria Sans", sans-serif;
@@ -65,7 +65,7 @@
 }
 
 .review-cycle-delete-button {
-  background: #f8b50d;
+  background: #fcb400;
   border: none;
   border-radius: 10px;
   width: 34px;

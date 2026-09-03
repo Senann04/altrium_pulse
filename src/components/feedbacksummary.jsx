@@ -11,13 +11,14 @@ function FeedbackSummary({ overallRating, categoryRatings = [] }) {
 
       <div className="feedback-summary-cards">
         <div className="overall-rating-card">
-          <span className="overall-rating-label">Overall rating</span>
+          <span className="overall-rating-label">Overall</span>
+          <span className="overall-rating-label">Rating</span>
           <div className="overall-rating-gold">{overallRating}</div>
-          <div className="overall-rating-white">out of 5</div>
+          <div className="overall-rating-white" />
         </div>
 
         <div className="summary-card">
-          <div className="feedback-title-pill summary-title">Performance summary</div>
+          <div className="feedback-title-pill summary-title">Summery</div>
 
           {categoryRatings.map((category) => (
             <div className="summary-row" key={category.name}>

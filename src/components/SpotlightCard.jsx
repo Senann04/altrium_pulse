@@ -2,7 +2,7 @@ import { useRef } from "react";
 import "../styles/spotlightcard.css";
 
 // Adapted from React Bits' SpotlightCard interaction for the Altrium design system.
-function SpotlightCard({ children, className = "", spotlightColor = "rgba(248, 181, 13, 0.16)" }) {
+function SpotlightCard({ children, className = "", spotlightColor = "rgba(252, 180, 0, 0.16)" }) {
   const cardRef = useRef(null);
 
   const handlePointerMove = (event) => {

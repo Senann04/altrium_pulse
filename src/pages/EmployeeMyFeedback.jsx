@@ -21,16 +21,16 @@ const employeeFeedbackData = {
   improvements: "",
 };
 
-function EmployeeMyFeedback({ onNavigate, onSignOut, profileData }) {
+function EmployeeMyFeedback({ onNavigate }) {
   return (
     <div className="employee-feedback-layout">
-      <Sidebar role="employee" activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role="employee" activeItem="feedback" onNavigate={onNavigate} />
 
       <div className="employee-feedback-main">
-        <Header title="My Feedback" profileData={profileData} />
+        <Header />
 
         <div className="employee-feedback-heading-card">
-          <div><span>Reviews</span><h1>My Feedback</h1><p>Complete assessments and review feedback shared with you.</p></div>
+          <h1>My Feedback</h1>
         </div>
 
         <div className="employee-feedback-subheading">Provide Feedback</div>
@@ -49,13 +49,13 @@ function EmployeeMyFeedback({ onNavigate, onSignOut, profileData }) {
 
         <div className="employee-feedback-bottom-row">
           <div className="employee-feedback-well-done-card">
-            <div className="employee-feedback-bottom-title">Strengths</div>
-            <div className="employee-feedback-bottom-content">{employeeFeedbackData.strengths || "No strengths have been shared yet."}</div>
+            <div className="employee-feedback-bottom-title">WELL DONE!!!</div>
+            <div className="employee-feedback-bottom-content">{employeeFeedbackData.strengths}</div>
           </div>
 
           <div className="employee-feedback-improve-card">
-            <div className="employee-feedback-bottom-title">Development opportunities</div>
-            <div className="employee-feedback-bottom-content">{employeeFeedbackData.improvements || "No development feedback has been shared yet."}</div>
+            <div className="employee-feedback-bottom-title">IMPROVE!</div>
+            <div className="employee-feedback-bottom-content">{employeeFeedbackData.improvements}</div>
           </div>
         </div>
       </div>

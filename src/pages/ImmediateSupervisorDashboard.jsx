@@ -3,12 +3,12 @@ import Header from "../components/header.jsx";
 import DashboardOverview from "../components/DashboardOverview.jsx";
 import "../styles/appshell.css";
 
-function ImmediateSupervisorDashboard({ onNavigate, onSignOut, profileData }) {
+function ImmediateSupervisorDashboard({ onNavigate, profileData }) {
   return (
     <div className="app-shell">
-      <Sidebar role="supervisor" activeItem="dashboard" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role="supervisor" activeItem="dashboard" onNavigate={onNavigate} />
       <main className="app-main">
-        <Header title="Overview" profileData={profileData} />
+        <Header profileData={profileData} />
         <DashboardOverview role="supervisor" profileData={profileData} onNavigate={onNavigate} />
       </main>
     </div>

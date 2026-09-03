@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: space-between;
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 15px;
   padding: 0.75rem 1.25rem;
 }
@@ -49,7 +49,7 @@
 }
 
 .assigned-goal-filter-select {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;

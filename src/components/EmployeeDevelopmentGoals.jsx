@@ -27,26 +27,20 @@ export const employeeDevelopmentPlans = {
 
 function TargetIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#f8b50d" strokeWidth="2">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fcb400" strokeWidth="2">
       <circle cx="12" cy="12" r="9" />
       <circle cx="12" cy="12" r="5" />
-      <circle cx="12" cy="12" r="1.5" fill="#f8b50d" />
+      <circle cx="12" cy="12" r="1.5" fill="#fcb400" />
     </svg>
   );
 }
 
 /* onSelectGoal is optional so this still works anywhere it isn't clickable */
 function EmployeeDevelopmentGoals({ title, goals, onSelectGoal }) {
-  const summary = goals.reduce(
-    (result, goal) => ({
-      active: result.active + Number(goal.status === "Ongoing"),
-      completed: result.completed + Number(goal.status === "Completed"),
-      overdue: result.overdue + Number(goal.status === "Overdue"),
-      progress: result.progress + goal.progress,
-    }),
-    { active: 0, completed: 0, overdue: 0, progress: 0 },
-  );
-  const averageProgress = goals.length ? Math.round(summary.progress / goals.length) : 0;
+  const activeGoals = goals.filter((g) => g.status === "Ongoing").length;
+  const completed = goals.filter((g) => g.status === "Completed").length;
+  const overdue = goals.filter((g) => g.status === "Overdue").length;
+  const averageProgress = Math.round(goals.reduce((sum, g) => sum + g.progress, 0) / goals.length);
 
   const visibleGoals = goals.filter((g) => g.status === "Ongoing");
 
@@ -58,7 +52,7 @@ function EmployeeDevelopmentGoals({ title, goals, onSelectGoal }) {
         <div className="dev-goals-summary-circle">
           <TargetIcon />
           <span className="dev-goals-summary-label">Active Goals</span>
-          <span className="dev-goals-summary-value">{summary.active}</span>
+          <span className="dev-goals-summary-value">{activeGoals}</span>
         </div>
         <div className="dev-goals-summary-circle">
           <TargetIcon />
@@ -68,12 +62,12 @@ function EmployeeDevelopmentGoals({ title, goals, onSelectGoal }) {
         <div className="dev-goals-summary-circle">
           <TargetIcon />
           <span className="dev-goals-summary-label">Completed</span>
-          <span className="dev-goals-summary-value">{summary.completed}</span>
+          <span className="dev-goals-summary-value">{completed}</span>
         </div>
         <div className="dev-goals-summary-circle">
           <TargetIcon />
           <span className="dev-goals-summary-label">Overdue</span>
-          <span className="dev-goals-summary-value">{summary.overdue}</span>
+          <span className="dev-goals-summary-value">{overdue}</span>
         </div>
       </div>
 

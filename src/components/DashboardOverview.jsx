@@ -1,11 +1,12 @@
+import SpotlightCard from "./SpotlightCard";
 import GoalProgressCard from "./GoalProgressCard";
 import "../styles/dashboardoverview.css";
 
 const roleContent = {
   employee: {
-    eyebrow: "Employee workspace",
-    title: "Your performance overview",
-    description: "Review your progress, upcoming actions and development goals for the current cycle.",
+    eyebrow: "Your performance snapshot",
+    title: "Build momentum, one goal at a time.",
+    description: "Track your review, stay ahead of deadlines and turn feedback into focused progress.",
     primaryAction: { label: "View current review", page: "current-review" },
     secondaryAction: { label: "Open my progress", page: "progress" },
     stats: [
@@ -15,9 +16,9 @@ const roleContent = {
     ],
   },
   supervisor: {
-    eyebrow: "Supervisor workspace",
-    title: "Team performance overview",
-    description: "Monitor your team, resolve pending actions and keep every review moving forward.",
+    eyebrow: "Team performance snapshot",
+    title: "Lead with clarity and timely feedback.",
+    description: "Keep your team aligned, identify blockers early and move every review forward.",
     primaryAction: { label: "Review my team", page: "team" },
     secondaryAction: { label: "Open current review", page: "current-review" },
     stats: [
@@ -27,9 +28,9 @@ const roleContent = {
     ],
   },
   hrbp: {
-    eyebrow: "HR partner workspace",
-    title: "People operations overview",
-    description: "Coordinate review cycles, monitor participation and support consistent decisions.",
+    eyebrow: "People operations snapshot",
+    title: "Keep every review cycle moving.",
+    description: "Coordinate goals, monitor participation and support consistent performance decisions.",
     primaryAction: { label: "Manage review cycle", page: "review-cycle" },
     secondaryAction: { label: "Assign goals", page: "assign-goals" },
     stats: [
@@ -39,9 +40,9 @@ const roleContent = {
     ],
   },
   leadership: {
-    eyebrow: "Leadership workspace",
-    title: "Organisation performance overview",
-    description: "Review performance health, goal alignment and organisation-wide momentum.",
+    eyebrow: "Organisation performance",
+    title: "See the signal behind your people data.",
+    description: "A focused view of performance health, review progress and organisation-wide momentum.",
     primaryAction: { label: "View executive profile", page: "profile" },
     secondaryAction: null,
     stats: [
@@ -93,36 +94,35 @@ const priorityTasks = {
 function DashboardOverview({ role, profileData, onNavigate }) {
   const content = roleContent[role] || roleContent.employee;
   const displayName = profileData?.name || "Team member";
-  const firstName = displayName.trim().split(/\s+/)[0];
+  const identifier = profileData?.identifier || profileData?.jobTitle || "Altrium Pulse";
   const tasks = priorityTasks[role] || priorityTasks.employee;
   const progressPage = role === "hrbp" ? "assign-goals" : role === "leadership" ? "profile" : "progress";
 
   return (
     <div className="dashboard-overview">
-      <section className="dashboard-hero">
+      <SpotlightCard className="dashboard-hero" spotlightColor="rgba(252, 180, 0, 0.2)">
         <div className="dashboard-hero-copy">
           <span className="dashboard-eyebrow">{content.eyebrow}</span>
-          <h2>Welcome back, {firstName}.</h2>
+          <h2>{content.title}</h2>
           <p>{content.description}</p>
-        </div>
-
-        <div className="dashboard-actions">
-          <button type="button" className="dashboard-action-primary" onClick={() => onNavigate?.(content.primaryAction.page)}>
-            {content.primaryAction.label}<span aria-hidden="true">→</span>
-          </button>
-          {content.secondaryAction && (
-            <button type="button" className="dashboard-action-secondary" onClick={() => onNavigate?.(content.secondaryAction.page)}>
-              {content.secondaryAction.label}
+          <div className="dashboard-actions">
+            <button type="button" className="dashboard-action-primary" onClick={() => onNavigate?.(content.primaryAction.page)}>
+              {content.primaryAction.label}<span aria-hidden="true">→</span>
             </button>
-          )}
+            {content.secondaryAction && (
+              <button type="button" className="dashboard-action-secondary" onClick={() => onNavigate?.(content.secondaryAction.page)}>
+                {content.secondaryAction.label}
+              </button>
+            )}
+          </div>
         </div>
-
-        <div className="dashboard-cycle-strip">
-          <span><i aria-hidden="true" /> Current cycle</span>
-          <strong>{profileData?.parCycle || "Performance Review 2026"}</strong>
-          <small>On track</small>
+        <div className="dashboard-person">
+          <span className="dashboard-avatar">{displayName.slice(0, 1).toUpperCase()}</span>
+          <div><strong>{displayName}</strong><span>{identifier}</span></div>
+          <span className="dashboard-person-status">Active</span>
         </div>
-      </section>
+        <div className="dashboard-hero-orb" aria-hidden="true" />
+      </SpotlightCard>
 
       <div className="dashboard-stats" aria-label="Performance summary">
         {content.stats.map((stat) => (

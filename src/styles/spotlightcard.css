@@ -1,7 +1,7 @@
 .spotlight-card {
   --spotlight-x: 50%;
   --spotlight-y: 50%;
-  --spotlight-color: rgba(248, 181, 13, 0.16);
+  --spotlight-color: rgba(252, 180, 0, 0.16);
   position: relative;
   overflow: hidden;
   isolation: isolate;

@@ -3,7 +3,7 @@
    Self-Assessment and Peer Review headers.
 */
 .feedback-title-pill {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px;
   text-align: center;
@@ -18,7 +18,7 @@
 
 .self-assessment-form {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.5rem;
   box-sizing: border-box;
@@ -56,7 +56,7 @@
 }
 
 .self-assessment-question textarea:focus {
-  outline: 2px solid #f8b50d;
+  outline: 2px solid #fcb400;
   outline-offset: 1px;
 }
 
@@ -74,7 +74,7 @@
    Shared gold submit button style, reused by both
    Self-Assessment and Peer Review forms. */
 .feedback-submit-button {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;
@@ -90,7 +90,7 @@
 }
 
 .feedback-submitted-note {
-  color: #f8b50d;
+  color: #fcb400;
   font-family: "Inria Sans", sans-serif;
   font-size: 12px;
 }
@@ -102,7 +102,7 @@
    corners, narrow vertical proportions.*/
 .peer-review-form {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.5rem;
   box-sizing: border-box;
@@ -178,7 +178,7 @@
 }
 
 .peer-review-star.filled {
-  color: #f8b50d;
+  color: #fcb400;
 }
 
 .peer-review-star:disabled {
@@ -229,7 +229,7 @@
 }
 
 .peer-review-question textarea:focus {
-  outline: 2px solid #f8b50d;
+  outline: 2px solid #fcb400;
   outline-offset: 1px;
 }
 
@@ -255,7 +255,7 @@
 
 .feedback-summary-heading {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 20px;
   color: #ffffff;
   font-family: "Iskoola Pota", serif;
@@ -277,7 +277,7 @@
    display blocks.*/
 .overall-rating-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.5rem;
   display: flex;
@@ -298,7 +298,7 @@
 .overall-rating-gold {
   width: 100%;
   min-height: 50px;
-  background: #f8b50d;
+  background: #fcb400;
   border-radius: 12px;
   margin-top: 0.5rem;
   display: flex;
@@ -321,7 +321,7 @@
    Black card, gold outline, holds the category rows.*/
 .summary-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.25rem 1.5rem;
   flex: 2;
@@ -366,7 +366,7 @@
 
 .summary-row-fill {
   height: 100%;
-  background: #f8b50d;
+  background: #fcb400;
   border-radius: 999px;
 }
 

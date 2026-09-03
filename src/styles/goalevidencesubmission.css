@@ -10,7 +10,7 @@
 
 .goal-evidence-panel {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.5rem;
   width: 90%;
@@ -47,7 +47,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: conic-gradient(#f8b50d 0deg 72deg, #ffffff 72deg 360deg);
+  background: conic-gradient(#fcb400 0deg 72deg, #ffffff 72deg 360deg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,7 +90,7 @@
 }
 
 .goal-evidence-file-input {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px 0 0 999px;
   padding: 0.4rem 0.9rem;
@@ -112,7 +112,7 @@
 }
 
 .goal-evidence-submit-button {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;

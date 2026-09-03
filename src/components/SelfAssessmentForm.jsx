@@ -43,14 +43,13 @@ function SelfAssessmentForm() {
             id={`self-assessment-q${index}`}
             value={answers[index]}
             onChange={(e) => handleChange(index, e.target.value)}
-            placeholder="Write your response…"
           />
         </div>
       ))}
 
       <div className="self-assessment-submit-row">
         <button type="submit" className="feedback-submit-button">
-          Submit assessment
+          SUBMIT
         </button>
         {submitted && <span className="feedback-submitted-note">Submitted</span>}
       </div>

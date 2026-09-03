@@ -15,7 +15,7 @@
 
 .employee-feedback-heading-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.25rem;
 }
@@ -31,7 +31,7 @@
 
 .employee-feedback-subheading {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 999px;
   padding: 0.6rem;
   text-align: center;
@@ -59,14 +59,14 @@
 .employee-feedback-improve-card {
   flex: 1;
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 20px;
   padding: 1rem;
   box-sizing: border-box;
 }
 
 .employee-feedback-bottom-title {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px;
   text-align: center;

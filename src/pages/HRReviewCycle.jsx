@@ -3,13 +3,13 @@ import Header from "../components/header.jsx";
 import ReviewCycleSection from "../components/ReviewCycleSection";
 import "../styles/hrreviewcycle.css";
 
-function HRReviewCycle({ onNavigate, onSignOut, profileData }) {
+function HRReviewCycle({ onNavigate }) {
   return (
     <div className="hr-review-cycle-layout">
-      <Sidebar role="hrbp" activeItem="review-cycle" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role="hrbp" activeItem="review-cycle" onNavigate={onNavigate} />
 
       <div className="hr-review-cycle-main">
-        <Header title="Review Cycles" profileData={profileData} />
+        <Header />
         <ReviewCycleSection />
       </div>
     </div>

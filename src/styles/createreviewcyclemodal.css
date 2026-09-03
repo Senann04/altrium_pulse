@@ -10,7 +10,7 @@
 
 .create-cycle-modal {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 20px;
   padding: 1.5rem;
   width: 90%;
@@ -84,7 +84,7 @@
 }
 
 .create-cycle-button {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;

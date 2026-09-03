@@ -10,7 +10,7 @@
 
 .par-scheduler-modal {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.5rem;
   width: 90%;
@@ -34,7 +34,7 @@
 }
 
 .par-scheduler-weekday {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 8px;
   text-align: center;
@@ -63,7 +63,7 @@
 }
 
 .par-scheduler-day.selected {
-  background: #f8b50d;
+  background: #fcb400;
 }
 
 .par-scheduler-day-empty {
@@ -83,7 +83,7 @@
   align-items: center;
   gap: 0.5rem;
   background: #111111;
-  border: 1.5px solid #f8b50d;
+  border: 1.5px solid #fcb400;
   border-radius: 999px;
   padding: 0.4rem 0.9rem;
   color: #ffffff;
@@ -100,7 +100,7 @@
 }
 
 .par-scheduler-ok {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;

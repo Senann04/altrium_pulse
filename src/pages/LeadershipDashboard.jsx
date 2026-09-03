@@ -3,12 +3,12 @@ import Header from "../components/header.jsx";
 import DashboardOverview from "../components/DashboardOverview.jsx";
 import "../styles/appshell.css";
 
-function LeadershipDashboard({ onNavigate, onSignOut, profileData }) {
+function LeadershipDashboard({ onNavigate, profileData }) {
   return (
     <div className="app-shell">
-      <Sidebar role="leadership" activeItem="dashboard" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role="leadership" activeItem="dashboard" onNavigate={onNavigate} />
       <main className="app-main">
-        <Header title="Overview" profileData={profileData} />
+        <Header profileData={profileData} />
         <DashboardOverview role="leadership" profileData={profileData} onNavigate={onNavigate} />
       </main>
     </div>

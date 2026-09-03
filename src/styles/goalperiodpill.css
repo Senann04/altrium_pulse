@@ -4,7 +4,7 @@
   justify-content: space-between;
   gap: 0.75rem;
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 999px;
   padding: 0.6rem 1.25rem;
   cursor: pointer;
@@ -25,7 +25,7 @@
   border-radius: 50%;
   flex-shrink: 0;
   background: conic-gradient(
-    #f8b50d 0deg calc(var(--progress) * 3.6deg),
+    #fcb400 0deg calc(var(--progress) * 3.6deg),
     #ffffff calc(var(--progress) * 3.6deg) 360deg
   );
 }

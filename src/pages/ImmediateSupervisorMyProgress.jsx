@@ -8,7 +8,7 @@ import "../styles/immediatesupervisormyprogress.css";
 // Temporary current-user identity until Supabase Auth/profile is connected.
 const currentSupervisor = { id: "IMS00089", name: "Kasun Silva" };
 
-function SupervisorMyProgress({ onNavigate, onSignOut, profileData }) {
+function SupervisorMyProgress({ onNavigate }) {
   const [allGoals, setAllGoals] = useState(getAssignedTimeGoals());
 
   useEffect(() => {
@@ -26,13 +26,13 @@ function SupervisorMyProgress({ onNavigate, onSignOut, profileData }) {
 
   return (
     <div className="supervisor-progress-layout">
-      <Sidebar role="supervisor" activeItem="progress" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role="supervisor" activeItem="progress" onNavigate={onNavigate} />
 
       <div className="supervisor-progress-main">
-        <Header title="My Progress" profileData={profileData} />
+        <Header />
 
         <div className="supervisor-progress-heading-card">
-          <div><span>Workspace</span><h1>My Progress</h1><p>Monitor goals assigned across each planning period.</p></div>
+          <h1>My Progress</h1>
         </div>
 
         <div className="supervisor-progress-columns">

@@ -27,16 +27,16 @@ const currentReviewData = {
 
 // onNavigate is passed down from Sidebar's parent so clicking other menu
 // items can switch pages later once real routing exists.
-function EmployeeMyCurrentReview({ onNavigate, onSignOut, profileData }) {
+function EmployeeMyCurrentReview({ onNavigate }) {
   return (
     <div className="employee-current-review-layout">
-      <Sidebar role="employee" activeItem="current-review" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role="employee" activeItem="current-review" onNavigate={onNavigate} />
 
       <div className="employee-current-review-main">
-        <Header title="Current Review" profileData={profileData} />
+        <Header />
 
         <div className="employee-current-review-heading-card">
-          <div><span>Reviews</span><h1>My Current Review</h1><p>Follow each stage of your active performance review.</p></div>
+          <h1>My Current Review</h1>
           <div className="employee-current-review-cycle-pill">
             {currentReviewData.reviewCycle.name}
           </div>

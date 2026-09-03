@@ -17,9 +17,9 @@ import LeadershipDashboard from "./pages/LeadershipDashboard";
 import LeadershipProfile from "./pages/LeadershipProfile";
 import Login from "./pages/Login";
 import MyTeam from "./pages/MyTeam";
+import logo from "./assets/altriumlogo.svg";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import { loadProfileView } from "./services/profileAdapter";
-import logo from "./assets/altriumlogo.svg";
 import "./styles/statusscreen.css";
 
 const REMEMBER_KEY = "altrium-pulse:remember-me";

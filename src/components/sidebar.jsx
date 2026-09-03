@@ -70,29 +70,29 @@ const ICONS = {
 // Role -> menu items. Each item needs a unique key, a label, and an icon.
 const MENUS = {
   employee: [
-    { key: "dashboard", label: "Overview", icon: "dashboard", section: "Workspace" },
-    { key: "progress", label: "My Progress", icon: "progress", section: "Workspace" },
-    { key: "current-review", label: "Current Review", icon: "review", section: "Reviews" },
-    { key: "feedback", label: "Feedback", icon: "feedback", section: "Reviews" },
-    { key: "profile", label: "My Profile", icon: "profile", section: "Account" },
+    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
+    { key: "current-review", label: "My Current Review", icon: "review" },
+    { key: "feedback", label: "My Feedback", icon: "feedback" },
+    { key: "progress", label: "My Progress", icon: "progress" },
+    { key: "profile", label: "My Profile", icon: "profile" },
   ],
   supervisor: [
-    { key: "dashboard", label: "Overview", icon: "dashboard", section: "Workspace" },
-    { key: "team", label: "My Team", icon: "team", section: "Workspace" },
-    { key: "progress", label: "My Progress", icon: "progress", section: "Workspace" },
-    { key: "current-review", label: "Current Review", icon: "review", section: "Reviews" },
-    { key: "feedback", label: "Feedback", icon: "feedback", section: "Reviews" },
-    { key: "profile", label: "My Profile", icon: "profile", section: "Account" },
+    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
+    { key: "current-review", label: "My Current Review", icon: "review" },
+    { key: "feedback", label: "My Feedback", icon: "feedback" },
+    { key: "progress", label: "My Progress", icon: "progress" },
+    { key: "team", label: "My Team", icon: "team" },
+    { key: "profile", label: "My Profile", icon: "profile" },
   ],
   leadership: [
-    { key: "dashboard", label: "Overview", icon: "dashboard", section: "Workspace" },
-    { key: "profile", label: "My Profile", icon: "profile", section: "Account" },
+    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
+    { key: "profile", label: "My Profile", icon: "profile" },
   ],
   hrbp: [
-    { key: "dashboard", label: "Overview", icon: "dashboard", section: "Workspace" },
-    { key: "review-cycle", label: "Review Cycles", icon: "cycle", section: "Performance" },
-    { key: "assign-goals", label: "Assign Goals", icon: "goals", section: "Performance" },
-    { key: "profile", label: "My Profile", icon: "profile", section: "Account" },
+    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
+    { key: "review-cycle", label: "Review Cycle", icon: "cycle" },
+    { key: "assign-goals", label: "Assign Goals", icon: "goals" },
+    { key: "profile", label: "My Profile", icon: "profile" },
   ],
 };
 
@@ -110,55 +110,44 @@ const ROLE_LABELS = {
  onNavigate -> callback fired with the clicked item's key; routing is
               wired up later, this component does not navigate itself */
 
-function Sidebar({ role, activeItem, onNavigate, profileData, onSignOut }) {
+function Sidebar({ role, activeItem, onNavigate }) {
   const menuItems = MENUS[role] || [];
-  const sections = [...new Set(menuItems.map((item) => item.section))];
-  const displayName = profileData?.name || ROLE_LABELS[role] || "Team member";
-  const identifier = profileData?.jobTitle || profileData?.identifier || ROLE_LABELS[role] || "Workspace member";
-  const initial = displayName.trim().charAt(0).toUpperCase() || "A";
 
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
         <img src={altriumLogo} alt="Altrium Pulse" />
-        <span>People performance</span>
+        <span>Performance workspace</span>
+      </div>
+
+      <div className="sidebar-role">
+        <span className="sidebar-role-dot" aria-hidden="true" />
+        <div>
+          <small>Signed in as</small>
+          <strong>{ROLE_LABELS[role] || "Team member"}</strong>
+        </div>
       </div>
 
       <nav className="sidebar-menu" aria-label="Workspace navigation">
-        {sections.map((section, sectionIndex) => (
-          <div className="sidebar-section" key={section}>
-            <span className="sidebar-section-label">
-              {String(sectionIndex + 1).padStart(2, "0")} &nbsp; {section}
-            </span>
-            {menuItems.filter((item) => item.section === section).map((item) => {
-              const isActive = item.key === activeItem;
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  className={`sidebar-item${isActive ? " active" : ""}`}
-                  onClick={() => onNavigate?.(item.key)}
-                >
-                  <span className="sidebar-icon">{ICONS[item.icon]}</span>
-                  <span className="sidebar-label">{item.label}</span>
-                  {isActive && <span className="sidebar-active-dot" aria-hidden="true" />}
-                </button>
-              );
-            })}
-          </div>
-        ))}
+        {menuItems.map((item) => {
+          const isActive = item.key === activeItem;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              className={`sidebar-item${isActive ? " active" : ""}`}
+              onClick={() => onNavigate && onNavigate(item.key)}
+            >
+              <span className="sidebar-icon">{ICONS[item.icon]}</span>
+              <span className="sidebar-label">{item.label}</span>
+            </button>
+          );
+        })}
       </nav>
 
       <div className="sidebar-footer">
-        <span className="sidebar-avatar">{initial}</span>
-        <p><strong>{displayName}</strong><span>{identifier}</span></p>
-        {onSignOut && (
-          <button type="button" onClick={onSignOut} aria-label="Sign out" title="Sign out">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M10 17l5-5-5-5M15 12H3M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5" />
-            </svg>
-          </button>
-        )}
+        <span className="sidebar-footer-status" aria-hidden="true" />
+        <p><strong>Altrium Pulse</strong><span>People performance platform</span></p>
       </div>
     </aside>
   );

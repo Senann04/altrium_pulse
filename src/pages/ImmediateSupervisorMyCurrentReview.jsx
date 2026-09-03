@@ -28,16 +28,16 @@ const diamondArrows = [
   "review-flow-arrow-d4",
 ];
 
-function ImmediateSupervisorMyCurrentReview({ onNavigate, onSignOut, profileData }) {
+function ImmediateSupervisorMyCurrentReview({ onNavigate }) {
   return (
     <div className="supervisor-current-review-layout">
-      <Sidebar role="supervisor" activeItem="current-review" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role="supervisor" activeItem="current-review" onNavigate={onNavigate} />
 
       <div className="supervisor-current-review-main">
-        <Header title="Current Review" profileData={profileData} />
+        <Header />
 
         <div className="supervisor-current-review-heading-card">
-          <div><span>Reviews</span><h1>My Current Review</h1><p>Track your review stages and upcoming PAR meeting.</p></div>
+          <h1>My Current Review</h1>
           <div className="supervisor-current-review-cycle-pill">
             {immediateSupervisorCurrentReviewData.reviewCycle.name}
           </div>

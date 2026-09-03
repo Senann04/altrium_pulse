@@ -1,6 +1,22 @@
 import { useState } from "react";
+import SpotlightCard from "../components/SpotlightCard";
 import logo from "../assets/altriumlogo.svg";
 import "../styles/login.css";
+
+const platformBenefits = [
+  {
+    title: "Clear review cycles",
+    detail: "Know what is due and what comes next.",
+  },
+  {
+    title: "Aligned development goals",
+    detail: "Keep PDP and PIP progress visible.",
+  },
+  {
+    title: "Role-based access",
+    detail: "Only the right people see each workspace.",
+  },
+];
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState("");
@@ -26,51 +42,61 @@ function Login({ onLogin }) {
 
   return (
     <main className="login-page">
-      <div className="login-grid" aria-hidden="true" />
-
-      <div className="login-shell">
-        <header className="login-brandbar">
+      <SpotlightCard className="login-shell" spotlightColor="rgba(252, 180, 0, 0.07)">
+        <header className="login-shell-header">
           <img src={logo} alt="Altrium Pulse" className="login-logo" />
-          <span><i aria-hidden="true" /> Secure workspace</span>
+          <span className="login-secure-status">
+            <span aria-hidden="true" />
+            Secure workspace
+          </span>
         </header>
 
-        <div className="login-layout">
+        <div className="login-shell-body">
           <section className="login-story" aria-label="Altrium Pulse overview">
-            <span className="login-eyebrow">People performance platform</span>
-            <h1>One place for better performance conversations.</h1>
-            <p>
-              Manage goals, reviews and feedback through a focused workspace built
-              for every role in your organisation.
-            </p>
+            <div className="login-story-copy">
+              <span className="login-eyebrow">People performance platform</span>
+              <h1>
+                One place for
+                <br />better
+                <br />performance
+                <br />conversations.
+              </h1>
+              <p>
+                Manage goals, reviews and feedback through a focused workspace built
+                for every role in your organisation.
+              </p>
+            </div>
 
-            <div className="login-feature-list">
-              <div>
-                <span>01</span>
-                <p><strong>Clear review cycles</strong><small>Know what is due and what comes next.</small></p>
-              </div>
-              <div>
-                <span>02</span>
-                <p><strong>Aligned development goals</strong><small>Keep PDP and PIP progress visible.</small></p>
-              </div>
-              <div>
-                <span>03</span>
-                <p><strong>Role-based access</strong><small>Only the right people see each workspace.</small></p>
-              </div>
+            <div className="login-benefits" aria-label="Platform benefits">
+              {platformBenefits.map((benefit, index) => (
+                <div className="login-benefit" key={benefit.title}>
+                  <span className="login-benefit-number">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="login-benefit-copy">
+                    <strong>{benefit.title}</strong>
+                    <small>{benefit.detail}</small>
+                  </span>
+                </div>
+              ))}
             </div>
           </section>
 
-          <section className="login-access">
+          <section className="login-access" aria-label="Account access">
             <div className="login-panel">
-              <p className="login-panel-kicker">Account access</p>
+              <span className="login-panel-kicker">Account access</span>
               <h2>Welcome back</h2>
-              <p className="login-panel-copy">Sign in with your company account to continue.</p>
+              <p className="login-panel-copy">
+                Sign in with your company account to continue.
+              </p>
 
               <form className="login-form" onSubmit={handleSubmit}>
                 <div className="login-field">
                   <label htmlFor="username">Work email</label>
                   <div className="login-input-wrap">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M4 6h16v12H4z" /><path d="m4 7 8 6 8-6" />
+                      <path d="M4 6h16v12H4z" />
+                      <path d="m4 7 8 6 8-6" />
                     </svg>
                     <input
                       id="username"
@@ -146,7 +172,7 @@ function Login({ onLogin }) {
             </div>
           </section>
         </div>
-      </div>
+      </SpotlightCard>
     </main>
   );
 }

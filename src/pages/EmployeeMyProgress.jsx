@@ -10,7 +10,7 @@ import "../styles/employeemyprogress.css";
 /* temporary current-user identity until Supabase Auth/profile is connected */
 const currentEmployee = { id: "EM00145", name: "S. Supun Kalhara" };
 
-function EmployeeMyProgress({ onNavigate, onSignOut, profileData }) {
+function EmployeeMyProgress({ onNavigate }) {
   const [timeGoals, setTimeGoals] = useState(getAssignedTimeGoals());
   /* local PDP/PIP state so clicking a goal can update its progress */
   const [pdpGoals, setPdpGoals] = useState(employeeDevelopmentPlans.PDP);
@@ -39,13 +39,13 @@ function EmployeeMyProgress({ onNavigate, onSignOut, profileData }) {
 
   return (
     <div className="employee-progress-layout">
-      <Sidebar role="employee" activeItem="progress" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role="employee" activeItem="progress" onNavigate={onNavigate} />
 
       <div className="employee-progress-main">
-        <Header title="My Progress" profileData={profileData} />
+        <Header />
 
         <div className="employee-progress-heading-card">
-          <div><span>Workspace</span><h1>My Progress</h1><p>Track weekly priorities and development-plan progress.</p></div>
+          <h1>My Progress</h1>
         </div>
 
         <div className="employee-progress-time-columns">

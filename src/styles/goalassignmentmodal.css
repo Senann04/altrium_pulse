@@ -12,7 +12,7 @@
 /*  modal card: black background, gold outline */
 .goal-assignment-modal {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.5rem;
   width: 90%;
@@ -63,7 +63,7 @@
 .goal-assignment-button {
   display: block;
   margin-left: auto;
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;

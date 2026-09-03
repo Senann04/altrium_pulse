@@ -1,6 +1,6 @@
 .hrmgmt-review-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.5rem;
   width: 100%;
@@ -11,7 +11,7 @@
 }
 
 .hrmgmt-review-title-pill {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px;
   text-align: center;
@@ -69,7 +69,7 @@
 }
 
 .hrmgmt-review-star.filled {
-  color: #f8b50d;
+  color: #fcb400;
 }
 
 .hrmgmt-review-rating-pill {
@@ -114,7 +114,7 @@
 }
 
 .hrmgmt-review-success {
-  color: #f8b50d;
+  color: #fcb400;
   font-family: "Inria Sans", sans-serif;
   font-size: 14px;
   text-align: center;
@@ -126,7 +126,7 @@
 }
 
 .hrmgmt-review-submit-button {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;
