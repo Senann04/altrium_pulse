@@ -1,30 +1,6 @@
 import EmployeeDevelopmentGoalCard from "./EmployeeDevelopmentGoalCard";
 import "../styles/employeedevelopmentgoals.css";
 
-/* temporary values until assigned PDP/PIP records are loaded from Supabase */
-export const employeeDevelopmentPlans = {
-  PDP: [
-    { id: "pdp-1", title: "Improve UI/UX Design Skills", status: "Ongoing", start_date: "2026-07-02", target_date: "2026-07-16", progress: 37 },
-    { id: "pdp-2", title: "Develop Communication Skills", status: "Ongoing", start_date: "2026-07-29", target_date: "2026-07-10", progress: 24 },
-    { id: "pdp-3", title: "Strengthen Problem-Solving Abilities", status: "Ongoing", start_date: "2026-07-05", target_date: "2026-07-19", progress: 6 },
-    { id: "pdp-4", title: "Complete Leadership Training", status: "Completed", start_date: "2026-01-10", target_date: "2026-02-10", progress: 100 },
-    { id: "pdp-5", title: "Mentor a Junior Colleague", status: "Completed", start_date: "2026-02-01", target_date: "2026-03-01", progress: 100 },
-    { id: "pdp-6", title: "Present Quarterly Review", status: "Completed", start_date: "2026-03-01", target_date: "2026-04-01", progress: 100 },
-    { id: "pdp-7", title: "Complete Certification Course", status: "Completed", start_date: "2026-04-01", target_date: "2026-05-01", progress: 100 },
-    { id: "pdp-8", title: "Lead Cross-Team Project", status: "Overdue", start_date: "2026-05-01", target_date: "2026-06-01", progress: 15 },
-  ],
-  PIP: [
-    { id: "pip-1", title: "Gain Real-World UX/UI Experience", status: "Ongoing", start_date: "2026-07-02", target_date: "2026-07-16", progress: 33 },
-    { id: "pip-2", title: "Learn Industry Design Standards", status: "Ongoing", start_date: "2026-07-29", target_date: "2026-07-10", progress: 24 },
-    { id: "pip-3", title: "Build a Strong Professional Portfolio", status: "Ongoing", start_date: "2026-05-07", target_date: "2026-07-10", progress: 9 },
-    { id: "pip-4", title: "Attend Weekly Check-ins", status: "Completed", start_date: "2026-01-10", target_date: "2026-02-10", progress: 100 },
-    { id: "pip-5", title: "Meet Sprint Delivery Targets", status: "Completed", start_date: "2026-02-01", target_date: "2026-03-01", progress: 100 },
-    { id: "pip-6", title: "Reduce Reported Defect Rate", status: "Completed", start_date: "2026-03-01", target_date: "2026-04-01", progress: 100 },
-    { id: "pip-7", title: "Complete Communication Workshop", status: "Completed", start_date: "2026-04-01", target_date: "2026-05-01", progress: 100 },
-    { id: "pip-8", title: "Submit Self-Assessment Summary", status: "Overdue", start_date: "2026-05-01", target_date: "2026-06-01", progress: 10 },
-  ],
-};
-
 function PlanMetricIcon({ type }) {
   if (type === "progress") {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18V6M4 18h16" /><path d="m7 14 3-3 3 2 5-6" /><path d="M15 7h3v3" /></svg>;
@@ -52,9 +28,9 @@ function EmployeeDevelopmentGoals({ title, goals, onSelectGoal }) {
   const averageProgress = goals.length ? Math.round(summary.progress / goals.length) : 0;
 
   const statusPriority = { Overdue: 0, Ongoing: 1, Completed: 2 };
-  const visibleGoals = [...goals]
-    .filter((goal) => goal.status !== "Completed")
-    .sort((left, right) => statusPriority[left.status] - statusPriority[right.status]);
+  const visibleGoals = [...goals].sort(
+    (left, right) => (statusPriority[left.status] ?? 3) - (statusPriority[right.status] ?? 3),
+  );
 
   const metrics = [
     { type: "active", label: "Active goals", value: summary.active },
@@ -84,6 +60,7 @@ function EmployeeDevelopmentGoals({ title, goals, onSelectGoal }) {
         {visibleGoals.map((goal) => (
           <EmployeeDevelopmentGoalCard key={goal.id} goal={goal} onClick={onSelectGoal} />
         ))}
+        {!visibleGoals.length && <p className="dev-goals-empty">No {title.toLowerCase()} assigned.</p>}
       </div>
     </section>
   );

@@ -5,9 +5,10 @@ data changes, not the structure. overallRating maps to the existing
 `rating` field; categoryRatings are temporary until the backend/database
 supports per-category fields.*/
 function FeedbackSummary({ overallRating, categoryRatings = [] }) {
-  const normalizedRating = Math.max(0, Math.min(5, Number(overallRating) || 0));
+  const hasRating = overallRating !== null && overallRating !== undefined && overallRating !== "";
+  const normalizedRating = hasRating ? Math.max(0, Math.min(5, Number(overallRating) || 0)) : 0;
   const ratingPercent = Math.round((normalizedRating / 5) * 100);
-  const ratingMessage = normalizedRating >= 4 ? "Strong performance" : normalizedRating >= 3 ? "Solid performance" : "Needs attention";
+  const ratingMessage = !hasRating ? "No completed rating yet" : normalizedRating >= 4 ? "Strong performance" : normalizedRating >= 3 ? "Solid performance" : "Needs attention";
 
   return (
     <div className="feedback-summary-row">
@@ -19,11 +20,11 @@ function FeedbackSummary({ overallRating, categoryRatings = [] }) {
           <div
             className="overall-rating-ring"
             role="img"
-            aria-label={`${normalizedRating} out of 5`}
+            aria-label={hasRating ? `${normalizedRating} out of 5` : "No completed rating available"}
             style={{ "--rating-progress": `${ratingPercent}%` }}
           >
             <div>
-              <strong>{normalizedRating}</strong>
+              <strong>{hasRating ? normalizedRating : "–"}</strong>
               <span>out of 5</span>
             </div>
           </div>
@@ -50,6 +51,11 @@ function FeedbackSummary({ overallRating, categoryRatings = [] }) {
               </div>
             </div>
           ))}
+          {!categoryRatings.length && (
+            <div className="feedback-summary-empty">
+              Detailed category scores have not been recorded for this review cycle.
+            </div>
+          )}
         </div>
       </div>
     </div>

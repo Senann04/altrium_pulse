@@ -24,13 +24,15 @@ function ClockIcon() {
 
 /* Shared PAR Meeting card. Supervisor can open the scheduler to set it;
    Employee sees the same record read-only. role: "supervisor" | "employee" */
-function PARMeeting({ role }) {
-  const [meeting, setMeeting] = useState(getParMeeting());
+function PARMeeting({ role, meeting: meetingProp = null }) {
+  const [storedMeeting, setStoredMeeting] = useState(getParMeeting);
   const [isSchedulerOpen, setIsSchedulerOpen] = useState(false);
+  const meeting = role === "employee" ? meetingProp : storedMeeting;
 
   useEffect(() => {
-    return subscribeToParMeeting(() => setMeeting(getParMeeting()));
-  }, []);
+    if (role === "employee") return undefined;
+    return subscribeToParMeeting(() => setStoredMeeting(getParMeeting()));
+  }, [role]);
 
   const handleSave = (newMeeting) => {
     saveParMeeting({ ...newMeeting, status: "Scheduled" });

@@ -53,49 +53,13 @@ const roleContent = {
   },
 };
 
-const progressPlans = {
-  pdp: {
-    action_items: [
-      { completed: true }, { completed: true }, { completed: true },
-      { completed: false }, { completed: false },
-    ],
-  },
-  pip: {
-    action_items: [
-      { completed: true }, { completed: true }, { completed: true }, { completed: true },
-      { completed: true }, { completed: false }, { completed: false }, { completed: false },
-    ],
-  },
-};
-
-const priorityTasks = {
-  employee: [
-    { day: "02", month: "OCT", title: "Performance review checkpoint", detail: "Review progress and complete outstanding actions", page: "current-review" },
-    { day: "07", month: "OCT", title: "Goal alignment session", detail: "Confirm priorities for the upcoming period", page: "progress" },
-    { day: "14", month: "OCT", title: "Feedback window closes", detail: "Submit feedback before the cycle deadline", page: "feedback" },
-  ],
-  supervisor: [
-    { day: "02", month: "OCT", title: "Performance review checkpoint", detail: "Review progress and complete outstanding actions", page: "current-review" },
-    { day: "07", month: "OCT", title: "Team alignment session", detail: "Confirm priorities with your direct reports", page: "team" },
-    { day: "14", month: "OCT", title: "Feedback window closes", detail: "Complete feedback before the cycle deadline", page: "feedback" },
-  ],
-  hrbp: [
-    { day: "02", month: "OCT", title: "Review cycle checkpoint", detail: "Monitor completion and outstanding actions", page: "review-cycle" },
-    { day: "07", month: "OCT", title: "Goal assignment review", detail: "Confirm priorities for the upcoming period", page: "assign-goals" },
-    { day: "14", month: "OCT", title: "Profile data review", detail: "Verify your business partner information", page: "profile" },
-  ],
-  leadership: [
-    { day: "02", month: "OCT", title: "Executive performance briefing", detail: "Review organisation-wide progress", page: "dashboard" },
-    { day: "07", month: "OCT", title: "Goal alignment checkpoint", detail: "Review strategic performance indicators", page: "dashboard" },
-    { day: "14", month: "OCT", title: "Profile data review", detail: "Verify leadership account information", page: "profile" },
-  ],
-};
-
 function DashboardOverview({ role, profileData, onNavigate }) {
   const content = roleContent[role] || roleContent.employee;
   const displayName = profileData?.name || "Team member";
   const identifier = profileData?.identifier || profileData?.jobTitle || "Altrium Pulse";
-  const tasks = priorityTasks[role] || priorityTasks.employee;
+  const stats = profileData?.dashboard?.stats || content.stats;
+  const tasks = profileData?.dashboard?.tasks || [];
+  const planProgress = profileData?.dashboard?.planProgress || { pdp: 0, pip: 0 };
   const progressPage = role === "hrbp" ? "assign-goals" : role === "leadership" ? "profile" : "progress";
 
   return (
@@ -125,7 +89,7 @@ function DashboardOverview({ role, profileData, onNavigate }) {
       </SpotlightCard>
 
       <div className="dashboard-stats" aria-label="Performance summary">
-        {content.stats.map((stat) => (
+        {stats.map((stat) => (
           <article key={stat.label} className="dashboard-stat-card">
             <div className={`dashboard-stat-icon dashboard-stat-icon-${stat.tone}`} aria-hidden="true">
               <span />
@@ -143,7 +107,7 @@ function DashboardOverview({ role, profileData, onNavigate }) {
         <section className="dashboard-panel dashboard-priority-panel">
           <div className="dashboard-panel-heading">
             <div><span>Up next</span><h3>Priority actions</h3></div>
-            <span className="dashboard-panel-count">03</span>
+            <span className="dashboard-panel-count">{String(tasks.length).padStart(2, "0")}</span>
           </div>
           <div className="dashboard-task-list">
             {tasks.map((task) => (
@@ -153,6 +117,7 @@ function DashboardOverview({ role, profileData, onNavigate }) {
                 <span className="dashboard-task-arrow" aria-hidden="true">↗</span>
               </button>
             ))}
+            {!tasks.length && <p className="dashboard-task-empty">No upcoming actions are scheduled.</p>}
           </div>
         </section>
 
@@ -161,9 +126,12 @@ function DashboardOverview({ role, profileData, onNavigate }) {
             <div><span>Current cycle</span><h3>Goal progress</h3></div>
             <button type="button" onClick={() => onNavigate?.(progressPage)}>View all</button>
           </div>
-          <GoalProgressCard title="Development plan" plan={progressPlans.pdp} />
-          <GoalProgressCard title="Performance plan" plan={progressPlans.pip} />
-          <div className="dashboard-cycle-note"><span>●</span> Cycle on track <small>Next review: 02 October</small></div>
+          <GoalProgressCard title="Development plan" progress={planProgress.pdp} />
+          <GoalProgressCard title="Performance plan" progress={planProgress.pip} />
+          <div className="dashboard-cycle-note">
+            <span>●</span> {profileData?.dashboard?.cycleStatus || "No active cycle"}
+            <small>{profileData?.dashboard?.nextReviewLabel || "No deadline scheduled"}</small>
+          </div>
         </section>
       </div>
     </div>

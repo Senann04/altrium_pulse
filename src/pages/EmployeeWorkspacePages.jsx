@@ -31,6 +31,7 @@ function PageIcon({ type }) {
 function EmployeeWorkspacePage({ view, onNavigate, onSignOut, profileData }) {
   const content = pageContent[view];
   const cycleLabel = profileData?.parCycle || "Current PAR cycle";
+  const completedReviews = view === "history" ? profileData?.completedReviews || [] : [];
 
   return (
     <div className="app-shell">
@@ -44,10 +45,29 @@ function EmployeeWorkspacePage({ view, onNavigate, onSignOut, profileData }) {
             <div><span>Employee workspace</span><h2>{content.title}</h2></div>
             <span className="employee-workspace-cycle">{cycleLabel}</span>
           </div>
-          <div className="employee-workspace-empty">
-            <span className="employee-workspace-empty-icon"><PageIcon type={view} /></span>
-            <div><h3>{content.emptyTitle}</h3><p>{content.emptyDescription}</p></div>
-          </div>
+          {completedReviews.length ? (
+            <div className="employee-history-list">
+              {completedReviews.map((review) => (
+                <article className="employee-history-item" key={review.id}>
+                  <span className="employee-history-icon"><PageIcon type="history" /></span>
+                  <div className="employee-history-copy">
+                    <strong>{review.cycleName}</strong>
+                    <span>{review.startDate} – {review.endDate}</span>
+                    <small>Completed {review.completedAt}</small>
+                  </div>
+                  <div className="employee-history-rating">
+                    <span>Final rating</span>
+                    <strong>{review.rating ?? "–"}</strong>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="employee-workspace-empty">
+              <span className="employee-workspace-empty-icon"><PageIcon type={view} /></span>
+              <div><h3>{content.emptyTitle}</h3><p>{content.emptyDescription}</p></div>
+            </div>
+          )}
         </section>
       </main>
     </div>
@@ -73,6 +93,17 @@ function EmployeeCalendar({ onNavigate, onSignOut, profileData }) {
     ...Array.from({ length: leadingDays }, (_, index) => `empty-${index}`),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
   ];
+  const events = profileData?.calendarEvents || [];
+  const todayValue = today.toISOString().slice(0, 10);
+  const upcomingEvents = events.filter((event) => event.date >= todayValue);
+  const eventDays = new Set(
+    events
+      .filter((event) => {
+        const date = new Date(`${event.date}T00:00:00`);
+        return date.getFullYear() === year && date.getMonth() === month;
+      })
+      .map((event) => Number(event.date.slice(-2))),
+  );
 
   return (
     <div className="app-shell">
@@ -89,17 +120,31 @@ function EmployeeCalendar({ onNavigate, onSignOut, profileData }) {
             </div>
             <div className="employee-calendar-grid">
               {calendarDays.map((day) => typeof day === "string" ? <span key={day} /> : (
-                <span className={day === today.getDate() ? "is-today" : ""} key={day}>{day}</span>
+                <span className={`${day === today.getDate() ? "is-today " : ""}${eventDays.has(day) ? "has-event" : ""}`.trim()} key={day}>{day}</span>
               ))}
             </div>
           </section>
 
           <aside className="employee-calendar-agenda">
             <div><span>Schedule</span><h2>Upcoming</h2></div>
-            <div className="employee-workspace-empty compact">
-              <span className="employee-workspace-empty-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" /><path d="M7.5 3.5v4M16.5 3.5v4M3.5 9.5h17" /></svg></span>
-              <div><h3>No events scheduled</h3><p>Your review meetings and deadlines will appear here.</p></div>
-            </div>
+            {upcomingEvents.length ? (
+              <div className="employee-calendar-event-list">
+                {upcomingEvents.map((event) => (
+                  <article className="employee-calendar-event" key={event.id}>
+                    <time dateTime={event.date}>
+                      <strong>{event.date.slice(-2)}</strong>
+                      <span>{new Date(`${event.date}T00:00:00`).toLocaleDateString("en", { month: "short" }).toUpperCase()}</span>
+                    </time>
+                    <div><strong>{event.title}</strong><span>{event.type}{event.time ? ` · ${event.time}` : ""}</span></div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="employee-workspace-empty compact">
+                <span className="employee-workspace-empty-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" /><path d="M7.5 3.5v4M16.5 3.5v4M3.5 9.5h17" /></svg></span>
+                <div><h3>No events scheduled</h3><p>Your review meetings and deadlines will appear here.</p></div>
+              </div>
+            )}
           </aside>
         </div>
       </main>

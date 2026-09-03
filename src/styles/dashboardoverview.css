@@ -69,6 +69,7 @@
 .dashboard-panel-count { display:grid; width:34px; height:34px; place-items:center; border-radius:11px; color:#111!important; background:var(--ap-gold); font-size:11px!important; }
 .dashboard-panel-heading button { padding:7px 10px; border:1px solid var(--ap-line); border-radius:9px; color:var(--ap-gold); background:transparent; font-size:10px; cursor:pointer; }
 .dashboard-task-list { display:flex; flex-direction:column; }
+.dashboard-task-empty { margin: 18px 0 4px; color: var(--ap-text-soft); font-size: 13px; }
 .dashboard-task-list > button { display:flex; align-items:center; gap:14px; width:100%; padding:14px 0; border:0; border-bottom:1px solid var(--ap-line); color:inherit; background:transparent; text-align:left; cursor:pointer; }
 .dashboard-task-list > button:first-child { padding-top:4px; }
 .dashboard-task-list > button:last-child { padding-bottom:0; border-bottom:0; }

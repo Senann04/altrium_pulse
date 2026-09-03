@@ -2,16 +2,14 @@ import "../styles/EmployeeProfile.css";
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
 import WorkspaceHeading from "../components/WorkspaceHeading";
+import ProfileDetailsCard from "../components/ProfileDetailsCard";
 
 const emptyProfile = {
   identifier: "",
   department: "Department",
   parCycle: "Current PAR Cycle",
   name: "",
-  nic: "",
-  contactNo: "",
-  personalEmail: "",
-  address: "",
+  workEmail: "",
 };
 
 function LeadershipProfile({ onNavigate, onSignOut, profileData = emptyProfile }) {
@@ -21,7 +19,7 @@ function LeadershipProfile({ onNavigate, onSignOut, profileData = emptyProfile }
 
   return (
     <div className="employee-profile-layout">
-      <Sidebar role="leadership" activeItem="profile" onNavigate={onNavigate} />
+      <Sidebar role="leadership" activeItem="profile" onNavigate={onNavigate} onSignOut={handleSignOut} profileData={profileData} />
 
       <div className="employee-profile-main">
         <Header title="My Profile" profileData={profileData} />
@@ -33,44 +31,7 @@ function LeadershipProfile({ onNavigate, onSignOut, profileData = emptyProfile }
           meta={profileData.identifier || "Leadership record"}
         />
 
-        <div className="employee-profile-card">
-          <div className="employee-profile-left">
-            <div className="employee-profile-photo" />
-
-            <div className="employee-profile-pill">{profileData.identifier}</div>
-            <div className="employee-profile-pill">{profileData.department}</div>
-            <div className="employee-profile-par-cycle">{profileData.parCycle}</div>
-          </div>
-
-          <div className="employee-profile-right">
-            <div className="employee-profile-field">
-              <label>Name :</label>
-              <div className="employee-profile-value">{profileData.name}</div>
-            </div>
-
-            <div className="employee-profile-field">
-              <label>NIC :</label>
-              <div className="employee-profile-value">{profileData.nic}</div>
-            </div>
-
-            <div className="employee-profile-field">
-              <label>Contact NO :</label>
-              <div className="employee-profile-value">{profileData.contactNo}</div>
-            </div>
-
-            <div className="employee-profile-field">
-              <label>Personal E-Mail :</label>
-              <div className="employee-profile-value">{profileData.personalEmail}</div>
-            </div>
-
-            <div className="employee-profile-field">
-              <label>Address :</label>
-              <div className="employee-profile-value employee-profile-address">
-                {profileData.address}
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProfileDetailsCard profileData={profileData} />
 
         <div className="employee-profile-signout-row">
           <button type="button" className="employee-profile-signout-button" onClick={handleSignOut}>

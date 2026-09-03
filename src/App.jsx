@@ -25,6 +25,7 @@ import "./styles/statusscreen.css";
 
 const REMEMBER_KEY = "altrium-pulse:remember-me";
 const SESSION_KEY = "altrium-pulse:session-active";
+const ACTIVE_PAGE_KEY = "altrium-pulse:active-page";
 
 const rolePages = {
   employee: {
@@ -83,7 +84,9 @@ function StatusScreen({ message, onSignOut }) {
 function App() {
   const [claims, setClaims] = useState(null);
   const [profileView, setProfileView] = useState(null);
-  const [activePage, setActivePage] = useState("dashboard");
+  const [activePage, setActivePage] = useState(
+    () => window.sessionStorage.getItem(ACTIVE_PAGE_KEY) || "dashboard",
+  );
   const [loading, setLoading] = useState(isSupabaseConfigured);
   const [error, setError] = useState("");
 
@@ -144,7 +147,10 @@ function App() {
         const view = await loadProfileView(claims.sub);
         if (mounted) {
           setProfileView(view);
-          setActivePage("dashboard");
+          const savedPage = window.sessionStorage.getItem(ACTIVE_PAGE_KEY) || "dashboard";
+          const nextPage = rolePages[view.role]?.[savedPage] ? savedPage : "dashboard";
+          setActivePage(nextPage);
+          window.sessionStorage.setItem(ACTIVE_PAGE_KEY, nextPage);
           setError("");
         }
       } catch (profileError) {
@@ -193,6 +199,7 @@ function App() {
     }
     window.localStorage.removeItem(REMEMBER_KEY);
     window.sessionStorage.removeItem(SESSION_KEY);
+    window.sessionStorage.removeItem(ACTIVE_PAGE_KEY);
     setActivePage("dashboard");
   };
 
@@ -218,7 +225,10 @@ function App() {
 
   const Page = pages[activePage] || pages.dashboard;
   const handleNavigate = (pageKey) => {
-    if (pages[pageKey]) setActivePage(pageKey);
+    if (pages[pageKey]) {
+      setActivePage(pageKey);
+      window.sessionStorage.setItem(ACTIVE_PAGE_KEY, pageKey);
+    }
   };
 
   return (

@@ -5,30 +5,12 @@ import "../styles/employeemycurrentreview.css";
 import PARMeeting from "../components/PARMeeting";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 
-// Temporary current-review data until Supabase provides the employee's
-// active Review Cycle (created by HR) and real stage statuses.
-const currentReviewData = {
-  reviewCycle: {
-    id: "cycle-1",
-    name: "August 2026 Review",
-    status: "Finalizing...",
-  },
-  immediateSupervisor: "R. Thiwen Sandul",
-  hrBusinessPartner: "R. Thiwen Sandul",
-  // Temporary review-stage display data until stage states are provided by Supabase.
-  stages: [
-    { key: "self-assessment", label: "Self Assessment", status: "In progress" },
-    { key: "peer-review", label: "Peer Review", status: "In progress" },
-    { key: "supervisor-review", label: "Supervisor Review", status: "Pending" },
-    { key: "normalization", label: "Normalization", status: "Pending" },
-    { key: "par-meeting", label: "PAR Meeting", status: "Pending" },
-    { key: "pdp-pip", label: "PDP & PIP", status: "Pending" },
-  ],
-};
-
-// onNavigate is passed down from Sidebar's parent so clicking other menu
-// items can switch pages later once real routing exists.
 function EmployeeMyCurrentReview({ onNavigate, onSignOut, profileData }) {
+  const currentReview = profileData?.currentReview;
+  const emptyStages = ["Self Assessment", "Peer Review", "Supervisor Review", "Normalization", "PAR Meeting", "PDP & PIP"]
+    .map((label) => ({ key: label.toLowerCase().replace(/\s+|&/g, "-"), label, status: "Pending" }));
+  const stages = currentReview?.stages || emptyStages;
+
   return (
     <div className="employee-current-review-layout">
       <Sidebar role="employee" activeItem="current-review" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
@@ -40,7 +22,7 @@ function EmployeeMyCurrentReview({ onNavigate, onSignOut, profileData }) {
           eyebrow="Performance review"
           title="My Current Review"
           description="See each review stage, the people supporting you and your next scheduled conversation."
-          meta={currentReviewData.reviewCycle.name}
+          meta={currentReview?.cycleName || profileData?.parCycle || "No active review"}
         />
 
         <div className="employee-current-review-progress-card">
@@ -48,20 +30,20 @@ function EmployeeMyCurrentReview({ onNavigate, onSignOut, profileData }) {
 
           <div className="employee-current-review-people-row">
             <span>
-              Immediate Supervisor : <strong>{currentReviewData.immediateSupervisor}</strong>
+              Immediate Supervisor : <strong>{profileData?.immediateSupervisor || "Not assigned"}</strong>
             </span>
             <span>
-              HR Business Partner : <strong>{currentReviewData.hrBusinessPartner}</strong>
+              HR Business Partner : <strong>{profileData?.hrBusinessPartner || "Not assigned"}</strong>
             </span>
           </div>
 
           <ReviewProgressFlow
-            stages={currentReviewData.stages}
-            centerStatus={currentReviewData.reviewCycle.status}
+            stages={stages}
+            centerStatus={currentReview?.status || "Not started"}
           />
         </div>
 
-        <PARMeeting role="employee" />
+        <PARMeeting role="employee" meeting={profileData?.meeting} />
       </div>
     </div>
   );

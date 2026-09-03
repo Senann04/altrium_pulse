@@ -5,10 +5,13 @@ import "../styles/goalevidencesubmission.css";
 function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
   const [actionItemFile, setActionItemFile] = useState(null);
   const [evidenceFile, setEvidenceFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const closePanel = () => {
     setActionItemFile(null);
     setEvidenceFile(null);
+    setError("");
     onClose();
   };
 
@@ -29,14 +32,22 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
 
   if (!goal) return null;
 
-  const goalType = String(goal.id).toLowerCase().startsWith("pip") ? "PIP" : "PDP";
+  const goalType = goal.type || "PDP";
   const progress = Math.min(100, Math.max(0, Number(goal.progress) || 0));
   const filesReady = Boolean(actionItemFile && evidenceFile);
 
-  const handleSubmitEvidence = () => {
-    if (!filesReady) return;
-    onSubmitEvidence(goal.id);
-    closePanel();
+  const handleSubmitEvidence = async () => {
+    if (!filesReady || isSubmitting) return;
+    setIsSubmitting(true);
+    setError("");
+    try {
+      await onSubmitEvidence(goal.id, { actionItemFile, evidenceFile });
+      closePanel();
+    } catch (submissionError) {
+      setError(submissionError.message || "Unable to upload this evidence.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -128,14 +139,14 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
         </div>
 
         <footer className="goal-evidence-footer">
-          <span>{filesReady ? "Both files are ready" : "Select both files to continue"}</span>
+          <span className={error ? "goal-evidence-error" : ""}>{error || (filesReady ? "Both files are ready" : "Select both files to continue")}</span>
           <button
             type="button"
             className="goal-evidence-submit-button"
-            disabled={!filesReady}
+            disabled={!filesReady || isSubmitting}
             onClick={handleSubmitEvidence}
           >
-            Submit evidence
+            {isSubmitting ? "Uploading…" : "Submit evidence"}
           </button>
         </footer>
       </section>

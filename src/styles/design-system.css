@@ -482,6 +482,8 @@
 .summary-row-track { height: 7px; background: #252831; }
 .summary-row-fill { background: linear-gradient(90deg, #c98f00, var(--ap-gold)); }
 .summary-row-value { min-width: 46px; padding: 0; color: var(--ap-text-muted); background: transparent; font-family: inherit; font-size: 13px; }
+.feedback-summary-empty { display: flex; min-height: 156px; padding: 20px; align-items: center; justify-content: center; border: 1px dashed var(--ap-line); border-radius: 12px; color: var(--ap-text-soft); background: #0d0f13; font-size: 13px; line-height: 1.55; text-align: center; }
+.feedback-submit-button:disabled { opacity: .55; cursor: not-allowed; }
 
 .employee-feedback-bottom-row,
 .supervisor-feedback-bottom-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
@@ -524,6 +526,7 @@
 .dev-goals-summary-completed { --metric-color: var(--ap-success); --metric-soft: rgba(103,211,145,.08); }
 .dev-goals-summary-overdue { --metric-color: var(--ap-danger); --metric-soft: rgba(255,124,124,.09); box-shadow: inset 3px 0 0 var(--ap-danger); }
 .dev-goals-card-list { gap: 10px; }
+.dev-goals-empty { margin: 4px 0 0; color: var(--ap-text-soft); font-size: 14px; }
 .dev-goal-card { width: 100%; padding: 0; border: 1px solid var(--ap-line); border-radius: 13px; color: inherit; background: #0d0f13; text-align: left; cursor: pointer; transition: border-color .16s ease, transform .16s ease, background .16s ease; }
 .dev-goal-card:hover { border-color: rgba(252,180,0,.24); background: rgba(252,180,0,.025); transform: translateY(-1px); }
 .dev-goal-card-overdue { border-color: rgba(255,124,124,.3); background: linear-gradient(90deg, rgba(255,124,124,.08), transparent 30%), #0d0f13; box-shadow: inset 3px 0 0 var(--ap-danger); }

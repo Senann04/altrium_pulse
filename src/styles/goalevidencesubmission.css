@@ -243,6 +243,7 @@
   border-top: 1px solid var(--ap-line);
 }
 .goal-evidence-footer > span { color: var(--ap-text-soft); font-size: 12px; }
+.goal-evidence-footer > span.goal-evidence-error { color: var(--ap-danger); }
 
 .goal-evidence-submit-button {
   min-height: 44px;

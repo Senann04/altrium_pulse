@@ -2,18 +2,9 @@ import { useState } from "react";
 import { StarIcon } from "./InterfaceIcons";
 import "../styles/employeepeerreview.css";
 
-/* Temporary peer options until user data comes from Supabase.
-   currentEmployeeId excludes the logged-in user from their own list. */
-const currentEmployeeId = "EM00145";
-const peerOptions = [
-  { id: "EM00212", name: "Nadeesha Fernando" },
-  { id: "EM00300", name: "Amaya Perera" },
-  { id: "EM00089", name: "Kasun Silva" },
-].filter((p) => p.id !== currentEmployeeId);
-
 const categories = ["Team Work", "Communication", "Reliability", "Professionalism", "Technical Contribution"];
 
-function EmployeePeerReview() {
+function EmployeePeerReview({ peerOptions = [] }) {
   const [selectedPeer, setSelectedPeer] = useState("");
   /* Temporary category ratings until the backend schema supports rating categories. */
   const [categoryRatings, setCategoryRatings] = useState({});
@@ -74,7 +65,7 @@ function EmployeePeerReview() {
         </span>
         <span>
           <strong>{selectedPeerData?.name || "Choose who you are reviewing"}</strong>
-          <small>{selectedPeerData?.id || "Employee profile"}</small>
+          <small>{selectedPeerData?.employeeNumber || "Employee profile"}</small>
         </span>
       </div>
 
