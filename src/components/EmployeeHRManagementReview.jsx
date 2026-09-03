@@ -56,7 +56,7 @@ function EmployeeHRManagementReview() {
         value={selectedTarget}
         onChange={(e) => setSelectedTarget(e.target.value)}
       >
-        <option value="" disabled>Review HR and Management!!!!</option>
+        <option value="" disabled>Select HR or management</option>
         {hrManagementReviewTargets.map((t) => (
           <option key={t.id} value={t.id}>{t.name}</option>
         ))}
@@ -80,7 +80,7 @@ function EmployeeHRManagementReview() {
                   </button>
                 ))}
               </div>
-              <span className="hrmgmt-review-rating-pill" />
+              <span className="hrmgmt-review-rating-pill">{rating || "–"}/5</span>
             </div>
           );
         })}
@@ -88,18 +88,18 @@ function EmployeeHRManagementReview() {
 
       <div className="hrmgmt-review-question">
         <label>1. What does this employee do well?</label>
-        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} />
+        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} placeholder="Share a specific strength…" />
       </div>
 
       <div className="hrmgmt-review-question">
         <label>2. What could they improve?</label>
-        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} />
+        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} placeholder="Share a constructive suggestion…" />
       </div>
 
       {error && <p className="hrmgmt-review-error">{error}</p>}
 
       <div className="hrmgmt-review-submit-row">
-        <button type="submit" className="hrmgmt-review-submit-button">SUBMIT</button>
+        <button type="submit" className="hrmgmt-review-submit-button">Submit feedback</button>
       </div>
     </form>
   );

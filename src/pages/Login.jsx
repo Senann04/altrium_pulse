@@ -1,6 +1,4 @@
 import { useState } from "react";
-import GlobeAnimation from "../components/globeanimation";
-import SpotlightCard from "../components/SpotlightCard";
 import logo from "../assets/altriumlogo.svg";
 import "../styles/login.css";
 
@@ -28,127 +26,127 @@ function Login({ onLogin }) {
 
   return (
     <main className="login-page">
-      <section className="login-story" aria-label="Altrium Pulse overview">
-        <div className="login-grid" aria-hidden="true" />
-        <img src={logo} alt="Altrium Pulse" className="login-logo" />
+      <div className="login-grid" aria-hidden="true" />
 
-        <div className="login-story-copy">
-          <span className="login-eyebrow">Performance, aligned.</span>
-          <h1>Turn every review into meaningful progress.</h1>
-          <p>
-            One secure workspace for goals, feedback, reviews and the conversations
-            that move teams forward.
-          </p>
-        </div>
+      <div className="login-shell">
+        <header className="login-brandbar">
+          <img src={logo} alt="Altrium Pulse" className="login-logo" />
+          <span><i aria-hidden="true" /> Secure workspace</span>
+        </header>
 
-        <div className="login-visual" aria-hidden="true">
-          <GlobeAnimation />
-          <div className="login-orbit-note login-orbit-note-top">
-            <span /> Clear goals
-          </div>
-          <div className="login-orbit-note login-orbit-note-bottom">
-            <span /> Better outcomes
-          </div>
-        </div>
+        <div className="login-layout">
+          <section className="login-story" aria-label="Altrium Pulse overview">
+            <span className="login-eyebrow">People performance platform</span>
+            <h1>One place for better performance conversations.</h1>
+            <p>
+              Manage goals, reviews and feedback through a focused workspace built
+              for every role in your organisation.
+            </p>
 
-        <div className="login-trust-row">
-          <div><strong>4</strong><span>role-based workspaces</span></div>
-          <div><strong>1</strong><span>shared performance view</span></div>
-          <div><strong>24/7</strong><span>secure access</span></div>
-        </div>
-      </section>
+            <div className="login-feature-list">
+              <div>
+                <span>01</span>
+                <p><strong>Clear review cycles</strong><small>Know what is due and what comes next.</small></p>
+              </div>
+              <div>
+                <span>02</span>
+                <p><strong>Aligned development goals</strong><small>Keep PDP and PIP progress visible.</small></p>
+              </div>
+              <div>
+                <span>03</span>
+                <p><strong>Role-based access</strong><small>Only the right people see each workspace.</small></p>
+              </div>
+            </div>
+          </section>
 
-      <section className="login-access">
-        <SpotlightCard className="login-panel">
-          <div className="login-panel-heading">
-            <span className="login-panel-mark">AP</span>
-            <div>
-              <p className="login-panel-kicker">Altrium workspace</p>
+          <section className="login-access">
+            <div className="login-panel">
+              <p className="login-panel-kicker">Account access</p>
               <h2>Welcome back</h2>
-            </div>
-          </div>
-          <p className="login-panel-copy">Sign in with your company account to continue.</p>
+              <p className="login-panel-copy">Sign in with your company account to continue.</p>
 
-          <form className="login-form" onSubmit={handleSubmit}>
-            <div className="login-field">
-              <label htmlFor="username">Work email</label>
-              <div className="login-input-wrap">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 6h16v12H4z" /><path d="m4 7 8 6 8-6" />
-                </svg>
-                <input
-                  id="username"
-                  type="email"
-                  value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                  autoComplete="username"
-                  placeholder="name@company.com"
-                  required
-                />
-              </div>
-            </div>
+              <form className="login-form" onSubmit={handleSubmit}>
+                <div className="login-field">
+                  <label htmlFor="username">Work email</label>
+                  <div className="login-input-wrap">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 6h16v12H4z" /><path d="m4 7 8 6 8-6" />
+                    </svg>
+                    <input
+                      id="username"
+                      type="email"
+                      value={username}
+                      onChange={(event) => setUsername(event.target.value)}
+                      autoComplete="username"
+                      placeholder="name@company.com"
+                      required
+                    />
+                  </div>
+                </div>
 
-            <div className="login-field">
-              <div className="login-label-row">
-                <label htmlFor="password">Password</label>
-                <button
-                  type="button"
-                  className="login-text-button"
-                  onClick={() => window.alert("Please contact HR to reset your password.")}
-                >
-                  Forgot password?
+                <div className="login-field">
+                  <div className="login-label-row">
+                    <label htmlFor="password">Password</label>
+                    <button
+                      type="button"
+                      className="login-text-button"
+                      onClick={() => window.alert("Please contact HR to reset your password.")}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                  <div className="login-input-wrap">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="5" y="10" width="14" height="10" rx="2" />
+                      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                    </svg>
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      autoComplete="current-password"
+                      placeholder="Enter your password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="login-password-toggle"
+                      onClick={() => setShowPassword((visible) => !visible)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                </div>
+
+                <label className="remember-me">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(event) => setRememberMe(event.target.checked)}
+                  />
+                  <span>Keep me signed in on this device</span>
+                </label>
+
+                {errorMessage && (
+                  <div className="login-error" role="alert">
+                    <span aria-hidden="true">!</span>
+                    {errorMessage}
+                  </div>
+                )}
+
+                <button type="submit" className="login-button" disabled={loading}>
+                  <span>{loading ? "Signing in…" : "Sign in"}</span>
+                  {!loading && <span aria-hidden="true">→</span>}
                 </button>
-              </div>
-              <div className="login-input-wrap">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="5" y="10" width="14" height="10" rx="2" />
-                  <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-                </svg>
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  autoComplete="current-password"
-                  placeholder="Enter your password"
-                  required
-                />
-                <button
-                  type="button"
-                  className="login-password-toggle"
-                  onClick={() => setShowPassword((visible) => !visible)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
+              </form>
+
+              <p className="login-help">Need access? Contact your HR Business Partner.</p>
             </div>
-
-            <label className="remember-me">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(event) => setRememberMe(event.target.checked)}
-              />
-              <span>Keep me signed in on this device</span>
-            </label>
-
-            {errorMessage && (
-              <div className="login-error" role="alert">
-                <span aria-hidden="true">!</span>
-                {errorMessage}
-              </div>
-            )}
-
-            <button type="submit" className="login-button" disabled={loading}>
-              <span>{loading ? "Signing in…" : "Sign in to Altrium"}</span>
-              {!loading && <span aria-hidden="true">→</span>}
-            </button>
-          </form>
-
-          <p className="login-help">Need access? Contact your HR Business Partner.</p>
-        </SpotlightCard>
-      </section>
+          </section>
+        </div>
+      </div>
     </main>
   );
 }

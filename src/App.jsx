@@ -19,6 +19,7 @@ import Login from "./pages/Login";
 import MyTeam from "./pages/MyTeam";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import { loadProfileView } from "./services/profileAdapter";
+import logo from "./assets/altriumlogo.svg";
 import "./styles/statusscreen.css";
 
 const REMEMBER_KEY = "altrium-pulse:remember-me";
@@ -53,12 +54,18 @@ const rolePages = {
 };
 
 function StatusScreen({ message, onSignOut }) {
+  const isLoading = !onSignOut;
+
   return (
     <div className="status-screen">
-      <div className="status-card">
-        <span className="status-mark">AP</span>
-        <span className="status-kicker">Altrium Pulse</span>
+      <div className={`status-card${isLoading ? " status-card-loading" : " status-card-message"}`}>
+        <img src={logo} alt="Altrium Pulse" className="status-logo" />
         <p>{message}</p>
+        {isLoading && (
+          <div className="status-progress" aria-hidden="true">
+            <span />
+          </div>
+        )}
         {onSignOut && (
           <button type="button" onClick={onSignOut}>
             Sign Out

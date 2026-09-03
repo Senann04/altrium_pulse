@@ -13,16 +13,16 @@ const supervisorTeamMembers = [
   { id: "EM00300", name: "Amaya Perera", avatarUrl: null },
 ];
 
-function MyTeam({ onNavigate }) {
+function MyTeam({ onNavigate, onSignOut, profileData }) {
   return (
     <div className="my-team-layout">
-      <Sidebar role="supervisor" activeItem="team" onNavigate={onNavigate} />
+      <Sidebar role="supervisor" activeItem="team" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="my-team-main">
-        <Header />
+        <Header title="My Team" profileData={profileData} />
 
         <div className="my-team-heading-card">
-          <h1>My Team</h1>
+          <div><span>Workspace</span><h1>My Team</h1><p>View team members and their performance records.</p></div>
         </div>
 
         <div className="my-team-list">

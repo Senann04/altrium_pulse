@@ -4,24 +4,33 @@
   padding: 24px;
   place-items: center;
   background:
-    radial-gradient(circle at 50% 35%, rgba(248,181,13,.1), transparent 30%),
+    radial-gradient(circle at 50% 44%, rgba(248, 181, 13, 0.055), transparent 24%),
     var(--ap-bg);
 }
 
 .status-card {
   display: flex;
-  width: min(100%, 440px);
-  padding: 42px;
+  width: min(100%, 420px);
   flex-direction: column;
   align-items: center;
-  border: 1px solid var(--ap-line);
-  border-radius: 24px;
-  background: var(--ap-surface);
-  box-shadow: var(--ap-shadow);
   text-align: center;
 }
 
-.status-mark { display:grid; width:48px; height:48px; margin-bottom:16px; place-items:center; border-radius:14px; color:#111; background:var(--ap-gold); font-weight:800; }
-.status-kicker { margin-bottom:10px; color:var(--ap-gold); font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
-.status-card p { margin:0; color:#d9dade; font-size:14px; line-height:1.6; }
-.status-card button { margin-top:22px; padding:11px 18px; border:0; border-radius:11px; color:#111; background:var(--ap-gold); font-weight:800; cursor:pointer; }
+.status-logo { width: 190px; height: auto; margin-bottom: 22px; }
+.status-card p { margin: 0; color: #9da199; font-size: 12px; line-height: 1.6; }
+.status-progress { position: relative; overflow: hidden; width: 180px; height: 2px; margin-top: 18px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); }
+.status-progress span { position: absolute; top: 0; bottom: 0; left: -45%; width: 45%; border-radius: inherit; background: var(--ap-gold); box-shadow: 0 0 14px rgba(248, 181, 13, 0.32); animation: status-sweep 1.25s ease-in-out infinite; }
+
+.status-card-message {
+  padding: 36px;
+  border: 1px solid var(--ap-line);
+  border-radius: 16px;
+  background: var(--ap-surface);
+}
+
+.status-card button { margin-top: 20px; padding: 10px 16px; border: 0; border-radius: 9px; color: #17150d; background: var(--ap-gold); font-size: 11px; font-weight: 800; cursor: pointer; }
+
+@keyframes status-sweep {
+  0% { left: -45%; }
+  60%, 100% { left: 100%; }
+}

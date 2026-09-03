@@ -4,16 +4,16 @@ import AssignedGoalSection from "../components/AssignedGoalSection";
 import AssignedTimeGoalSection from "../components/AssignedTimeGoalSection";
 import "../styles/assigngoals.css";
 
-function AssignGoals({ onNavigate }) {
+function AssignGoals({ onNavigate, onSignOut, profileData }) {
   return (
     <div className="assign-goals-layout">
-      <Sidebar role="hrbp" activeItem="assign-goals" onNavigate={onNavigate} />
+      <Sidebar role="hrbp" activeItem="assign-goals" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="assign-goals-main">
-        <Header />
+        <Header title="Assign Goals" profileData={profileData} />
 
         <div className="assign-goals-heading-card">
-          <h1>Assign Goals</h1>
+          <div><span>Performance</span><h1>Assign Goals</h1><p>Create and monitor development goals for your teams.</p></div>
         </div>
 
         {/* PDP/PIP use the goal assignment system (GoalAssignmentModal) */}

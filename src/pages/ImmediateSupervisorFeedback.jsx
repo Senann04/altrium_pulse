@@ -19,16 +19,16 @@ const supervisorFeedbackData = {
   improvements: "",
 };
 
-function SupervisorMyFeedback({ onNavigate }) {
+function SupervisorMyFeedback({ onNavigate, onSignOut, profileData }) {
   return (
     <div className="supervisor-feedback-layout">
-      <Sidebar role="supervisor" activeItem="feedback" onNavigate={onNavigate} />
+      <Sidebar role="supervisor" activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="supervisor-feedback-main">
-        <Header />
+        <Header title="My Feedback" profileData={profileData} />
 
         <div className="supervisor-feedback-heading-card">
-          <h1>My Feedback</h1>
+          <div><span>Reviews</span><h1>My Feedback</h1><p>Complete assessments and review feedback from your colleagues.</p></div>
         </div>
 
         <div className="supervisor-feedback-subheading">Provide Feedback</div>
@@ -54,13 +54,13 @@ function SupervisorMyFeedback({ onNavigate }) {
 
         <div className="supervisor-feedback-bottom-row">
           <div className="supervisor-feedback-well-done-card">
-            <div className="supervisor-feedback-bottom-title">WELL DONE!!!</div>
-            <div className="supervisor-feedback-bottom-content">{supervisorFeedbackData.strengths}</div>
+            <div className="supervisor-feedback-bottom-title">Strengths</div>
+            <div className="supervisor-feedback-bottom-content">{supervisorFeedbackData.strengths || "No strengths have been shared yet."}</div>
           </div>
 
           <div className="supervisor-feedback-improve-card">
-            <div className="supervisor-feedback-bottom-title">IMPROVE!</div>
-            <div className="supervisor-feedback-bottom-content">{supervisorFeedbackData.improvements}</div>
+            <div className="supervisor-feedback-bottom-title">Development opportunities</div>
+            <div className="supervisor-feedback-bottom-content">{supervisorFeedbackData.improvements || "No development feedback has been shared yet."}</div>
           </div>
         </div>
       </div>

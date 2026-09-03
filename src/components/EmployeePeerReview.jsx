@@ -59,7 +59,7 @@ function EmployeePeerReview() {
         value={selectedPeer}
         onChange={(e) => setSelectedPeer(e.target.value)}
       >
-        <option value="" disabled>Review Your Teammate!!!</option>
+        <option value="" disabled>Select a teammate</option>
         {peerOptions.map((p) => (
           <option key={p.id} value={p.id}>{p.name}</option>
         ))}
@@ -86,7 +86,7 @@ function EmployeePeerReview() {
                   </button>
                 ))}
               </div>
-              <span className="peer-review-rating-pill" />
+              <span className="peer-review-rating-pill">{rating || "–"}/5</span>
             </div>
           );
         })}
@@ -94,18 +94,18 @@ function EmployeePeerReview() {
 
       <div className="peer-review-question">
         <label>1. What does this employee do well?</label>
-        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} />
+        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} placeholder="Share a specific strength…" />
       </div>
 
       <div className="peer-review-question">
         <label>2. What could they improve?</label>
-        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} />
+        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} placeholder="Share a constructive suggestion…" />
       </div>
 
       {error && <p className="peer-review-error">{error}</p>}
 
       <div className="peer-review-submit-row">
-        <button type="submit" className="peer-review-submit-button">SUBMIT</button>
+        <button type="submit" className="peer-review-submit-button">Submit review</button>
       </div>
     </form>
   );
