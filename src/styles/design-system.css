@@ -87,7 +87,10 @@
 .employee-feedback-subheading,
 .supervisor-feedback-subheading {
   margin: 22px 0 10px;
-  padding: 0;
+  padding: 0 0 12px;
+  border: 0;
+  border-bottom: 1px solid var(--ap-line);
+  border-radius: 0;
   color: #dfe0e3;
   background: transparent;
   font-family: inherit;
