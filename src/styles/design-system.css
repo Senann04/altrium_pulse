@@ -1,0 +1,264 @@
+/* Cross-page polish layer for legacy feature screens. */
+.assign-goals-layout,
+.employee-current-review-layout,
+.employee-feedback-layout,
+.employee-progress-layout,
+.supervisor-current-review-layout,
+.supervisor-feedback-layout,
+.supervisor-progress-layout,
+.my-team-layout,
+.hr-review-cycle-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--ap-bg);
+}
+
+.assign-goals-main,
+.employee-current-review-main,
+.employee-feedback-main,
+.employee-progress-main,
+.supervisor-current-review-main,
+.supervisor-feedback-main,
+.supervisor-progress-main,
+.my-team-main,
+.hr-review-cycle-main {
+  width: calc(100% - 264px);
+  max-width: 1560px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 4vw, 60px) 52px;
+  gap: 18px;
+  color: var(--ap-text);
+  background: var(--ap-bg);
+}
+
+.assign-goals-heading-card,
+.employee-current-review-heading-card,
+.employee-feedback-heading-card,
+.employee-progress-heading-card,
+.supervisor-current-review-heading-card,
+.supervisor-feedback-heading-card,
+.supervisor-progress-heading-card,
+.my-team-heading-card,
+.review-cycle-heading-card {
+  display: flex;
+  min-height: 142px;
+  margin: 28px 0 20px;
+  padding: 28px 32px;
+  align-items: flex-end;
+  justify-content: space-between;
+  border: 1px solid rgba(248, 181, 13, 0.18);
+  border-radius: 22px;
+  background:
+    linear-gradient(112deg, rgba(248, 181, 13, 0.11), transparent 44%),
+    var(--ap-surface);
+  box-shadow: none;
+}
+
+.assign-goals-heading-card h1,
+.employee-current-review-heading-card h1,
+.employee-feedback-heading-card h1,
+.employee-progress-heading-card h1,
+.supervisor-current-review-heading-card h1,
+.supervisor-feedback-heading-card h1,
+.supervisor-progress-heading-card h1,
+.my-team-heading-card h1,
+.review-cycle-heading-card h1 {
+  margin: 0;
+  color: var(--ap-text);
+  font-size: clamp(27px, 3.7vw, 44px);
+  font-weight: 750;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.employee-current-review-cycle-pill,
+.supervisor-current-review-cycle-pill {
+  padding: 9px 13px;
+  border: 1px solid rgba(248,181,13,.2);
+  border-radius: 999px;
+  color: var(--ap-gold);
+  background: var(--ap-gold-soft);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.employee-feedback-subheading,
+.supervisor-feedback-subheading {
+  margin: 22px 0 10px;
+  padding: 0;
+  color: #dfe0e3;
+  background: transparent;
+  font-family: "Manrope", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.employee-current-review-progress-card,
+.supervisor-current-review-progress-card,
+.assigned-goal-section,
+.assigned-time-goal-section,
+.review-cycle-section,
+.dev-goals-section,
+.par-meeting-card,
+.summary-card,
+.overall-rating-card,
+.self-assessment-form,
+.peer-review-card,
+.hrmgmt-review-card,
+.employee-feedback-well-done-card,
+.employee-feedback-improve-card,
+.supervisor-feedback-well-done-card,
+.supervisor-feedback-improve-card,
+.employee-progress-time-column,
+.supervisor-progress-column,
+.team-member-card {
+  border: 1px solid var(--ap-line);
+  border-radius: 18px;
+  color: #dfe0e3;
+  background: var(--ap-surface);
+  box-shadow: none;
+}
+
+.employee-current-review-progress-title,
+.supervisor-current-review-progress-title,
+.assigned-goal-section-title,
+.assigned-time-goal-title,
+.dev-goals-title-pill,
+.feedback-title-pill,
+.peer-review-title-pill,
+.hrmgmt-review-title-pill,
+.employee-progress-time-title,
+.supervisor-progress-column-title,
+.summary-title {
+  color: #efeff1;
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
+}
+
+.assigned-goal-section-header,
+.assigned-time-goal-header,
+.review-cycle-card,
+.assigned-goal-card,
+.assigned-time-goal-card,
+.dev-goal-card,
+.feedback-summary-cards,
+.employee-feedback-bottom-row,
+.supervisor-feedback-bottom-row {
+  border-color: var(--ap-line);
+}
+
+.assigned-goal-card,
+.assigned-time-goal-card,
+.dev-goal-card,
+.review-cycle-card,
+.assigned-goal-row,
+.summary-row {
+  color: #d5d6da;
+  background: #0d0f13;
+}
+
+.assigned-goal-add-button,
+.assigned-time-goal-add-button,
+.review-cycle-add-button,
+.feedback-submit-button,
+.peer-review-submit-button,
+.hrmgmt-review-submit-button,
+.goal-evidence-submit-button,
+.create-cycle-button,
+.goal-assignment-button,
+.time-goal-assignment-button,
+.par-scheduler-ok {
+  border-color: transparent;
+  border-radius: 11px;
+  color: #111;
+  background: var(--ap-gold);
+  font-weight: 750;
+}
+
+.assigned-goal-filter-select,
+.assigned-time-goal-filter-select,
+.peer-review-dropdown,
+.peer-review-select,
+.hrmgmt-review-select,
+.goal-assignment-field input,
+.goal-assignment-field select,
+.time-goal-assignment-field input,
+.time-goal-assignment-field select,
+.create-cycle-field input,
+.create-cycle-field select,
+.self-assessment-question textarea,
+.peer-review-question textarea,
+.hrmgmt-review-question textarea {
+  border: 1px solid var(--ap-line);
+  border-radius: 10px;
+  color: #e7e8ea;
+  background: #0d0f13;
+}
+
+.goal-assignment-overlay,
+.time-goal-assignment-overlay,
+.create-cycle-overlay,
+.goal-evidence-overlay,
+.par-scheduler-overlay {
+  background: rgba(0,0,0,.74);
+  backdrop-filter: blur(10px);
+}
+
+.goal-assignment-modal,
+.time-goal-assignment-modal,
+.create-cycle-modal,
+.goal-evidence-panel,
+.par-scheduler-modal {
+  border: 1px solid var(--ap-line);
+  border-radius: 22px;
+  color: var(--ap-text);
+  background: var(--ap-surface);
+  box-shadow: var(--ap-shadow);
+}
+
+@media (max-width: 900px) {
+  .assign-goals-main,
+  .employee-current-review-main,
+  .employee-feedback-main,
+  .employee-progress-main,
+  .supervisor-current-review-main,
+  .supervisor-feedback-main,
+  .supervisor-progress-main,
+  .my-team-main,
+  .hr-review-cycle-main {
+    width: 100%;
+    padding: 0 20px 94px;
+  }
+}
+
+@media (max-width: 640px) {
+  .assign-goals-main,
+  .employee-current-review-main,
+  .employee-feedback-main,
+  .employee-progress-main,
+  .supervisor-current-review-main,
+  .supervisor-feedback-main,
+  .supervisor-progress-main,
+  .my-team-main,
+  .hr-review-cycle-main { padding-inline: 14px; }
+
+  .assign-goals-heading-card,
+  .employee-current-review-heading-card,
+  .employee-feedback-heading-card,
+  .employee-progress-heading-card,
+  .supervisor-current-review-heading-card,
+  .supervisor-feedback-heading-card,
+  .supervisor-progress-heading-card,
+  .my-team-heading-card,
+  .review-cycle-heading-card {
+    min-height: 116px;
+    padding: 22px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+}

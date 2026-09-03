@@ -3,7 +3,7 @@ import "../styles/goalassignmentmodal.css";
 
 /* Reusable overlay for assigning either a PDP or a PIP goal — the `type` prop tells the caller 
 (AssignedGoalSection) which section is assigning, this component itself has no PDP/PIP branching. */
-function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirectory }) {
+function GoalAssignmentModal({ isOpen, onClose, onAssign, employeeDirectory }) {
   const [team, setTeam] = useState("");
   const [employeeId, setEmployeeId] = useState("");
   const [employeeName, setEmployeeName] = useState("");

@@ -1,31 +1,16 @@
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
-import WelcomeCard from "../components/welcomecard";
-import UpcomingEventCard from "../components/upcomingeventcard.jsx";
-import "../styles/hrbpdashboard.css";
+import DashboardOverview from "../components/DashboardOverview.jsx";
+import "../styles/appshell.css";
 
-// Temporary dashboard data until Supabase / Google Calendar are connected.
-const hrbpDashboardData = {
-  upcomingMeeting: { title: "Upcoming Meeting", date: "02 October 2026", time: "10:00 a.m." },
-};
-
-function HRBPDashboard({ onNavigate }) {
+function HRBPDashboard({ onNavigate, profileData }) {
   return (
-    <div className="hrbp-dashboard-layout">
+    <div className="app-shell">
       <Sidebar role="hrbp" activeItem="dashboard" onNavigate={onNavigate} />
-
-      <div className="hrbp-dashboard-main">
-        <Header />
-
-        <div className="hrbp-dashboard-top-row">
-          <div className="hrbp-dashboard-welcome-col">
-            <WelcomeCard />
-          </div>
-          <div className="hrbp-dashboard-meeting-col">
-            <UpcomingEventCard {...hrbpDashboardData.upcomingMeeting} />
-          </div>
-        </div>
-      </div>
+      <main className="app-main">
+        <Header profileData={profileData} />
+        <DashboardOverview role="hrbp" profileData={profileData} onNavigate={onNavigate} />
+      </main>
     </div>
   );
 }

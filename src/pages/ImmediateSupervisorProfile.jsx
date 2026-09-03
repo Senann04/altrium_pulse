@@ -14,7 +14,7 @@ const emptyProfile = {
   hrBusinessPartner: "",
 };
 
-function ImmediateSupervisorProfile({ onSignOut, profileData = emptyProfile }) {
+function ImmediateSupervisorProfile({ onNavigate, onSignOut, profileData = emptyProfile }) {
   const handleSignOut = () => {
     if (onSignOut) onSignOut();
   };

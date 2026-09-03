@@ -1,4 +1,5 @@
 import "../styles/sidebar.css";
+import altriumLogo from "../assets/altriumlogo.svg";
 
 /* Menu configuration: one entry per role. Add/remove items here only.
 Icons are small inline SVGs so no new icon library is required. */
@@ -72,38 +73,34 @@ const MENUS = {
     { key: "dashboard", label: "Dashboard", icon: "dashboard" },
     { key: "current-review", label: "My Current Review", icon: "review" },
     { key: "feedback", label: "My Feedback", icon: "feedback" },
-    { key: "projects", label: "Projects", icon: "projects" },
     { key: "progress", label: "My Progress", icon: "progress" },
-    { key: "history", label: "Performance History", icon: "history" },
-    { key: "calendar", label: "Calendar", icon: "calendar" },
     { key: "profile", label: "My Profile", icon: "profile" },
   ],
   supervisor: [
     { key: "dashboard", label: "Dashboard", icon: "dashboard" },
     { key: "current-review", label: "My Current Review", icon: "review" },
     { key: "feedback", label: "My Feedback", icon: "feedback" },
-    { key: "projects", label: "Projects", icon: "projects" },
     { key: "progress", label: "My Progress", icon: "progress" },
     { key: "team", label: "My Team", icon: "team" },
-    { key: "history", label: "Performance History", icon: "history" },
-    { key: "calendar", label: "Calendar", icon: "calendar" },
     { key: "profile", label: "My Profile", icon: "profile" },
   ],
   leadership: [
     { key: "dashboard", label: "Dashboard", icon: "dashboard" },
-    { key: "feedback", label: "My Feedback", icon: "feedback" },
-    { key: "projects", label: "Projects", icon: "projects" },
-    { key: "calendar", label: "Calendar", icon: "calendar" },
     { key: "profile", label: "My Profile", icon: "profile" },
   ],
   hrbp: [
     { key: "dashboard", label: "Dashboard", icon: "dashboard" },
     { key: "review-cycle", label: "Review Cycle", icon: "cycle" },
-    { key: "feedback", label: "My Feedback", icon: "feedback" },
-    { key: "projects", label: "Projects", icon: "projects" },
     { key: "assign-goals", label: "Assign Goals", icon: "goals" },
     { key: "profile", label: "My Profile", icon: "profile" },
   ],
+};
+
+const ROLE_LABELS = {
+  employee: "Employee",
+  supervisor: "Supervisor",
+  hrbp: "HR Business Partner",
+  leadership: "Senior Management",
 };
 
 
@@ -118,7 +115,20 @@ function Sidebar({ role, activeItem, onNavigate }) {
 
   return (
     <aside className="sidebar">
-      <nav className="sidebar-menu">
+      <div className="sidebar-brand">
+        <img src={altriumLogo} alt="Altrium Pulse" />
+        <span>Performance workspace</span>
+      </div>
+
+      <div className="sidebar-role">
+        <span className="sidebar-role-dot" aria-hidden="true" />
+        <div>
+          <small>Signed in as</small>
+          <strong>{ROLE_LABELS[role] || "Team member"}</strong>
+        </div>
+      </div>
+
+      <nav className="sidebar-menu" aria-label="Workspace navigation">
         {menuItems.map((item) => {
           const isActive = item.key === activeItem;
           return (
@@ -134,6 +144,11 @@ function Sidebar({ role, activeItem, onNavigate }) {
           );
         })}
       </nav>
+
+      <div className="sidebar-footer">
+        <span className="sidebar-footer-mark">AP</span>
+        <p><strong>Altrium Pulse</strong><span>People performance platform</span></p>
+      </div>
     </aside>
   );
 }

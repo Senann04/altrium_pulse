@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../styles/timegoalassignmentmodal.css";
 
-function TimeGoalAssignmentModal({ period, isOpen, onClose, onAssign, personDirectory }) {
+function TimeGoalAssignmentModal({ isOpen, onClose, onAssign, personDirectory }) {
   const [team, setTeam] = useState("");
   const [personId, setPersonId] = useState("");
   const [personName, setPersonName] = useState("");

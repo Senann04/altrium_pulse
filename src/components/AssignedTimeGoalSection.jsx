@@ -3,7 +3,6 @@ import AssignedTimeGoalCard from "./AssignedTimeGoalCard";
 import TimeGoalAssignmentModal from "./TimeGoalAssignmentModal";
 import {
   getAssignedTimeGoals,
-  saveAssignedTimeGoals,
   addAssignedTimeGoal,
   subscribeToAssignedTimeGoals,
 } from "../services/assignedTimeGoalsStorage";

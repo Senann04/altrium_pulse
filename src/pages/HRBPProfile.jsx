@@ -13,7 +13,7 @@ const emptyProfile = {
   address: "",
 };
 
-function HRBPProfile({ onSignOut, profileData = emptyProfile }) {
+function HRBPProfile({ onNavigate, onSignOut, profileData = emptyProfile }) {
   const handleSignOut = () => {
     if (onSignOut) onSignOut();
   };

@@ -19,6 +19,10 @@ import Login from "./pages/Login";
 import MyTeam from "./pages/MyTeam";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import { loadProfileView } from "./services/profileAdapter";
+import "./styles/statusscreen.css";
+
+const REMEMBER_KEY = "altrium-pulse:remember-me";
+const SESSION_KEY = "altrium-pulse:session-active";
 
 const rolePages = {
   employee: {
@@ -50,35 +54,13 @@ const rolePages = {
 
 function StatusScreen({ message, onSignOut }) {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "grid",
-        placeItems: "center",
-        background: "#111111",
-        color: "#ffffff",
-        fontFamily: '"Inria Sans", sans-serif',
-        padding: "2rem",
-        textAlign: "center",
-      }}
-    >
-      <div>
+    <div className="status-screen">
+      <div className="status-card">
+        <span className="status-mark">AP</span>
+        <span className="status-kicker">Altrium Pulse</span>
         <p>{message}</p>
         {onSignOut && (
-          <button
-            type="button"
-            onClick={onSignOut}
-            style={{
-              marginTop: "1rem",
-              border: 0,
-              borderRadius: "999px",
-              padding: "0.65rem 1.4rem",
-              background: "#f8b50d",
-              color: "#111111",
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
-          >
+          <button type="button" onClick={onSignOut}>
             Sign Out
           </button>
         )}
@@ -96,6 +78,15 @@ function App() {
 
   const refreshClaims = useCallback(async () => {
     if (!supabase) {
+      setClaims(null);
+      setLoading(false);
+      return;
+    }
+
+    const rememberPreference = window.localStorage.getItem(REMEMBER_KEY);
+    const activeTabSession = window.sessionStorage.getItem(SESSION_KEY);
+    if (rememberPreference === "false" && !activeTabSession) {
+      await supabase.auth.signOut();
       setClaims(null);
       setLoading(false);
       return;
@@ -158,7 +149,7 @@ function App() {
     };
   }, [claims?.sub]);
 
-  const handleLogin = async ({ username, password }) => {
+  const handleLogin = async ({ username, password, rememberMe }) => {
     if (!supabase) {
       throw new Error(
         "Supabase is not configured. Add the project URL and publishable key to the Vercel environment.",
@@ -171,6 +162,9 @@ function App() {
     });
 
     if (loginError) throw loginError;
+
+    window.localStorage.setItem(REMEMBER_KEY, rememberMe ? "true" : "false");
+    window.sessionStorage.setItem(SESSION_KEY, "true");
   };
 
   const handleSignOut = async () => {
@@ -180,6 +174,8 @@ function App() {
       setError(signOutError.message);
       return;
     }
+    window.localStorage.removeItem(REMEMBER_KEY);
+    window.sessionStorage.removeItem(SESSION_KEY);
     setActivePage("dashboard");
   };
 

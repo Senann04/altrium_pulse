@@ -15,7 +15,7 @@ const emptyProfile = {
   hrBusinessPartner: "",
 };
 
-function EmployeeProfile({ onSignOut, profileData = emptyProfile }) {
+function EmployeeProfile({ onNavigate, onSignOut, profileData = emptyProfile }) {
   const handleSignOut = () => {
     if (onSignOut) onSignOut();
   };

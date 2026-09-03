@@ -13,7 +13,7 @@ const emptyProfile = {
   address: "",
 };
 
-function LeadershipProfile({ onSignOut, profileData = emptyProfile }) {
+function LeadershipProfile({ onNavigate, onSignOut, profileData = emptyProfile }) {
   const handleSignOut = () => {
     if (onSignOut) onSignOut();
   };

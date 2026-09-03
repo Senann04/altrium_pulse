@@ -7,10 +7,10 @@ function GoalProgressCard({ title, plan }) {
   const completedActions = plan.action_items.filter((item) => item.completed).length;
 
   // Progress = completed actions / total actions * 100.
-  const progress = Math.round((completedActions / totalActions) * 100);
+  const progress = totalActions ? Math.round((completedActions / totalActions) * 100) : 0;
 
   return (
-    <div className="goal-progress-card">
+    <article className="goal-progress-card">
       <div className="goal-progress-header">
         <span className="goal-progress-title">{title}</span>
         <span className="goal-progress-badge">{progress}%</span>
@@ -19,7 +19,7 @@ function GoalProgressCard({ title, plan }) {
       <div className="goal-progress-track">
         <div className="goal-progress-fill" style={{ width: `${progress}%` }} />
       </div>
-    </div>
+    </article>
   );
 }
 
