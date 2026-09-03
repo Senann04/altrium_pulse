@@ -83,7 +83,7 @@ function App() {
   const [loading, setLoading] = useState(isSupabaseConfigured);
   const [error, setError] = useState("");
 
-  const refreshClaims = useCallback(async () => {
+  const refreshClaims = useCallback(async ({ enforceRememberPreference = false } = {}) => {
     if (!supabase) {
       setClaims(null);
       setLoading(false);
@@ -92,7 +92,7 @@ function App() {
 
     const rememberPreference = window.localStorage.getItem(REMEMBER_KEY);
     const activeTabSession = window.sessionStorage.getItem(SESSION_KEY);
-    if (rememberPreference === "false" && !activeTabSession) {
+    if (enforceRememberPreference && rememberPreference === "false" && !activeTabSession) {
       await supabase.auth.signOut();
       setClaims(null);
       setLoading(false);
@@ -106,7 +106,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const initialRefresh = window.setTimeout(refreshClaims, 0);
+    const initialRefresh = window.setTimeout(
+      () => refreshClaims({ enforceRememberPreference: true }),
+      0,
+    );
     if (!supabase) {
       return () => window.clearTimeout(initialRefresh);
     }
@@ -163,15 +166,18 @@ function App() {
       );
     }
 
+    window.localStorage.setItem(REMEMBER_KEY, rememberMe ? "true" : "false");
+    window.sessionStorage.setItem(SESSION_KEY, "true");
+
     const { error: loginError } = await supabase.auth.signInWithPassword({
       email: username.trim(),
       password,
     });
 
-    if (loginError) throw loginError;
-
-    window.localStorage.setItem(REMEMBER_KEY, rememberMe ? "true" : "false");
-    window.sessionStorage.setItem(SESSION_KEY, "true");
+    if (loginError) {
+      window.sessionStorage.removeItem(SESSION_KEY);
+      throw loginError;
+    }
   };
 
   const handleSignOut = async () => {
