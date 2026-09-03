@@ -15,16 +15,25 @@ function SelfAssessmentForm() {
   // Answers keyed by question index. Starts empty — no dummy content.
   const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(""));
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (index, value) => {
     const updated = [...answers];
     updated[index] = value;
     setAnswers(updated);
+    if (error) setError("");
   };
 
   // Temporary frontend submission handler until Supabase integration is connected.
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (answers.some((answer) => !answer.trim())) {
+      setSubmitted(false);
+      setError("Please answer all five questions before submitting.");
+      return;
+    }
+
+    setError("");
     // Backend developer: replace this with a real Supabase submission using `answers`.
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 2000);
@@ -49,6 +58,7 @@ function SelfAssessmentForm() {
       ))}
 
       <div className="self-assessment-submit-row">
+        {error && <span className="feedback-validation-error" role="alert">{error}</span>}
         <button type="submit" className="feedback-submit-button">
           Submit assessment
         </button>

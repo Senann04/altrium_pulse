@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/goalevidencesubmission.css";
 
 /* reused for both PDP and PIP goals — the goal itself is passed in via props */
@@ -6,67 +6,139 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
   const [actionItemFile, setActionItemFile] = useState(null);
   const [evidenceFile, setEvidenceFile] = useState(null);
 
-  if (!goal) return null;
-
-  /* +10% here is only the illustrative badge shown in the design,
-     not a real rule — actual progress still comes from completed/total */
-  const handleSubmitEvidence = () => {
-    if (!evidenceFile) return;
-    onSubmitEvidence(goal.id);
+  const closePanel = () => {
+    setActionItemFile(null);
+    setEvidenceFile(null);
     onClose();
   };
 
-  return (
-    <div className="goal-evidence-overlay" onClick={onClose}>
-      <div className="goal-evidence-panel" onClick={(e) => e.stopPropagation()}>
-        <div className="goal-evidence-progress-row">
-          <div className="goal-evidence-progress-badge">
-            <span>Progress</span>
-            <span className="goal-evidence-plus-tag">+10%</span>
-          </div>
-          <div className="goal-evidence-progress-circle">{goal.progress}%</div>
-        </div>
+  useEffect(() => {
+    if (!goal) return undefined;
 
-        <div className="goal-evidence-content-box" />
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setActionItemFile(null);
+        setEvidenceFile(null);
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [goal, onClose]);
+
+  if (!goal) return null;
+
+  const goalType = String(goal.id).toLowerCase().startsWith("pip") ? "PIP" : "PDP";
+  const progress = Math.min(100, Math.max(0, Number(goal.progress) || 0));
+  const filesReady = Boolean(actionItemFile && evidenceFile);
+
+  const handleSubmitEvidence = () => {
+    if (!filesReady) return;
+    onSubmitEvidence(goal.id);
+    closePanel();
+  };
+
+  return (
+    <div className="goal-evidence-overlay" onClick={closePanel}>
+      <section
+        className="goal-evidence-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="goal-evidence-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header className="goal-evidence-header">
+          <div>
+            <span className="goal-evidence-eyebrow">Goal evidence</span>
+            <h2 id="goal-evidence-title">{goal.title}</h2>
+          </div>
+          <div className="goal-evidence-header-actions">
+            <span className="goal-evidence-type">{goalType}</span>
+            <button type="button" className="goal-evidence-close" onClick={closePanel} aria-label="Close evidence form">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12M18 6 6 18" />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div className="goal-evidence-progress-block">
+          <div className="goal-evidence-progress-copy">
+            <span>Current progress</span>
+            <strong>{progress}% complete</strong>
+          </div>
+          <div
+            className="goal-evidence-progress-track"
+            role="progressbar"
+            aria-label={`${goal.title} progress`}
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={progress}
+          >
+            <span style={{ width: `${progress}%` }} />
+          </div>
+        </div>
 
         <p className="goal-evidence-instruction">
-          If you completed this {goal.title ? "PDP" : "PDP"} goal please submit Action Item file and
-          Evidence file here...
+          Add the completed action item and supporting evidence for this {goalType} goal. Both files are
+          required before you can submit.
         </p>
 
-        <div className="goal-evidence-field-row">
-          <label>1. Action Item</label>
-          <div className="goal-evidence-file-row">
-            <label className="goal-evidence-file-input">
-              Choose File
-              <input type="file" onChange={(e) => setActionItemFile(e.target.files[0] || null)} hidden />
-            </label>
-            <span className="goal-evidence-filename">{actionItemFile ? actionItemFile.name : ""}</span>
-            <button type="button" className="goal-evidence-submit-button" disabled={!actionItemFile}>
-              SUBMIT
-            </button>
-          </div>
+        <div className="goal-evidence-file-grid">
+          <label className={`goal-evidence-file-card${actionItemFile ? " has-file" : ""}`} htmlFor="goal-action-item-file">
+            <input
+              id="goal-action-item-file"
+              className="goal-evidence-native-input"
+              type="file"
+              onChange={(event) => setActionItemFile(event.target.files[0] || null)}
+            />
+            <span className="goal-evidence-file-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <path d="M14 2v6h6M8 15h8M8 11h2" />
+              </svg>
+            </span>
+            <span className="goal-evidence-file-copy">
+              <strong>1. Action item</strong>
+              <small>{actionItemFile?.name || "PDF, document or image"}</small>
+            </span>
+            <span className="goal-evidence-choose">{actionItemFile ? "Change" : "Choose file"}</span>
+          </label>
+
+          <label className={`goal-evidence-file-card${evidenceFile ? " has-file" : ""}`} htmlFor="goal-evidence-file">
+            <input
+              id="goal-evidence-file"
+              className="goal-evidence-native-input"
+              type="file"
+              onChange={(event) => setEvidenceFile(event.target.files[0] || null)}
+            />
+            <span className="goal-evidence-file-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <path d="m17 8-5-5-5 5M12 3v12" />
+              </svg>
+            </span>
+            <span className="goal-evidence-file-copy">
+              <strong>2. Supporting evidence</strong>
+              <small>{evidenceFile?.name || "PDF, document or image"}</small>
+            </span>
+            <span className="goal-evidence-choose">{evidenceFile ? "Change" : "Choose file"}</span>
+          </label>
         </div>
 
-        <div className="goal-evidence-field-row">
-          <label>2. Evidence</label>
-          <div className="goal-evidence-file-row">
-            <label className="goal-evidence-file-input">
-              Choose File
-              <input type="file" onChange={(e) => setEvidenceFile(e.target.files[0] || null)} hidden />
-            </label>
-            <span className="goal-evidence-filename">{evidenceFile ? evidenceFile.name : ""}</span>
-            <button
-              type="button"
-              className="goal-evidence-submit-button"
-              disabled={!evidenceFile}
-              onClick={handleSubmitEvidence}
-            >
-              SUBMIT
-            </button>
-          </div>
-        </div>
-      </div>
+        <footer className="goal-evidence-footer">
+          <span>{filesReady ? "Both files are ready" : "Select both files to continue"}</span>
+          <button
+            type="button"
+            className="goal-evidence-submit-button"
+            disabled={!filesReady}
+            onClick={handleSubmitEvidence}
+          >
+            Submit evidence
+          </button>
+        </footer>
+      </section>
     </div>
   );
 }

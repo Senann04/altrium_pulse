@@ -19,6 +19,7 @@
   --ap-radius-sm: 12px;
   --ap-radius: 18px;
   --ap-radius-lg: 28px;
+  --ap-sidebar-width: 270px;
   font-family: "DM Sans", "Segoe UI", sans-serif;
   color: var(--ap-text);
   background: var(--ap-bg);
@@ -27,6 +28,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+:root:has(.sidebar.collapsed) { --ap-sidebar-width: 84px; }
 
 * { box-sizing: border-box; }
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "../styles/sidebar.css";
 import altriumLogo from "../assets/altriumlogo.svg";
 
@@ -126,6 +127,8 @@ const ROLE_LABELS = {
   leadership: "Senior Management",
 };
 
+const SIDEBAR_COLLAPSED_KEY = "altrium-pulse:sidebar-collapsed";
+
 
 /*Sidebar component
 
@@ -137,12 +140,31 @@ function Sidebar({ role, activeItem, onNavigate, onSignOut, profileData }) {
   const menuGroups = MENUS[role] || [];
   const roleLabel = ROLE_LABELS[role] || "Team member";
   const displayName = profileData?.name || roleLabel;
+  const [isCollapsed, setIsCollapsed] = useState(
+    () => window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true",
+  );
+
+  const toggleSidebar = () => {
+    setIsCollapsed((currentValue) => {
+      const nextValue = !currentValue;
+      window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(nextValue));
+      return nextValue;
+    });
+  };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${isCollapsed ? " collapsed" : ""}`}>
       <div className="sidebar-brand">
         <img src={altriumLogo} alt="Altrium Pulse" />
-        <span className="sidebar-brand-chevron" aria-hidden="true">‹</span>
+        <button
+          type="button"
+          className="sidebar-brand-chevron"
+          onClick={toggleSidebar}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+        </button>
       </div>
 
       <nav className="sidebar-menu" aria-label="Workspace navigation">
@@ -162,6 +184,7 @@ function Sidebar({ role, activeItem, onNavigate, onSignOut, profileData }) {
                     className={`sidebar-item${isActive ? " active" : ""}`}
                     onClick={() => onNavigate?.(item.key)}
                     aria-current={isActive ? "page" : undefined}
+                    title={isCollapsed ? item.label : undefined}
                   >
                     <span className="sidebar-icon">{ICONS[item.icon]}</span>
                     <span className="sidebar-label">{item.label}</span>
