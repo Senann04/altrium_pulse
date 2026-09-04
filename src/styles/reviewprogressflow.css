@@ -27,13 +27,13 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: conic-gradient(#f8b50d 0deg 90deg, transparent 90deg 360deg);
+  background: conic-gradient(#fcb400 0deg 90deg, transparent 90deg 360deg);
   z-index: -1;
 }
 
 .review-flow-center-label {
   color: #111111;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 15px;
   font-weight: 600;
   padding: 0 0.5rem;
@@ -44,7 +44,7 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: #f8b50d;
+  background: #fcb400;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,7 +57,7 @@
 
 .review-flow-stage-label {
   color: #111111;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
   line-height: 1.1;
@@ -69,7 +69,7 @@
   border-radius: 999px;
   padding: 0.1rem 0.5rem;
   font-size: 8px;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   margin-top: 0.25rem;
 }
 

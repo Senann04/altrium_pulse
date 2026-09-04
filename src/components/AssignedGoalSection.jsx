@@ -1,60 +1,22 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AssignedGoalCard from "./AssignedGoalCard";
 import GoalAssignmentModal from "./GoalAssignmentModal";
+import {
+  completeDevelopmentPlan,
+  createDevelopmentPlan,
+  loadAssignedDevelopmentPlans,
+  loadPeopleDirectory,
+  updateDevelopmentPlan,
+} from "../services/workflowService";
 import "../styles/assignedgoalsection.css";
 
-/*Temporary prototype data until Supabase provides real PDP/PIP goal
- records and a real employee directory. Kept in this one file and passed down as props so nothing else duplicates it.*/
-const employeeDirectory = [
-  { id: "EM1842", name: "Tharindu Perera", team: "Engineering" },
-  { id: "EM2011", name: "Nadeesha Fernando", team: "Engineering" },
-  { id: "EM1503", name: "Kasun Silva", team: "Design" },
-  { id: "EM1770", name: "Amaya Perera", team: "Marketing" },
-];
-
-const initialGoalsByType = {
-  PDP: [
-    {
-      id: "pdp-1",
-      type: "PDP",
-      team: "Engineering",
-      employeeName: "Tharindu Perera",
-      employeeId: "EM1842",
-      goal: "Complete advanced React certification and lead one project.",
-      status: "In Progress",
-      progress: 40,
-      /* action item/completed pair mirrors the shape Supabase PDP/PIP
-      action_items will eventually use (description + completed), so
-      multiple assigned items can later feed the completed/total * 100
-      formula used by GoalProgressCard.*/
-      actionItem: "Finish certification module 3",
-      actionItemCompleted: false,
-      evidence: "",
-    },
-  ],
-  PIP: [
-    {
-      id: "pip-1",
-      type: "PIP",
-      team: "Design",
-      employeeName: "Kasun Silva",
-      employeeId: "EM1503",
-      goal: "Meet all sprint delivery deadlines for the current quarter.",
-      status: "In Progress",
-      progress: 25,
-      actionItem: "Submit weekly progress report",
-      actionItemCompleted: false,
-      evidence: "",
-    },
-  ],
-};
-
-/*Reusable for both "ASSIGNED PDP GOALS" and "ASSIGNED PIP GOALS" — type
-and title are passed in as props, no internal PDP/PIP branching.*/
 function AssignedGoalSection({ type, title }) {
-  const [goals, setGoals] = useState(initialGoalsByType[type] || []);
+  const [goals, setGoals] = useState([]);
+  const [employeeDirectory, setEmployeeDirectory] = useState([]);
   const [teamFilter, setTeamFilter] = useState("All Teams");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const teams = ["All Teams", ...new Set(employeeDirectory.map((e) => e.team))];
 
@@ -62,33 +24,59 @@ function AssignedGoalSection({ type, title }) {
   const visibleGoals =
     teamFilter === "All Teams" ? goals : goals.filter((g) => g.team === teamFilter);
 
-  /* Where a newly assigned goal is added to the visible list. This is the
-  seam a future Supabase insert will replace (insert, then update/refetch). */
-  const handleAssign = (newGoal) => {
-    setGoals([{ ...newGoal, id: `${type.toLowerCase()}-${Date.now()}`, type }, ...goals]);
+  const refresh = useCallback(async () => {
+    setError("");
+    try {
+      const [directory, assignedGoals] = await Promise.all([
+        loadPeopleDirectory({ includeSupervisors: false, managedOnly: true }),
+        loadAssignedDevelopmentPlans(type),
+      ]);
+      setEmployeeDirectory(directory);
+      setGoals(assignedGoals);
+    } catch (loadError) {
+      setError(loadError.message || `Unable to load ${type} goals.`);
+    } finally {
+      setLoading(false);
+    }
+  }, [type]);
+
+  useEffect(() => {
+    const initialLoad = window.setTimeout(refresh, 0);
+    return () => window.clearTimeout(initialLoad);
+  }, [refresh]);
+
+  const handleAssign = async (newGoal) => {
+    await createDevelopmentPlan(type, newGoal);
+    await refresh();
     setTeamFilter("All Teams");
     setIsModalOpen(false);
   };
 
-  const handleUpdate = (goalId, updatedFields) => {
-    setGoals(goals.map((g) => (g.id === goalId ? { ...g, ...updatedFields } : g)));
+  const handleUpdate = async (goalId, updatedFields) => {
+    await updateDevelopmentPlan(goalId, updatedFields);
+    await refresh();
   };
 
-  const handleDone = (goalId) => {
-    setGoals(goals.map((g) => (g.id === goalId ? { ...g, status: "Completed" } : g)));
+  const handleDone = async (goalId) => {
+    await completeDevelopmentPlan(goalId);
+    await refresh();
   };
 
   return (
-    <section className="assigned-goal-section">
+    <section className={`assigned-goal-section assigned-goal-section-${type.toLowerCase()}`}>
       <div className="assigned-goal-section-header">
-        <h2 className="assigned-goal-section-title">{title}</h2>
+        <div>
+          <span className="assigned-goal-section-kicker">{type} plan</span>
+          <h2 className="assigned-goal-section-title">{title}</h2>
+        </div>
         <button
           type="button"
           className="assigned-goal-add-button"
           onClick={() => setIsModalOpen(true)}
           aria-label={`Assign new ${type} goal`}
         >
-          +
+          <span aria-hidden="true">+</span>
+          Assign {type}
         </button>
       </div>
 
@@ -109,6 +97,11 @@ function AssignedGoalSection({ type, title }) {
       </div>
 
       <div className="assigned-goal-card-list">
+        {loading && <p className="hr-admin-state">Loading assigned {type} goals…</p>}
+        {error && <p className="hr-admin-state is-error" role="alert">{error}</p>}
+        {!loading && !error && !visibleGoals.length && (
+          <p className="hr-admin-state">No {type} goals are assigned within your business unit.</p>
+        )}
         {visibleGoals.map((goal) => (
           <AssignedGoalCard
             key={goal.id}

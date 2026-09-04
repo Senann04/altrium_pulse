@@ -5,20 +5,40 @@ import EmployeeMyFeedback from "./pages/EmployeeMyFeedback";
 import EmployeeMyProgress from "./pages/EmployeeMyProgress";
 import EmployeeMyCurrentReview from "./pages/EmployeeMycurrentReview";
 import EmployeeProfile from "./pages/EmployeeProfile";
+import {
+  EmployeeCalendar,
+  EmployeePerformanceHistory,
+  EmployeeProjects,
+  HRBPProjects,
+  SupervisorCalendar,
+  SupervisorPerformanceHistory,
+  SupervisorProjects,
+} from "./pages/EmployeeWorkspacePages";
 import HRBPDashboard from "./pages/HRBPDashboard";
 import HRBPProfile from "./pages/HRBPProfile";
 import HRReviewCycle from "./pages/HRReviewCycle";
 import ImmediateSupervisorDashboard from "./pages/ImmediateSupervisorDashboard";
-import ImmediateSupervisorFeedback from "./pages/ImmediateSupervisorFeedback";
+import ImmediateSupervisorFeedback, { HRBPFeedback } from "./pages/ImmediateSupervisorFeedback";
 import ImmediateSupervisorMyCurrentReview from "./pages/ImmediateSupervisorMyCurrentReview";
 import ImmediateSupervisorMyProgress from "./pages/ImmediateSupervisorMyProgress";
 import ImmediateSupervisorProfile from "./pages/ImmediateSupervisorProfile";
 import LeadershipDashboard from "./pages/LeadershipDashboard";
 import LeadershipProfile from "./pages/LeadershipProfile";
+import {
+  LeadershipCalendar,
+  LeadershipFeedback,
+  LeadershipProjects,
+} from "./pages/LeadershipWorkspacePages";
 import Login from "./pages/Login";
 import MyTeam from "./pages/MyTeam";
+import logo from "./assets/altriumlogo.svg";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import { loadProfileView } from "./services/profileAdapter";
+import "./styles/statusscreen.css";
+
+const REMEMBER_KEY = "altrium-pulse:remember-me";
+const SESSION_KEY = "altrium-pulse:session-active";
+const ACTIVE_PAGE_KEY = "altrium-pulse:active-page";
 
 const rolePages = {
   employee: {
@@ -26,59 +46,54 @@ const rolePages = {
     "current-review": EmployeeMyCurrentReview,
     feedback: EmployeeMyFeedback,
     progress: EmployeeMyProgress,
+    projects: EmployeeProjects,
+    history: EmployeePerformanceHistory,
+    calendar: EmployeeCalendar,
     profile: EmployeeProfile,
   },
   supervisor: {
     dashboard: ImmediateSupervisorDashboard,
     "current-review": ImmediateSupervisorMyCurrentReview,
     feedback: ImmediateSupervisorFeedback,
+    projects: SupervisorProjects,
     progress: ImmediateSupervisorMyProgress,
     team: MyTeam,
+    history: SupervisorPerformanceHistory,
+    calendar: SupervisorCalendar,
     profile: ImmediateSupervisorProfile,
   },
   hr_partner: {
     dashboard: HRBPDashboard,
     "review-cycle": HRReviewCycle,
+    feedback: HRBPFeedback,
+    projects: HRBPProjects,
     "assign-goals": AssignGoals,
     profile: HRBPProfile,
   },
   senior_management: {
     dashboard: LeadershipDashboard,
+    feedback: LeadershipFeedback,
+    projects: LeadershipProjects,
+    calendar: LeadershipCalendar,
     profile: LeadershipProfile,
   },
 };
 
 function StatusScreen({ message, onSignOut }) {
+  const isLoading = !onSignOut;
+
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "grid",
-        placeItems: "center",
-        background: "#111111",
-        color: "#ffffff",
-        fontFamily: '"Inria Sans", sans-serif',
-        padding: "2rem",
-        textAlign: "center",
-      }}
-    >
-      <div>
+    <div className="status-screen">
+      <div className={`status-card${isLoading ? " status-card-loading" : " status-card-message"}`}>
+        <img src={logo} alt="Altrium Pulse" className="status-logo" />
         <p>{message}</p>
+        {isLoading && (
+          <div className="status-progress" aria-hidden="true">
+            <span />
+          </div>
+        )}
         {onSignOut && (
-          <button
-            type="button"
-            onClick={onSignOut}
-            style={{
-              marginTop: "1rem",
-              border: 0,
-              borderRadius: "999px",
-              padding: "0.65rem 1.4rem",
-              background: "#f8b50d",
-              color: "#111111",
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
-          >
+          <button type="button" onClick={onSignOut}>
             Sign Out
           </button>
         )}
@@ -90,12 +105,23 @@ function StatusScreen({ message, onSignOut }) {
 function App() {
   const [claims, setClaims] = useState(null);
   const [profileView, setProfileView] = useState(null);
-  const [activePage, setActivePage] = useState("dashboard");
+  const [activePage, setActivePage] = useState(
+    () => window.sessionStorage.getItem(ACTIVE_PAGE_KEY) || "dashboard",
+  );
   const [loading, setLoading] = useState(isSupabaseConfigured);
   const [error, setError] = useState("");
 
-  const refreshClaims = useCallback(async () => {
+  const refreshClaims = useCallback(async ({ enforceRememberPreference = false } = {}) => {
     if (!supabase) {
+      setClaims(null);
+      setLoading(false);
+      return;
+    }
+
+    const rememberPreference = window.localStorage.getItem(REMEMBER_KEY);
+    const activeTabSession = window.sessionStorage.getItem(SESSION_KEY);
+    if (enforceRememberPreference && rememberPreference === "false" && !activeTabSession) {
+      await supabase.auth.signOut();
       setClaims(null);
       setLoading(false);
       return;
@@ -108,7 +134,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const initialRefresh = window.setTimeout(refreshClaims, 0);
+    const initialRefresh = window.setTimeout(
+      () => refreshClaims({ enforceRememberPreference: true }),
+      0,
+    );
     if (!supabase) {
       return () => window.clearTimeout(initialRefresh);
     }
@@ -139,7 +168,10 @@ function App() {
         const view = await loadProfileView(claims.sub);
         if (mounted) {
           setProfileView(view);
-          setActivePage("dashboard");
+          const savedPage = window.sessionStorage.getItem(ACTIVE_PAGE_KEY) || "dashboard";
+          const nextPage = rolePages[view.role]?.[savedPage] ? savedPage : "dashboard";
+          setActivePage(nextPage);
+          window.sessionStorage.setItem(ACTIVE_PAGE_KEY, nextPage);
           setError("");
         }
       } catch (profileError) {
@@ -158,19 +190,25 @@ function App() {
     };
   }, [claims?.sub]);
 
-  const handleLogin = async ({ username, password }) => {
+  const handleLogin = async ({ username, password, rememberMe }) => {
     if (!supabase) {
       throw new Error(
         "Supabase is not configured. Add the project URL and publishable key to the Vercel environment.",
       );
     }
 
+    window.localStorage.setItem(REMEMBER_KEY, rememberMe ? "true" : "false");
+    window.sessionStorage.setItem(SESSION_KEY, "true");
+
     const { error: loginError } = await supabase.auth.signInWithPassword({
       email: username.trim(),
       password,
     });
 
-    if (loginError) throw loginError;
+    if (loginError) {
+      window.sessionStorage.removeItem(SESSION_KEY);
+      throw loginError;
+    }
   };
 
   const handleSignOut = async () => {
@@ -180,6 +218,9 @@ function App() {
       setError(signOutError.message);
       return;
     }
+    window.localStorage.removeItem(REMEMBER_KEY);
+    window.sessionStorage.removeItem(SESSION_KEY);
+    window.sessionStorage.removeItem(ACTIVE_PAGE_KEY);
     setActivePage("dashboard");
   };
 
@@ -205,7 +246,10 @@ function App() {
 
   const Page = pages[activePage] || pages.dashboard;
   const handleNavigate = (pageKey) => {
-    if (pages[pageKey]) setActivePage(pageKey);
+    if (pages[pageKey]) {
+      setActivePage(pageKey);
+      window.sessionStorage.setItem(ACTIVE_PAGE_KEY, pageKey);
+    }
   };
 
   return (

@@ -1,6 +1,6 @@
 .hrmgmt-review-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.5rem;
   width: 100%;
@@ -11,12 +11,12 @@
 }
 
 .hrmgmt-review-title-pill {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px;
   text-align: center;
   padding: 0.6rem;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -29,7 +29,7 @@
   border: none;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   margin-bottom: 1rem;
 }
@@ -50,7 +50,7 @@
 .hrmgmt-review-category-label {
   flex: 1;
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
 }
 
@@ -69,7 +69,7 @@
 }
 
 .hrmgmt-review-star.filled {
-  color: #f8b50d;
+  color: #fcb400;
 }
 
 .hrmgmt-review-rating-pill {
@@ -87,7 +87,7 @@
 
 .hrmgmt-review-question label {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 0.4rem;
@@ -100,7 +100,7 @@
   padding: 0.6rem;
   min-height: 70px;
   resize: vertical;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   color: #111111;
   box-sizing: border-box;
@@ -108,14 +108,14 @@
 
 .hrmgmt-review-error {
   color: #ff6b6b;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
   margin: 0 0 0.75rem 0;
 }
 
 .hrmgmt-review-success {
-  color: #f8b50d;
-  font-family: "Inria Sans", sans-serif;
+  color: #fcb400;
+  font-family: inherit;
   font-size: 14px;
   text-align: center;
 }
@@ -126,13 +126,19 @@
 }
 
 .hrmgmt-review-submit-button {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;
   padding: 0.5rem 1.5rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.hrmgmt-review-submit-button:disabled,
+.hrmgmt-review-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }

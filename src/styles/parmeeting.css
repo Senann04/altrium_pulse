@@ -1,6 +1,6 @@
 .par-meeting-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.25rem 1.5rem;
   box-sizing: border-box;
@@ -16,18 +16,18 @@
 
 .par-meeting-header h2 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 20px;
   font-weight: 400;
   margin: 0;
 }
 
 .par-meeting-status-pill {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px;
   padding: 0.35rem 1.25rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 700;
 }
@@ -42,7 +42,7 @@
   border: none;
   border-radius: 999px;
   padding: 0.5rem 1rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   margin-bottom: 0.6rem;
   cursor: pointer;
@@ -55,6 +55,13 @@
 
 .par-meeting-row:disabled {
   cursor: default;
+}
+
+.par-meeting-error {
+  margin: 0.5rem 0 0;
+  color: #ff7f7f;
+  font-family: inherit;
+  font-size: 0.78rem;
 }
 
 .par-meeting-icon {

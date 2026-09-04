@@ -2,12 +2,19 @@ import "../styles/employeedevelopmentgoalcard.css";
 
 /* now clickable so the employee can open the proof-submission panel for this goal */
 function EmployeeDevelopmentGoalCard({ goal, onClick }) {
+  const statusKey = goal.status.toLowerCase().replace(/\s+/g, "-");
+
   return (
-    <div className="dev-goal-card" onClick={() => onClick && onClick(goal)} style={{ cursor: "pointer" }}>
+    <button
+      className={`dev-goal-card dev-goal-card-${statusKey}`}
+      type="button"
+      onClick={() => onClick?.(goal)}
+      aria-label={`Open goal: ${goal.title}`}
+    >
       <div className="dev-goal-inner">
         <div className="dev-goal-header">
           <span className="dev-goal-title">{goal.title}</span>
-          <span className="dev-goal-status-badge">{goal.status}</span>
+          <span className={`dev-goal-status-badge dev-goal-status-${statusKey}`}>{goal.status}</span>
         </div>
 
         <div className="dev-goal-dates">
@@ -24,7 +31,7 @@ function EmployeeDevelopmentGoalCard({ goal, onClick }) {
           </span>
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 

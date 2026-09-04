@@ -1,65 +1,60 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
 import AssignedGoalRow from "../components/AssignedGoalRow.jsx";
-import EmployeeDevelopmentGoals, { employeeDevelopmentPlans } from "../components/EmployeeDevelopmentGoals.jsx";
+import EmployeeDevelopmentGoals from "../components/EmployeeDevelopmentGoals.jsx";
 import GoalEvidenceSubmission from "../components/GoalEvidenceSubmission.jsx";
-import { getAssignedTimeGoals, subscribeToAssignedTimeGoals } from "../services/assignedTimeGoalsStorage.js";
+import WorkspaceHeading from "../components/WorkspaceHeading";
+import { submitGoalEvidence } from "../services/goalEvidenceService.js";
 import "../styles/employeemyprogress.css";
 
-/* temporary current-user identity until Supabase Auth/profile is connected */
-const currentEmployee = { id: "EM00145", name: "S. Supun Kalhara" };
-
-function EmployeeMyProgress({ onNavigate }) {
-  const [timeGoals, setTimeGoals] = useState(getAssignedTimeGoals());
-  /* local PDP/PIP state so clicking a goal can update its progress */
-  const [pdpGoals, setPdpGoals] = useState(employeeDevelopmentPlans.PDP);
-  const [pipGoals, setPipGoals] = useState(employeeDevelopmentPlans.PIP);
+function EmployeeMyProgress({ onNavigate, onSignOut, profileData }) {
   const [selectedGoal, setSelectedGoal] = useState(null);
 
-  useEffect(() => {
-    return subscribeToAssignedTimeGoals(() => setTimeGoals(getAssignedTimeGoals()));
-  }, []);
+  const timeGoals = profileData?.goals || [];
+  const plans = profileData?.developmentPlans || [];
+  const weekly = timeGoals.filter((goal) => goal.period === "Weekly");
+  const monthly = timeGoals.filter((goal) => goal.period === "Monthly");
+  const yearly = timeGoals.filter((goal) => goal.period === "Yearly");
+  const pdpGoals = plans.filter((goal) => goal.type === "PDP");
+  const pipGoals = plans.filter((goal) => goal.type === "PIP");
 
-  const mine = timeGoals.filter(
-    (g) => g.targetRole === "employee" && g.targetUserId === currentEmployee.id
-  );
-  const weekly = mine.filter((g) => g.period === "Weekly");
-  const monthly = mine.filter((g) => g.period === "Monthly");
-  const yearly = mine.filter((g) => g.period === "Yearly");
-
-  /* marks the submitted goal completed — average/completed counts recalc automatically */
-  const handleEvidenceSubmitted = (goalId) => {
-    const markComplete = (goals) =>
-      goals.map((g) => (g.id === goalId ? { ...g, status: "Completed", progress: 100 } : g));
-
-    setPdpGoals((prev) => markComplete(prev));
-    setPipGoals((prev) => markComplete(prev));
+  const handleEvidenceSubmitted = async (goalId, files) => {
+    await submitGoalEvidence({
+      planId: goalId,
+      actionItemFile: files.actionItemFile,
+      evidenceFile: files.evidenceFile,
+    });
   };
 
   return (
     <div className="employee-progress-layout">
-      <Sidebar role="employee" activeItem="progress" onNavigate={onNavigate} />
+      <Sidebar role="employee" activeItem="progress" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="employee-progress-main">
-        <Header />
+        <Header title="My Progress" profileData={profileData} />
 
-        <div className="employee-progress-heading-card">
-          <h1>My Progress</h1>
-        </div>
+        <WorkspaceHeading
+          eyebrow="Goals and development"
+          title="My Progress"
+          description="Track short-term priorities and keep your development plans moving."
+        />
 
         <div className="employee-progress-time-columns">
           <div className="employee-progress-time-column">
             <div className="employee-progress-time-title">Weekly</div>
-            {weekly.map((g) => <AssignedGoalRow key={g.id} goal={g} />)}
+            {!weekly.length && <p className="employee-progress-empty">No weekly goals assigned.</p>}
+            {weekly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} />)}
           </div>
           <div className="employee-progress-time-column">
             <div className="employee-progress-time-title">Monthly</div>
-            {monthly.map((g) => <AssignedGoalRow key={g.id} goal={g} />)}
+            {!monthly.length && <p className="employee-progress-empty">No monthly goals assigned.</p>}
+            {monthly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} />)}
           </div>
           <div className="employee-progress-time-column">
             <div className="employee-progress-time-title">Yearly</div>
-            {yearly.map((g) => <AssignedGoalRow key={g.id} goal={g} />)}
+            {!yearly.length && <p className="employee-progress-empty">No yearly goals assigned.</p>}
+            {yearly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} />)}
           </div>
         </div>
 

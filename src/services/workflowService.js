@@ -73,16 +73,30 @@ function mapAssignedPlan(row) {
   };
 }
 
-export async function loadPeopleDirectory({ includeSupervisors = true } = {}) {
+export async function loadPeopleDirectory({ includeSupervisors = true, managedOnly = false } = {}) {
   const client = requireSupabase();
+  const user = managedOnly ? await requireCurrentUser() : null;
   let query = client
     .from("profiles")
-    .select("id, employee_number, full_name, role, department:departments(name)")
+    .select("id, employee_number, full_name, role, manager_id, hr_partner_id, department:departments(name)")
     .eq("is_active", true)
     .order("full_name");
 
   if (!includeSupervisors) query = query.eq("role", "employee");
   else query = query.in("role", ["employee", "supervisor"]);
+
+  if (managedOnly) {
+    const { data: managerProfile, error: managerError } = await client
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    if (managerError) throw managerError;
+
+    if (managerProfile.role === "hr_partner") query = query.eq("hr_partner_id", user.id);
+    else if (managerProfile.role === "supervisor") query = query.eq("manager_id", user.id);
+    else if (managerProfile.role !== "senior_management") query = query.eq("id", user.id);
+  }
 
   const { data, error } = await query;
   if (error) throw error;
@@ -464,6 +478,128 @@ export async function loadReviewProgress(reviewId) {
   else query = query.or(`employee_id.eq.${user.id},supervisor_id.eq.${user.id},hr_partner_id.eq.${user.id}`);
 
   const { data, error } = await query.maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+const reviewStatusLabels = {
+  not_started: "Not started",
+  self_review: "Self assessment",
+  peer_feedback: "Peer feedback",
+  supervisor_review: "Supervisor review",
+  hr_review: "HR review",
+  completed: "Completed",
+  reopened: "Reopened",
+};
+
+export async function loadHrReviewOperations() {
+  const client = requireSupabase();
+  const user = await requireCurrentUser();
+
+  const [reviewsResult, requestsResult, directory] = await Promise.all([
+    client
+      .from("reviews")
+      .select(`
+        id,
+        status,
+        due_date,
+        cycle:review_cycles(id, name, status, start_date, end_date),
+        employee:profiles!reviews_employee_id_fkey(
+          id,
+          employee_number,
+          full_name,
+          department_id,
+          department:departments(name)
+        )
+      `)
+      .eq("hr_partner_id", user.id)
+      .order("created_at", { ascending: false }),
+    client
+      .from("feedback_requests")
+      .select(`
+        id,
+        review_id,
+        reviewer_id,
+        feedback_type,
+        status,
+        due_date,
+        reviewer:profiles!feedback_requests_reviewer_id_fkey(id, employee_number, full_name)
+      `)
+      .eq("feedback_type", "peer")
+      .order("created_at", { ascending: false }),
+    loadPeopleDirectory({ includeSupervisors: false, managedOnly: true }),
+  ]);
+
+  if (reviewsResult.error) throw reviewsResult.error;
+  if (requestsResult.error) throw requestsResult.error;
+
+  const reviews = reviewsResult.data || [];
+  const reviewIds = new Set(reviews.map((review) => review.id));
+  const requests = (requestsResult.data || []).filter((request) => reviewIds.has(request.review_id));
+
+  return reviews
+    .map((review) => {
+      const cycle = firstRelation(review.cycle);
+      const employee = firstRelation(review.employee);
+      const department = firstRelation(employee?.department);
+      const peerRequests = requests
+        .filter((request) => request.review_id === review.id)
+        .map((request) => {
+          const reviewer = firstRelation(request.reviewer);
+          return {
+            id: request.id,
+            reviewerId: request.reviewer_id,
+            reviewerName: reviewer?.full_name || "Assigned reviewer",
+            reviewerNumber: reviewer?.employee_number || "",
+            status: request.status,
+            dueDate: request.due_date,
+          };
+        });
+
+      return {
+        id: review.id,
+        employeeId: employee?.id || "",
+        employeeNumber: employee?.employee_number || "",
+        employeeName: employee?.full_name || "Employee",
+        team: department?.name || "Unassigned",
+        cycleName: cycle?.name || "Review cycle",
+        cycleStatus: cycle?.status || "draft",
+        cycleStartDate: cycle?.start_date || "",
+        cycleEndDate: cycle?.end_date || "",
+        status: reviewStatusLabels[review.status] || review.status,
+        statusKey: review.status,
+        dueDate: review.due_date,
+        peerRequests,
+        reviewerOptions: directory.filter((person) => person.userId !== employee?.id),
+      };
+    })
+    .sort((left, right) => {
+      const leftActive = left.cycleStatus === "active" ? 0 : 1;
+      const rightActive = right.cycleStatus === "active" ? 0 : 1;
+      return leftActive - rightActive || left.employeeName.localeCompare(right.employeeName);
+    });
+}
+
+export async function assignPeerReviewer(reviewId, reviewerId, dueDate = null) {
+  const client = requireSupabase();
+  const user = await requireCurrentUser();
+  if (!reviewId || !reviewerId) throw new Error("Select an employee and peer reviewer first.");
+
+  const { data, error } = await client
+    .from("feedback_requests")
+    .upsert({
+      review_id: reviewId,
+      reviewer_id: reviewerId,
+      feedback_type: "peer",
+      visibility: "management_only",
+      status: "pending",
+      due_date: dueDate || null,
+      assigned_by: user.id,
+      responded_at: null,
+    }, { onConflict: "review_id,reviewer_id,feedback_type" })
+    .select("id, review_id, reviewer_id, status, due_date")
+    .single();
+
   if (error) throw error;
   return data;
 }

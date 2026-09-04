@@ -1,109 +1,155 @@
-/*header container
-   Full-width row: logo on the left, notification/time/
-   date cluster on the right. Sits beside the Sidebar
-   (placed as a sibling in the layout, not here).*/
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #111111;
-  padding: 1.25rem 2rem;
-  box-sizing: border-box;
+  gap: 24px;
   width: 100%;
+  min-height: 88px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--ap-line);
 }
 
- /*logo*/
-    
-.header-logo {
-  height: 44px;
-  width: auto;
+.header-context { min-width: 0; }
+.header-kicker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ap-gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-/*right-side cluster: notification, time pill, date*/
-.header-right {
+.header-context h1 {
+  overflow: hidden;
+  margin: 0;
+  color: var(--ap-text);
+  font-size: clamp(19px, 2vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-right { display: flex; align-items: center; gap: 10px; }
+.header-status {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 8px;
+  margin-right: 8px;
+  color: #767982;
+  font-size: 11px;
 }
 
-/*notification circle
-   Small gold circle with bell icon.*/
-.notification-circle {
-  width: 34px;
-  height: 34px;
+.header-status > span {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #f8b50d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  background: var(--ap-success);
+  box-shadow: 0 0 0 4px rgba(103, 211, 145, 0.09);
 }
 
-/*time pill
-   Gold rounded pill with clock icon + time text.*/
+.time-pill,
+.date-chip,
+.notification-button {
+  position: relative;
+  border: 1px solid var(--ap-line);
+  color: #c9cbd0;
+  background: var(--ap-surface);
+}
+
 .time-pill {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: #b8860b;
-  border-radius: 999px;
-  padding: 0.5rem 1.1rem;
-  color: #111111;
-  font-family: "Inria Sans", sans-serif;
-  font-size: 16px;
+  gap: 8px;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 12px;
   font-weight: 600;
 }
 
-/*date circle
-   Large gold circle: calendar icon, big day number,
-   month/year, weekday — stacked and centered.*/
-.date-circle {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: #b8860b;
+.time-pill svg,
+.notification-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.notification-button {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  place-items: center;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.notification-button:hover { border-color: rgba(252, 180, 0,.3); color: var(--ap-gold); background: var(--ap-gold-soft); }
+.notification-button.is-open { border-color: rgba(252, 180, 0,.32); color: var(--ap-gold); background: var(--ap-gold-soft); }
+.notification-area { position: relative; }
+.notification-count { position: absolute; top: -5px; right: -5px; display: grid; min-width: 18px; height: 18px; padding: 0 4px; place-items: center; border: 2px solid var(--ap-bg); border-radius: 999px; color: #111; background: var(--ap-gold); font-size: 9px; font-weight: 800; }
+.notification-panel { position: absolute; z-index: 40; top: calc(100% + 12px); right: 0; width: min(380px, calc(100vw - 28px)); overflow: hidden; border: 1px solid var(--ap-line); border-radius: 18px; background: #15171c; box-shadow: 0 24px 70px rgba(0,0,0,.45); }
+.notification-panel-heading { display: flex; padding: 18px 20px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--ap-line); background: linear-gradient(120deg, rgba(252,180,0,.08), transparent 55%); }
+.notification-panel-heading > div { display: flex; flex-direction: column; gap: 3px; }
+.notification-panel-heading span { color: var(--ap-gold); font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.notification-panel-heading strong { color: var(--ap-text); font-size: 17px; }
+.notification-panel-heading small { padding: 6px 8px; border: 1px solid var(--ap-line); border-radius: 8px; color: var(--ap-text-soft); font-size: 10px; }
+.notification-list { max-height: 390px; overflow-y: auto; padding: 6px; }
+.notification-item { display: flex; padding: 13px; gap: 11px; border-radius: 12px; }
+.notification-item + .notification-item { border-top: 1px solid rgba(255,255,255,.045); }
+.notification-item.is-unread { background: rgba(252,180,0,.035); }
+.notification-item-icon { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border: 1px solid var(--ap-line); border-radius: 9px; color: var(--ap-text-soft); background: #0d0f13; }
+.notification-item.is-unread .notification-item-icon { border-color: rgba(252,180,0,.22); color: var(--ap-gold); background: var(--ap-gold-soft); }
+.notification-item-icon svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 1.8; }
+.notification-item > div { min-width: 0; }
+.notification-item strong { display: block; margin-bottom: 4px; color: var(--ap-text); font-size: 12px; }
+.notification-item p { margin: 0 0 6px; color: var(--ap-text-soft); font-size: 11px; line-height: 1.45; }
+.notification-item small { color: var(--ap-text-faint); font-size: 9px; }
+.notification-empty { margin: 0; padding: 26px 18px; color: var(--ap-text-soft); font-size: 12px; text-align: center; }
+.date-chip {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  color: #111111;
-  font-family: "Inria Sans", sans-serif;
-  flex-shrink: 0;
+  gap: 10px;
+  height: 48px;
+  padding: 0 12px 0 8px;
+  border-radius: 14px;
 }
 
-.date-day {
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1;
-  margin-top: 2px;
+.date-chip-day {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid rgba(252, 180, 0, .32);
+  border-radius: 9px;
+  color: var(--ap-gold-strong);
+  background: rgba(252, 180, 0, .075);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
 }
 
-.date-month {
-  font-size: 10px;
-  line-height: 1.2;
+.date-chip > span:last-child { display: flex; flex-direction: column; line-height: 1.2; }
+.date-chip strong { color: #d8d9dd; font-size: 11px; }
+.date-chip small { color: #696c74; font-size: 9px; }
+
+@media (max-width: 1100px) {
+  .header-status { display: none; }
 }
 
-.date-weekday {
-  font-size: 10px;
-  line-height: 1.2;
-}
-
-/*responsive adjustments*/
-@media (max-width: 900px) {
-  .header {
-    padding: 1rem;
-  }
-
-  .header-right {
-    gap: 0.75rem;
-  }
-
-  .date-circle {
-    width: 80px;
-    height: 80px;
-  }
-
-  .date-day {
-    font-size: 22px;
-  }
+@media (max-width: 640px) {
+  .header { min-height: 76px; padding: 16px 0; }
+  .header-kicker { display: none; }
+  .header-context h1 { max-width: 175px; font-size: 18px; }
+  .time-pill { display: none; }
+  .date-chip { height: 42px; padding-right: 8px; }
+  .date-chip-day { width: 29px; height: 29px; }
+  .date-chip > span:last-child { display: none; }
 }

@@ -1,37 +1,69 @@
 import "../styles/reviewcyclecard.css";
+import { TrashIcon } from "./InterfaceIcons";
 /* Reusable for both HRBP and Leadership — the `cycle` prop contains all the data needed to render 
 the card, so this component never needs to know which dashboard it's rendering on. */
 function ReviewCycleCard({ cycle, onDelete }) {
   return (
-    <div className="review-cycle-card">
-      <div className="review-cycle-name-pill">{cycle.name}</div>
+    <article className="review-cycle-card">
+      <header className="review-cycle-card-header">
+        <div>
+          <span>Review cycle</span>
+          <h3 className="review-cycle-name-pill">{cycle.name}</h3>
+        </div>
+        <span className={`review-cycle-active-label${cycle.active ? " is-active" : ""}`}>
+          <i aria-hidden="true" />
+          {cycle.active ? "Active" : "Inactive"}
+        </span>
+      </header>
 
-      <div className="review-cycle-description">{cycle.description}</div>
+      <p className="review-cycle-description">{cycle.description}</p>
 
-      <div className="review-cycle-row">
-        <div className="review-cycle-field-box">{cycle.startDate}</div>
-        <div className="review-cycle-field-box">{cycle.endDate}</div>
-      </div>
+      <div className="review-cycle-details-grid">
+        <div className="review-cycle-window">
+          <div className="review-cycle-window-heading">
+            <span>Cycle window</span>
+            <small>Scheduled review period</small>
+          </div>
+          <div className="review-cycle-window-dates">
+            <div>
+              <span>Opens</span>
+              <strong>{cycle.startDate}</strong>
+            </div>
+            <div className="review-cycle-window-line" aria-hidden="true">
+              <i />
+            </div>
+            <div>
+              <span>Closes</span>
+              <strong>{cycle.endDate}</strong>
+            </div>
+          </div>
+        </div>
 
-      <div className="review-cycle-row">
-        <div className="review-cycle-field-box">{cycle.status}</div>
-        <div className="review-cycle-field-box">{cycle.reviewType}</div>
+        <div className="review-cycle-metadata">
+          <div className="review-cycle-field-box review-cycle-field-status">
+            <span>Current status</span>
+            <strong>{cycle.status}</strong>
+          </div>
+          <div className="review-cycle-field-box review-cycle-field-cadence">
+            <span>Cadence</span>
+            <strong>{cycle.reviewType}</strong>
+          </div>
+        </div>
       </div>
 
       <div className="review-cycle-footer">
-        <span className="review-cycle-active-label">
-          {cycle.active ? "Active" : "Inactive"}
-        </span>
+        <span>Created for organisation-wide performance reviews</span>
         <button
           type="button"
           className="review-cycle-delete-button"
-          onClick={() => onDelete(cycle.id)}
+          onClick={() => onDelete(cycle)}
           aria-label="Delete review cycle"
         >
-          🗑
+          <TrashIcon />
+          <span>Delete</span>
         </button>
       </div>
-    </div>
+    </article>
   );
 }
 

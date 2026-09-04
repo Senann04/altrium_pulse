@@ -15,14 +15,14 @@
 
 .employee-feedback-heading-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.25rem;
 }
 
 .employee-feedback-heading-card h1 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 26px;
   font-weight: 400;
   margin: 0;
@@ -31,12 +31,12 @@
 
 .employee-feedback-subheading {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 999px;
   padding: 0.6rem;
   text-align: center;
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 15px;
 }
 
@@ -59,19 +59,19 @@
 .employee-feedback-improve-card {
   flex: 1;
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 20px;
   padding: 1rem;
   box-sizing: border-box;
 }
 
 .employee-feedback-bottom-title {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px;
   text-align: center;
   padding: 0.6rem;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-weight: 700;
   margin-bottom: 0.75rem;
 }

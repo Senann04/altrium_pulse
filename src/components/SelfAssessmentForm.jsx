@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../styles/feedback.css";
+import { saveSelfAssessment } from "../services/reviewService";
 
 // Five self-assessment questions, in required order.
 const QUESTIONS = [
@@ -11,28 +12,49 @@ const QUESTIONS = [
 ];
 
 // Reused by both Employee and Immediate Supervisor — no role logic here.
-function SelfAssessmentForm() {
-  // Answers keyed by question index. Starts empty — no dummy content.
-  const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(""));
-  const [submitted, setSubmitted] = useState(false);
+function SelfAssessmentForm({ reviewId, initialAnswers, submittedAt }) {
+  const [answers, setAnswers] = useState(initialAnswers || Array(QUESTIONS.length).fill(""));
+  const [submitted, setSubmitted] = useState(Boolean(submittedAt));
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (index, value) => {
     const updated = [...answers];
     updated[index] = value;
     setAnswers(updated);
+    if (error) setError("");
   };
 
-  // Temporary frontend submission handler until Supabase integration is connected.
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Backend developer: replace this with a real Supabase submission using `answers`.
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 2000);
+    if (!reviewId) {
+      setError("No active review is available for this assessment.");
+      return;
+    }
+    if (answers.some((answer) => !answer.trim())) {
+      setSubmitted(false);
+      setError("Please answer all five questions before submitting.");
+      return;
+    }
+
+    setError("");
+    setSubmitting(true);
+    try {
+      await saveSelfAssessment(reviewId, answers, { submit: true });
+      setSubmitted(true);
+    } catch (submissionError) {
+      setError(submissionError.message || "Unable to submit this assessment.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <form className="self-assessment-form" onSubmit={handleSubmit}>
       <div className="feedback-title-pill">Self Assessment</div>
+      {!reviewId && (
+        <p className="feedback-availability-note">No active personal review is assigned to you.</p>
+      )}
 
       {QUESTIONS.map((question, index) => (
         <div className="self-assessment-question" key={index}>
@@ -43,15 +65,17 @@ function SelfAssessmentForm() {
             id={`self-assessment-q${index}`}
             value={answers[index]}
             onChange={(e) => handleChange(index, e.target.value)}
+            placeholder="Write a clear, specific response…"
+            disabled={submitted || !reviewId}
           />
         </div>
       ))}
 
       <div className="self-assessment-submit-row">
-        <button type="submit" className="feedback-submit-button">
-          SUBMIT
+        {error && <span className="feedback-validation-error" role="alert">{error}</span>}
+        <button type="submit" className="feedback-submit-button" disabled={submitted || submitting || !reviewId}>
+          {submitting ? "Submitting…" : submitted ? "Assessment submitted" : "Submit assessment"}
         </button>
-        {submitted && <span className="feedback-submitted-note">Submitted</span>}
       </div>
     </form>
   );

@@ -1,15 +1,10 @@
 import { useState } from "react";
+import { StarIcon } from "./InterfaceIcons";
 import "../styles/employeehrmanagementreview.css";
-
-/* Temporary review targets until HR/Management user data comes from Supabase. */
-const hrManagementReviewTargets = [
-  { id: "HRB1842", name: "R. Thiwen Sandul" },
-  { id: "LMS1842", name: "Senior Leadership" },
-];
 
 const categories = ["Communication", "Reliability", "Professionalism"];
 
-function EmployeeHRManagementReview() {
+function EmployeeHRManagementReview({ reviewTargets = [] }) {
   const [selectedTarget, setSelectedTarget] = useState("");
   /* Temporary category ratings until the backend schema supports these categories. */
   const [categoryRatings, setCategoryRatings] = useState({});
@@ -53,11 +48,13 @@ function EmployeeHRManagementReview() {
 
       <select
         className="hrmgmt-review-select"
+        aria-label="HR or management colleague to review"
         value={selectedTarget}
         onChange={(e) => setSelectedTarget(e.target.value)}
+        disabled={!reviewTargets.length}
       >
-        <option value="" disabled>Review HR and Management!!!!</option>
-        {hrManagementReviewTargets.map((t) => (
+        <option value="" disabled>{reviewTargets.length ? "Select HR or management" : "No HR or management profiles available"}</option>
+        {reviewTargets.map((t) => (
           <option key={t.id} value={t.id}>{t.name}</option>
         ))}
       </select>
@@ -75,12 +72,14 @@ function EmployeeHRManagementReview() {
                     key={star}
                     className={`hrmgmt-review-star${star <= rating ? " filled" : ""}`}
                     onClick={() => handleStarClick(category, star)}
+                    aria-label={`${category}: ${star} stars`}
+                    aria-pressed={star <= rating}
                   >
-                    ★
+                    <StarIcon />
                   </button>
                 ))}
               </div>
-              <span className="hrmgmt-review-rating-pill" />
+              <span className="hrmgmt-review-rating-pill">{rating || "–"}/5</span>
             </div>
           );
         })}
@@ -88,18 +87,18 @@ function EmployeeHRManagementReview() {
 
       <div className="hrmgmt-review-question">
         <label>1. What does this employee do well?</label>
-        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} />
+        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} placeholder="Share a specific strength…" />
       </div>
 
       <div className="hrmgmt-review-question">
         <label>2. What could they improve?</label>
-        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} />
+        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} placeholder="Share a constructive suggestion…" />
       </div>
 
       {error && <p className="hrmgmt-review-error">{error}</p>}
 
       <div className="hrmgmt-review-submit-row">
-        <button type="submit" className="hrmgmt-review-submit-button">SUBMIT</button>
+        <button type="submit" className="hrmgmt-review-submit-button" disabled={!reviewTargets.length}>Submit feedback</button>
       </div>
     </form>
   );

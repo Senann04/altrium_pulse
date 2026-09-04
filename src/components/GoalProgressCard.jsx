@@ -2,15 +2,14 @@ import "../styles/goalprogresscard.css";
 
 /* Reusable for both PDP and PIP — title and plan data are passed in as
  props, so this component never needs to know which one it's rendering. */
-function GoalProgressCard({ title, plan }) {
-  const totalActions = plan.action_items.length;
-  const completedActions = plan.action_items.filter((item) => item.completed).length;
-
-  // Progress = completed actions / total actions * 100.
-  const progress = Math.round((completedActions / totalActions) * 100);
+function GoalProgressCard({ title, plan, progress: progressValue }) {
+  const actions = plan?.action_items || [];
+  const completedActions = actions.filter((item) => item.completed).length;
+  const calculatedProgress = actions.length ? Math.round((completedActions / actions.length) * 100) : 0;
+  const progress = Math.max(0, Math.min(100, Number(progressValue ?? calculatedProgress) || 0));
 
   return (
-    <div className="goal-progress-card">
+    <article className="goal-progress-card">
       <div className="goal-progress-header">
         <span className="goal-progress-title">{title}</span>
         <span className="goal-progress-badge">{progress}%</span>
@@ -19,7 +18,7 @@ function GoalProgressCard({ title, plan }) {
       <div className="goal-progress-track">
         <div className="goal-progress-fill" style={{ width: `${progress}%` }} />
       </div>
-    </div>
+    </article>
   );
 }
 

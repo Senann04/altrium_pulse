@@ -11,7 +11,7 @@
 
 .assigned-time-goal-title {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 22px;
   margin: 0;
 }
@@ -38,17 +38,17 @@
 
 .assigned-time-goal-filter-row label {
   color: #d9d9d9;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
 }
 
 .assigned-time-goal-filter-select {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 999px;
   padding: 0.3rem 1rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
   font-weight: 600;
 }

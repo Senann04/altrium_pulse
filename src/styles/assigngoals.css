@@ -15,14 +15,14 @@
 
 .assign-goals-heading-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.25rem;
 }
 
 .assign-goals-heading-card h1 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 26px;
   font-weight: 400;
   margin: 0;

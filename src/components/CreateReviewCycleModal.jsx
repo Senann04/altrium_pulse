@@ -10,35 +10,58 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
   /* Required for the cycle-to-user linkage — not in the screenshot as a
  separate field group, but needed to establish target scope per spec. */
   const [appliesTo, setAppliesTo] = useState("both");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const datesValid = Boolean(startDate && endDate && endDate >= startDate);
+  const canCreate = Boolean(name.trim() && description.trim() && datesValid && reviewType.trim());
 
   if (!isOpen) return null;
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!name.trim() || !description.trim() || !startDate || !endDate || !reviewType.trim()) return;
+    if (!datesValid) {
+      setError("End date must be on or after the start date.");
+      return;
+    }
 
-    onCreate({
-      name: name.trim(),
-      description: description.trim(),
-      startDate,
-      endDate,
-      reviewType: reviewType.trim(),
-      status: "Pending...",
-      active: true,
-      appliesTo,
-    });
-
-    setName("");
-    setDescription("");
-    setStartDate("");
-    setEndDate("");
-    setReviewType("");
-    setAppliesTo("both");
+    setSubmitting(true);
+    setError("");
+    try {
+      await onCreate({
+        name: name.trim(),
+        description: description.trim(),
+        startDate,
+        endDate,
+        reviewType: reviewType.trim(),
+        status: "Pending...",
+        active: false,
+        appliesTo,
+      });
+      setName("");
+      setDescription("");
+      setStartDate("");
+      setEndDate("");
+      setReviewType("");
+      setAppliesTo("both");
+    } catch (createError) {
+      setError(createError.message || "Unable to create this review cycle.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <div className="create-cycle-overlay" onClick={onClose}>
       <div className="create-cycle-modal" onClick={(e) => e.stopPropagation()}>
-        <h2 className="create-cycle-title">Create a Review Cycle</h2>
+        <div className="create-cycle-header">
+          <div>
+            <span>Review administration</span>
+            <h2 className="create-cycle-title">Create review cycle</h2>
+          </div>
+          <button type="button" className="create-cycle-close" onClick={onClose} aria-label="Close create review cycle">
+            ×
+          </button>
+        </div>
 
         <div className="create-cycle-field">
           <label>Cycle name:</label>
@@ -61,14 +84,9 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
           </div>
         </div>
 
-        <div className="create-cycle-bottom-row">
-          <div className="create-cycle-field create-cycle-type-field">
-            <label>Review Type:</label>
-            <input value={reviewType} onChange={(e) => setReviewType(e.target.value)} />
-          </div>
-          <button type="button" className="create-cycle-button" onClick={handleCreate}>
-            Create
-          </button>
+        <div className="create-cycle-field create-cycle-type-field">
+          <label>Review Type:</label>
+          <input value={reviewType} onChange={(e) => setReviewType(e.target.value)} />
         </div>
 
         {/* Applies-to scope: required for linking the cycle to Employee/
@@ -80,6 +98,14 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
             <option value="supervisor">Immediate Supervisors</option>
             <option value="both">Both</option>
           </select>
+        </div>
+
+        <div className="create-cycle-actions">
+          {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}
+          <button type="button" className="create-cycle-cancel" onClick={onClose}>Cancel</button>
+          <button type="button" className="create-cycle-button" onClick={handleCreate} disabled={!canCreate || submitting}>
+            {submitting ? "Creating…" : "Create cycle"}
+          </button>
         </div>
       </div>
     </div>

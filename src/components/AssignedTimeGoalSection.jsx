@@ -1,52 +1,64 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AssignedTimeGoalCard from "./AssignedTimeGoalCard";
 import TimeGoalAssignmentModal from "./TimeGoalAssignmentModal";
-import {
-  getAssignedTimeGoals,
-  saveAssignedTimeGoals,
-  addAssignedTimeGoal,
-  subscribeToAssignedTimeGoals,
-} from "../services/assignedTimeGoalsStorage";
+import { createTimeGoal, loadPeopleDirectory, loadTimeGoals } from "../services/workflowService";
 import "../styles/assignedtimegoalsection.css";
 
-/* Temporary directory until Supabase provides real team/person data. */
-const personDirectory = [
-  { id: "EM00145", name: "S. Supun Kalhara", team: "Team 07", role: "employee" },
-  { id: "EM00212", name: "Nadeesha Fernando", team: "Team 07", role: "employee" },
-  { id: "IMS00089", name: "Kasun Silva", team: "Team 03", role: "supervisor" },
-  { id: "EM00300", name: "Amaya Perera", team: "Team 03", role: "employee" },
-];
-
 function AssignedTimeGoalSection({ period, title }) {
-  const [allGoals, setAllGoals] = useState(getAssignedTimeGoals());
+  const [allGoals, setAllGoals] = useState([]);
+  const [personDirectory, setPersonDirectory] = useState([]);
   const [teamFilter, setTeamFilter] = useState("All Teams");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const refresh = useCallback(async () => {
+    setError("");
+    try {
+      const [directory, goals] = await Promise.all([
+        loadPeopleDirectory({ includeSupervisors: true, managedOnly: true }),
+        loadTimeGoals(),
+      ]);
+      setPersonDirectory(directory);
+      setAllGoals(goals);
+    } catch (loadError) {
+      setError(loadError.message || `Unable to load ${period.toLowerCase()} goals.`);
+    } finally {
+      setLoading(false);
+    }
+  }, [period]);
 
   useEffect(() => {
-    return subscribeToAssignedTimeGoals(() => setAllGoals(getAssignedTimeGoals()));
-  }, []);
+    const initialLoad = window.setTimeout(refresh, 0);
+    return () => window.clearTimeout(initialLoad);
+  }, [refresh]);
 
   const periodGoals = allGoals.filter((g) => g.period === period);
   const teams = ["All Teams", ...new Set(personDirectory.map((p) => p.team))];
   const visibleGoals =
     teamFilter === "All Teams" ? periodGoals : periodGoals.filter((g) => g.team === teamFilter);
 
-  const handleAssign = (newGoal) => {
-    addAssignedTimeGoal({ ...newGoal, id: `${period.toLowerCase()}-${Date.now()}`, period });
+  const handleAssign = async (newGoal) => {
+    await createTimeGoal({ ...newGoal, period });
+    await refresh();
     setIsModalOpen(false);
   };
 
   return (
     <section className="assigned-time-goal-section">
       <div className="assigned-time-goal-header">
-        <h2 className="assigned-time-goal-title">{title}</h2>
+        <div>
+          <span className="assigned-time-goal-kicker">{period} schedule</span>
+          <h2 className="assigned-time-goal-title">{title}</h2>
+        </div>
         <button
           type="button"
           className="assigned-time-goal-add-button"
           onClick={() => setIsModalOpen(true)}
           aria-label={`Assign new ${period} goal`}
         >
-          +
+          <span aria-hidden="true">+</span>
+          Assign goal
         </button>
       </div>
 
@@ -65,7 +77,9 @@ function AssignedTimeGoalSection({ period, title }) {
       </div>
 
       <div className="assigned-time-goal-card-grid">
-        {visibleGoals.length === 0 && <p>No assigned time goals found.</p>}
+        {loading && <p>Loading assigned goals…</p>}
+        {error && <p className="is-error" role="alert">{error}</p>}
+        {!loading && !error && visibleGoals.length === 0 && <p>No assigned time goals found within your business unit.</p>}
         {visibleGoals.map((goal) => (
           <AssignedTimeGoalCard key={goal.id} goal={goal} />
         ))}

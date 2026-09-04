@@ -1,4 +1,6 @@
+import { useState } from "react";
 import "../styles/sidebar.css";
+import altriumLogo from "../assets/altriumlogo.svg";
 
 /* Menu configuration: one entry per role. Add/remove items here only.
 Icons are small inline SVGs so no new icon library is required. */
@@ -66,45 +68,84 @@ const ICONS = {
   ),
 };
 
-// Role -> menu items. Each item needs a unique key, a label, and an icon.
+// Role -> grouped menu items. The groups keep longer role menus easy to scan.
 const MENUS = {
   employee: [
-    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
-    { key: "current-review", label: "My Current Review", icon: "review" },
-    { key: "feedback", label: "My Feedback", icon: "feedback" },
-    { key: "projects", label: "Projects", icon: "projects" },
-    { key: "progress", label: "My Progress", icon: "progress" },
-    { key: "history", label: "Performance History", icon: "history" },
-    { key: "calendar", label: "Calendar", icon: "calendar" },
-    { key: "profile", label: "My Profile", icon: "profile" },
+    { label: "Overview", items: [{ key: "dashboard", label: "Dashboard", icon: "dashboard" }] },
+    {
+      label: "Performance",
+      items: [
+        { key: "current-review", label: "My Current Review", icon: "review" },
+        { key: "feedback", label: "My Feedback", icon: "feedback" },
+        { key: "progress", label: "My Progress", icon: "progress" },
+      ],
+    },
+    {
+      label: "Workspace",
+      items: [
+        { key: "projects", label: "Projects", icon: "projects" },
+        { key: "history", label: "Performance History", icon: "history" },
+        { key: "calendar", label: "Calendar", icon: "calendar" },
+        { key: "profile", label: "My Profile", icon: "profile" },
+      ],
+    },
   ],
   supervisor: [
-    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
-    { key: "current-review", label: "My Current Review", icon: "review" },
-    { key: "feedback", label: "My Feedback", icon: "feedback" },
-    { key: "projects", label: "Projects", icon: "projects" },
-    { key: "progress", label: "My Progress", icon: "progress" },
-    { key: "team", label: "My Team", icon: "team" },
-    { key: "history", label: "Performance History", icon: "history" },
-    { key: "calendar", label: "Calendar", icon: "calendar" },
-    { key: "profile", label: "My Profile", icon: "profile" },
+    { label: "Overview", items: [{ key: "dashboard", label: "Dashboard", icon: "dashboard" }] },
+    {
+      label: "Performance",
+      items: [
+        { key: "current-review", label: "My Current Review", icon: "review" },
+        { key: "feedback", label: "My Feedback", icon: "feedback" },
+        { key: "projects", label: "Projects", icon: "projects" },
+        { key: "progress", label: "My Progress", icon: "progress" },
+      ],
+    },
+    { label: "People", items: [{ key: "team", label: "My Team", icon: "team" }] },
+    {
+      label: "Workspace",
+      items: [
+        { key: "history", label: "Performance History", icon: "history" },
+        { key: "calendar", label: "Calendar", icon: "calendar" },
+        { key: "profile", label: "My Profile", icon: "profile" },
+      ],
+    },
   ],
   leadership: [
-    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
-    { key: "feedback", label: "My Feedback", icon: "feedback" },
-    { key: "projects", label: "Projects", icon: "projects" },
-    { key: "calendar", label: "Calendar", icon: "calendar" },
-    { key: "profile", label: "My Profile", icon: "profile" },
+    { label: "Overview", items: [{ key: "dashboard", label: "Dashboard", icon: "dashboard" }] },
+    {
+      label: "Organisation",
+      items: [
+        { key: "feedback", label: "My Feedback", icon: "feedback" },
+        { key: "projects", label: "Projects", icon: "projects" },
+        { key: "calendar", label: "Calendar", icon: "calendar" },
+      ],
+    },
+    { label: "Account", items: [{ key: "profile", label: "My Profile", icon: "profile" }] },
   ],
   hrbp: [
-    { key: "dashboard", label: "Dashboard", icon: "dashboard" },
-    { key: "review-cycle", label: "Review Cycle", icon: "cycle" },
-    { key: "feedback", label: "My Feedback", icon: "feedback" },
-    { key: "projects", label: "Projects", icon: "projects" },
-    { key: "assign-goals", label: "Assign Goals", icon: "goals" },
-    { key: "profile", label: "My Profile", icon: "profile" },
+    { label: "Overview", items: [{ key: "dashboard", label: "Dashboard", icon: "dashboard" }] },
+    {
+      label: "Performance",
+      items: [
+        { key: "review-cycle", label: "Review Cycle", icon: "cycle" },
+        { key: "feedback", label: "My Feedback", icon: "feedback" },
+        { key: "projects", label: "Projects", icon: "projects" },
+        { key: "assign-goals", label: "Assign Goals", icon: "goals" },
+      ],
+    },
+    { label: "Account", items: [{ key: "profile", label: "My Profile", icon: "profile" }] },
   ],
 };
+
+const ROLE_LABELS = {
+  employee: "Employee",
+  supervisor: "Supervisor",
+  hrbp: "HR Business Partner",
+  leadership: "Senior Management",
+};
+
+const SIDEBAR_COLLAPSED_KEY = "altrium-pulse:sidebar-collapsed";
 
 
 /*Sidebar component
@@ -113,27 +154,75 @@ const MENUS = {
  onNavigate -> callback fired with the clicked item's key; routing is
               wired up later, this component does not navigate itself */
 
-function Sidebar({ role, activeItem, onNavigate }) {
-  const menuItems = MENUS[role] || [];
+function Sidebar({ role, activeItem, onNavigate, onSignOut, profileData }) {
+  const menuGroups = MENUS[role] || [];
+  const roleLabel = ROLE_LABELS[role] || "Team member";
+  const displayName = profileData?.name || roleLabel;
+  const [isCollapsed, setIsCollapsed] = useState(
+    () => window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true",
+  );
+
+  const toggleSidebar = () => {
+    setIsCollapsed((currentValue) => {
+      const nextValue = !currentValue;
+      window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(nextValue));
+      return nextValue;
+    });
+  };
 
   return (
-    <aside className="sidebar">
-      <nav className="sidebar-menu">
-        {menuItems.map((item) => {
-          const isActive = item.key === activeItem;
-          return (
-            <button
-              key={item.key}
-              type="button"
-              className={`sidebar-item${isActive ? " active" : ""}`}
-              onClick={() => onNavigate && onNavigate(item.key)}
-            >
-              <span className="sidebar-icon">{ICONS[item.icon]}</span>
-              <span className="sidebar-label">{item.label}</span>
-            </button>
-          );
-        })}
+    <aside className={`sidebar${isCollapsed ? " collapsed" : ""}`}>
+      <div className="sidebar-brand">
+        <img src={altriumLogo} alt="Altrium Pulse" />
+        <button
+          type="button"
+          className="sidebar-brand-chevron"
+          onClick={toggleSidebar}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+        </button>
+      </div>
+
+      <nav className="sidebar-menu" aria-label="Workspace navigation">
+        {menuGroups.map((group, groupIndex) => (
+          <section className="sidebar-group" key={group.label}>
+            <div className="sidebar-group-label">
+              <span>{String(groupIndex + 1).padStart(2, "0")}</span>
+              {group.label}
+            </div>
+            <div className="sidebar-group-items">
+              {group.items.map((item) => {
+                const isActive = item.key === activeItem;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    className={`sidebar-item${isActive ? " active" : ""}`}
+                    onClick={() => onNavigate?.(item.key)}
+                    aria-current={isActive ? "page" : undefined}
+                    title={isCollapsed ? item.label : undefined}
+                  >
+                    <span className="sidebar-icon">{ICONS[item.icon]}</span>
+                    <span className="sidebar-label">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ))}
       </nav>
+
+      <div className="sidebar-footer">
+        <span className="sidebar-user-avatar" aria-hidden="true">{displayName.slice(0, 1).toUpperCase()}</span>
+        <p><strong>{displayName}</strong><span>{roleLabel}</span></p>
+        {onSignOut && (
+          <button type="button" className="sidebar-signout" onClick={onSignOut} aria-label="Sign out" title="Sign out">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M18 12H9" /></svg>
+          </button>
+        )}
+      </div>
     </aside>
   );
 }

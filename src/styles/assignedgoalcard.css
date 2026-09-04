@@ -2,7 +2,7 @@
    Dark card, gold outline, rounded corners */
 .assigned-goal-card {
   background: #1a1a1a;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 20px;
   padding: 1rem 1.25rem;
   position: relative;
@@ -25,7 +25,7 @@
   border: none;
   border-radius: 8px;
   padding: 0.25rem 0.75rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -41,7 +41,7 @@
 
 .assigned-goal-field label {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
   min-width: 110px;
@@ -54,7 +54,7 @@
   border: none;
   border-radius: 8px;
   padding: 0.3rem 0.6rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
   color: #111111;
   flex: 1;
@@ -75,7 +75,7 @@
 
 .assigned-goal-progress-row label {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
 }
 
@@ -85,7 +85,7 @@
   -webkit-appearance: none;
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(to right, #f8b50d 0%, #f8b50d var(--progress), #555555 var(--progress), #555555 100%);
+  background: linear-gradient(to right, #fcb400 0%, #fcb400 var(--progress), #555555 var(--progress), #555555 100%);
 }
 
 .assigned-goal-progress-slider::-webkit-slider-thumb {
@@ -107,7 +107,7 @@
 
 .assigned-goal-action-row label {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
   min-width: 90px;
@@ -127,7 +127,7 @@
   border: none;
   border-radius: 999px;
   padding: 0.2rem 0.75rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -142,10 +142,10 @@
 .assigned-goal-done-button {
   background: #111111;
   color: #ffffff;
-  border: 1.5px solid #f8b50d;
+  border: 1.5px solid #fcb400;
   border-radius: 8px;
   padding: 0.3rem 1rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -169,18 +169,18 @@
 
 .assigned-goal-view-popup-content {
   background: #1a1a1a;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 15px;
   padding: 1rem;
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   max-width: 85%;
 }
 
 .assigned-goal-view-popup-content button {
   margin-top: 0.5rem;
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border: none;
   border-radius: 8px;

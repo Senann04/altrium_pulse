@@ -1,18 +1,10 @@
 import { useState } from "react";
+import { StarIcon } from "./InterfaceIcons";
 import "../styles/employeepeerreview.css";
-
-/* Temporary peer options until user data comes from Supabase.
-   currentEmployeeId excludes the logged-in user from their own list. */
-const currentEmployeeId = "EM00145";
-const peerOptions = [
-  { id: "EM00212", name: "Nadeesha Fernando" },
-  { id: "EM00300", name: "Amaya Perera" },
-  { id: "EM00089", name: "Kasun Silva" },
-].filter((p) => p.id !== currentEmployeeId);
 
 const categories = ["Team Work", "Communication", "Reliability", "Professionalism", "Technical Contribution"];
 
-function EmployeePeerReview() {
+function EmployeePeerReview({ peerOptions = [] }) {
   const [selectedPeer, setSelectedPeer] = useState("");
   /* Temporary category ratings until the backend schema supports rating categories. */
   const [categoryRatings, setCategoryRatings] = useState({});
@@ -20,6 +12,7 @@ function EmployeePeerReview() {
   const [improve, setImprove] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const selectedPeerData = peerOptions.find((peer) => peer.id === selectedPeer);
 
   const handleStarClick = (category, star) => {
     setCategoryRatings((prev) => ({ ...prev, [category]: star }));
@@ -56,17 +49,26 @@ function EmployeePeerReview() {
 
       <select
         className="peer-review-select"
+        aria-label="Teammate to review"
         value={selectedPeer}
         onChange={(e) => setSelectedPeer(e.target.value)}
+        disabled={!peerOptions.length}
       >
-        <option value="" disabled>Review Your Teammate!!!</option>
+        <option value="" disabled>{peerOptions.length ? "Select a teammate" : "No teammates available"}</option>
         {peerOptions.map((p) => (
           <option key={p.id} value={p.id}>{p.name}</option>
         ))}
       </select>
 
-      {/* profile picture placeholder — real image comes from Supabase later */}
-      <div className="peer-review-avatar" />
+      <div className="peer-review-person">
+        <span className="peer-review-avatar" aria-hidden="true">
+          {selectedPeerData?.name?.charAt(0) || "–"}
+        </span>
+        <span>
+          <strong>{selectedPeerData?.name || "Choose who you are reviewing"}</strong>
+          <small>{selectedPeerData?.employeeNumber || "Employee profile"}</small>
+        </span>
+      </div>
 
       <div className="peer-review-categories">
         {categories.map((category) => {
@@ -81,12 +83,14 @@ function EmployeePeerReview() {
                     key={star}
                     className={`peer-review-star${star <= rating ? " filled" : ""}`}
                     onClick={() => handleStarClick(category, star)}
+                    aria-label={`${category}: ${star} stars`}
+                    aria-pressed={star <= rating}
                   >
-                    ★
+                    <StarIcon />
                   </button>
                 ))}
               </div>
-              <span className="peer-review-rating-pill" />
+              <span className="peer-review-rating-pill">{rating || "–"}/5</span>
             </div>
           );
         })}
@@ -94,18 +98,18 @@ function EmployeePeerReview() {
 
       <div className="peer-review-question">
         <label>1. What does this employee do well?</label>
-        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} />
+        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} placeholder="Share a specific strength…" />
       </div>
 
       <div className="peer-review-question">
         <label>2. What could they improve?</label>
-        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} />
+        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} placeholder="Share a constructive suggestion…" />
       </div>
 
       {error && <p className="peer-review-error">{error}</p>}
 
       <div className="peer-review-submit-row">
-        <button type="submit" className="peer-review-submit-button">SUBMIT</button>
+        <button type="submit" className="peer-review-submit-button" disabled={!peerOptions.length}>Submit review</button>
       </div>
     </form>
   );

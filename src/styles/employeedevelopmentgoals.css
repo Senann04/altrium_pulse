@@ -5,10 +5,10 @@
 
 .dev-goals-title-pill {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 999px;
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 18px;
   text-align: center;
   padding: 0.6rem;
@@ -28,7 +28,7 @@
   flex: 1;
   min-width: 65px;
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 50%;
   aspect-ratio: 1 / 1;
   display: flex;
@@ -42,7 +42,7 @@
 
 .dev-goals-summary-label {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 9px;
   text-align: center;
   line-height: 1.1;
@@ -57,7 +57,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
 }

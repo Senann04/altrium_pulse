@@ -15,14 +15,14 @@
 
 .supervisor-progress-heading-card {
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 25px;
   padding: 1.25rem;
 }
 
 .supervisor-progress-heading-card h1 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 26px;
   font-weight: 400;
   margin: 0;
@@ -37,7 +37,7 @@
 .supervisor-progress-column {
   flex: 1;
   background: #111111;
-  border: 2px solid #f8b50d;
+  border: 2px solid #fcb400;
   border-radius: 20px;
   padding: 1rem;
   display: flex;
@@ -47,12 +47,12 @@
 }
 
 .supervisor-progress-column-title {
-  background: #f8b50d;
+  background: #fcb400;
   color: #111111;
   border-radius: 999px;
   text-align: center;
   padding: 0.4rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-weight: 700;
   margin-bottom: 0.4rem;
 }

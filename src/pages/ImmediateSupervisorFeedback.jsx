@@ -4,63 +4,57 @@ import SelfAssessmentForm from "../components/SelfAssessmentForm";
 import EmployeePeerReview from "../components/EmployeePeerReview";
 import EmployeeHRManagementReview from "../components/EmployeeHRManagementReview";
 import FeedbackSummary from "../components/feedbacksummary.jsx";
+import WorkspaceHeading from "../components/WorkspaceHeading";
 import "../styles/immediatesupervisormyfeedback.css";
 
-// temporary values until Supabase provides real Feedback records
-const supervisorFeedbackData = {
-  overallRating: "4.5",
-  // category ratings are frontend-only until the backend schema supports them
-  categoryRatings: [
-    { name: "Communication", value: 87 },
-    { name: "Reliability", value: 95 },
-    { name: "Professionalism", value: 78 },
-  ],
-  strengths: "",
-  improvements: "",
-};
+function SupervisorMyFeedback({ onNavigate, onSignOut, profileData, sidebarRole = "supervisor" }) {
+  const feedback = profileData?.feedback || {};
+  const currentReview = profileData?.currentReview;
 
-function SupervisorMyFeedback({ onNavigate }) {
   return (
     <div className="supervisor-feedback-layout">
-      <Sidebar role="supervisor" activeItem="feedback" onNavigate={onNavigate} />
+      <Sidebar role={sidebarRole} activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="supervisor-feedback-main">
-        <Header />
+        <Header title="My Feedback" profileData={profileData} />
 
-        <div className="supervisor-feedback-heading-card">
-          <h1>My Feedback</h1>
-        </div>
+        <WorkspaceHeading
+          eyebrow="Feedback workspace"
+          title="My Feedback"
+          description="Complete assessments for yourself and others, then review the feedback shared with you."
+        />
 
         <div className="supervisor-feedback-subheading">Provide Feedback</div>
 
-        {/* row 1: Self Assessment + first Peer Review */}
         <div className="supervisor-feedback-row">
-          <SelfAssessmentForm />
-          <EmployeePeerReview />
+          <SelfAssessmentForm
+            reviewId={currentReview?.id}
+            initialAnswers={currentReview?.selfAssessment}
+            submittedAt={currentReview?.employeeSubmittedAt}
+          />
+          <EmployeePeerReview peerOptions={profileData?.teammates || []} />
         </div>
 
-        {/* row 2: second Peer Review + HR and Management review */}
         <div className="supervisor-feedback-row">
-          <EmployeePeerReview />
-          <EmployeeHRManagementReview />
+          <EmployeeHRManagementReview reviewTargets={profileData?.reviewTargets || []} />
         </div>
 
         <div className="supervisor-feedback-subheading">Feedback for Me</div>
 
         <FeedbackSummary
-          overallRating={supervisorFeedbackData.overallRating}
-          categoryRatings={supervisorFeedbackData.categoryRatings}
+          overallRating={feedback.overallRating}
+          categoryRatings={feedback.categoryRatings}
         />
 
         <div className="supervisor-feedback-bottom-row">
           <div className="supervisor-feedback-well-done-card">
-            <div className="supervisor-feedback-bottom-title">WELL DONE!!!</div>
-            <div className="supervisor-feedback-bottom-content">{supervisorFeedbackData.strengths}</div>
+            <div className="supervisor-feedback-bottom-title">Strengths</div>
+            <div className="supervisor-feedback-bottom-content">{feedback.strengths || "No strengths have been shared yet."}</div>
           </div>
 
           <div className="supervisor-feedback-improve-card">
-            <div className="supervisor-feedback-bottom-title">IMPROVE!</div>
-            <div className="supervisor-feedback-bottom-content">{supervisorFeedbackData.improvements}</div>
+            <div className="supervisor-feedback-bottom-title">Development opportunities</div>
+            <div className="supervisor-feedback-bottom-content">{feedback.improvements || "No development feedback has been shared yet."}</div>
           </div>
         </div>
       </div>
@@ -68,4 +62,43 @@ function SupervisorMyFeedback({ onNavigate }) {
   );
 }
 
+function HRBPFeedback({ onNavigate, onSignOut, profileData }) {
+  const feedback = profileData?.feedback || {};
+
+  return (
+    <div className="supervisor-feedback-layout">
+      <Sidebar role="hrbp" activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+
+      <div className="supervisor-feedback-main">
+        <Header title="My Feedback" profileData={profileData} />
+        <WorkspaceHeading
+          eyebrow="Personal feedback"
+          title="My Feedback"
+          description="Review feedback shared with you. Employee review administration stays in Review Cycle."
+        />
+
+        <section className="hrbp-feedback-notice">
+          <span>Clear separation</span>
+          <h2>This page is only for your own feedback</h2>
+          <p>Use Review Cycle to monitor assigned employee reviews and select their peer reviewers.</p>
+        </section>
+
+        <FeedbackSummary overallRating={feedback.overallRating} categoryRatings={feedback.categoryRatings} />
+
+        <div className="supervisor-feedback-bottom-row">
+          <div className="supervisor-feedback-well-done-card">
+            <div className="supervisor-feedback-bottom-title">Strengths</div>
+            <div className="supervisor-feedback-bottom-content">{feedback.strengths || "No strengths have been shared yet."}</div>
+          </div>
+          <div className="supervisor-feedback-improve-card">
+            <div className="supervisor-feedback-bottom-title">Development opportunities</div>
+            <div className="supervisor-feedback-bottom-content">{feedback.improvements || "No development feedback has been shared yet."}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export { HRBPFeedback };
 export default SupervisorMyFeedback;
