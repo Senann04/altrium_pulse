@@ -114,13 +114,20 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
       })
       .map((event) => Number(event.date.slice(-2))),
   );
+  const isLeadership = role === "leadership";
 
   return (
     <div className="app-shell">
       <Sidebar role={role} activeItem="calendar" onNavigate={onNavigate} onSignOut={onSignOut} profileData={profileData} />
       <main className="app-main employee-workspace-page">
         <Header title="Calendar" profileData={profileData} />
-        <WorkspaceHeading eyebrow="Schedule" title="Calendar" description="Keep review milestones, meetings and goal deadlines in one place." />
+        <WorkspaceHeading
+          eyebrow={isLeadership ? "Organisation schedule" : "Schedule"}
+          title="Calendar"
+          description={isLeadership
+            ? "Track organisation-wide review checkpoints and reporting deadlines."
+            : "Keep review milestones, meetings and goal deadlines in one place."}
+        />
 
         <div className="employee-calendar-layout">
           <section className="employee-calendar-card" aria-label={monthLabel}>
@@ -152,7 +159,7 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
             ) : (
               <div className="employee-workspace-empty compact">
                 <span className="employee-workspace-empty-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" /><path d="M7.5 3.5v4M16.5 3.5v4M3.5 9.5h17" /></svg></span>
-                <div><h3>No events scheduled</h3><p>Your review meetings and deadlines will appear here.</p></div>
+                <div><h3>No events scheduled</h3><p>{isLeadership ? "Organisation-wide review milestones will appear here." : "Your review meetings and deadlines will appear here."}</p></div>
               </div>
             )}
           </aside>

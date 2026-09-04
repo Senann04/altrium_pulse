@@ -113,6 +113,14 @@ const MENUS = {
   ],
   leadership: [
     { label: "Overview", items: [{ key: "dashboard", label: "Dashboard", icon: "dashboard" }] },
+    {
+      label: "Organisation",
+      items: [
+        { key: "feedback", label: "My Feedback", icon: "feedback" },
+        { key: "projects", label: "Projects", icon: "projects" },
+        { key: "calendar", label: "Calendar", icon: "calendar" },
+      ],
+    },
     { label: "Account", items: [{ key: "profile", label: "My Profile", icon: "profile" }] },
   ],
   hrbp: [

@@ -43,8 +43,8 @@ const roleContent = {
     eyebrow: "Organisation performance",
     title: "See the signal behind your people data.",
     description: "A focused view of performance health, review progress and organisation-wide momentum.",
-    primaryAction: { label: "View executive profile", page: "profile" },
-    secondaryAction: null,
+    primaryAction: { label: "View organisation insights", page: "feedback" },
+    secondaryAction: { label: "Open portfolio", page: "projects" },
     stats: [
       { label: "Review completion", value: "81%", trend: "+9% this cycle", tone: "gold" },
       { label: "Goal alignment", value: "88%", trend: "Healthy", tone: "green" },
@@ -60,11 +60,11 @@ function DashboardOverview({ role, profileData, onNavigate }) {
   const stats = profileData?.dashboard?.stats || content.stats;
   const tasks = profileData?.dashboard?.tasks || [];
   const planProgress = profileData?.dashboard?.planProgress || { pdp: 0, pip: 0 };
-  const progressPage = role === "supervisor" ? "team" : role === "hrbp" ? "assign-goals" : role === "leadership" ? "profile" : "progress";
-  const progressTitle = role === "supervisor" ? "Team plan progress" : "Goal progress";
-  const progressAction = role === "supervisor" ? "View team" : "View all";
-  const pdpTitle = role === "supervisor" ? "Team PDP" : "Development plan";
-  const pipTitle = role === "supervisor" ? "Team PIP" : "Performance plan";
+  const progressPage = role === "supervisor" ? "team" : role === "hrbp" ? "assign-goals" : role === "leadership" ? "projects" : "progress";
+  const progressTitle = role === "supervisor" ? "Team plan progress" : role === "leadership" ? "Organisation plan progress" : "Goal progress";
+  const progressAction = role === "supervisor" ? "View team" : role === "leadership" ? "View portfolio" : "View all";
+  const pdpTitle = role === "supervisor" ? "Team PDP" : role === "leadership" ? "Organisation PDP" : "Development plan";
+  const pipTitle = role === "supervisor" ? "Team PIP" : role === "leadership" ? "Organisation PIP" : "Performance plan";
 
   return (
     <div className="dashboard-overview">
@@ -75,7 +75,10 @@ function DashboardOverview({ role, profileData, onNavigate }) {
           <p>{content.description}</p>
           <div className="dashboard-actions">
             <button type="button" className="dashboard-action-primary" onClick={() => onNavigate?.(content.primaryAction.page)}>
-              {content.primaryAction.label}<span aria-hidden="true">→</span>
+              {content.primaryAction.label}
+              <span aria-hidden="true">
+                <svg viewBox="0 0 20 20"><path d="M4 10h12M11 5l5 5-5 5" /></svg>
+              </span>
             </button>
             {content.secondaryAction && (
               <button type="button" className="dashboard-action-secondary" onClick={() => onNavigate?.(content.secondaryAction.page)}>
@@ -118,7 +121,9 @@ function DashboardOverview({ role, profileData, onNavigate }) {
               <button key={`${task.day}-${task.title}`} type="button" onClick={() => onNavigate?.(task.page)}>
                 <span className="dashboard-task-date"><strong>{task.day}</strong>{task.month}</span>
                 <span className="dashboard-task-copy"><strong>{task.title}</strong><small>{task.detail}</small></span>
-                <span className="dashboard-task-arrow" aria-hidden="true">↗</span>
+                <span className="dashboard-task-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 20 20"><path d="M6 14 14 6M8 6h6v6" /></svg>
+                </span>
               </button>
             ))}
             {!tasks.length && <p className="dashboard-task-empty">No upcoming actions are scheduled.</p>}
@@ -133,7 +138,7 @@ function DashboardOverview({ role, profileData, onNavigate }) {
           <GoalProgressCard title={pdpTitle} progress={planProgress.pdp} />
           <GoalProgressCard title={pipTitle} progress={planProgress.pip} />
           <div className="dashboard-cycle-note">
-            <span>●</span> {profileData?.dashboard?.cycleStatus || "No active cycle"}
+            <span aria-hidden="true" /> {profileData?.dashboard?.cycleStatus || "No active cycle"}
             <small>{profileData?.dashboard?.nextReviewLabel || "No deadline scheduled"}</small>
           </div>
         </section>

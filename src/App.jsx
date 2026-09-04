@@ -24,6 +24,11 @@ import ImmediateSupervisorMyProgress from "./pages/ImmediateSupervisorMyProgress
 import ImmediateSupervisorProfile from "./pages/ImmediateSupervisorProfile";
 import LeadershipDashboard from "./pages/LeadershipDashboard";
 import LeadershipProfile from "./pages/LeadershipProfile";
+import {
+  LeadershipCalendar,
+  LeadershipFeedback,
+  LeadershipProjects,
+} from "./pages/LeadershipWorkspacePages";
 import Login from "./pages/Login";
 import MyTeam from "./pages/MyTeam";
 import logo from "./assets/altriumlogo.svg";
@@ -67,6 +72,9 @@ const rolePages = {
   },
   senior_management: {
     dashboard: LeadershipDashboard,
+    feedback: LeadershipFeedback,
+    projects: LeadershipProjects,
+    calendar: LeadershipCalendar,
     profile: LeadershipProfile,
   },
 };
