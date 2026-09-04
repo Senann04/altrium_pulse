@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AnimatedLoginBackdrop from "../components/AnimatedLoginBackdrop";
+import DarkVeil from "../components/DarkVeil";
 import SpotlightCard from "../components/SpotlightCard";
 import logo from "../assets/altriumlogo.svg";
 import altriumLogo from "../assets/altrium-logo-white.svg";
@@ -29,7 +29,16 @@ function Login({ onLogin }) {
 
   return (
     <main className="login-page">
-      <AnimatedLoginBackdrop />
+      <div className="login-darkveil" aria-hidden="true">
+        <DarkVeil
+          hueShift={18}
+          noiseIntensity={0.018}
+          scanlineIntensity={0}
+          speed={0.16}
+          warpAmount={0.12}
+          resolutionScale={1}
+        />
+      </div>
 
       <div className="login-intro" aria-hidden="true">
         <div className="login-intro-parent">
