@@ -97,32 +97,48 @@ export default function DarkVeil({
   const ref = useRef(null);
   useEffect(() => {
     const canvas = ref.current;
-    const parent = canvas.parentElement;
+    const parent = canvas?.parentElement;
 
-    const renderer = new Renderer({
-      dpr: Math.min(window.devicePixelRatio, 2),
-      canvas
-    });
+    // The animated veil is decorative. Keep the sign-in screen usable on
+    // browsers, remote sessions, and reduced graphics environments without
+    // WebGL instead of allowing OGL initialisation to crash the React tree.
+    if (!canvas || !parent || typeof window.WebGLRenderingContext === 'undefined') {
+      return undefined;
+    }
 
-    const gl = renderer.gl;
-    const geometry = new Triangle(gl);
+    let renderer;
+    let program;
+    let mesh;
 
-    const program = new Program(gl, {
-      vertex,
-      fragment,
-      uniforms: {
-        uTime: { value: 0 },
-        uResolution: { value: new Vec2() },
-        uHueShift: { value: hueShift },
-        uNoise: { value: noiseIntensity },
-        uScan: { value: scanlineIntensity },
-        uScanFreq: { value: scanlineFrequency },
-        uWarp: { value: warpAmount },
-        uLightMode: { value: lightMode ? 1 : 0 }
-      }
-    });
+    try {
+      renderer = new Renderer({
+        dpr: Math.min(window.devicePixelRatio, 2),
+        canvas
+      });
 
-    const mesh = new Mesh(gl, { geometry, program });
+      const gl = renderer.gl;
+      if (!gl) return undefined;
+
+      const geometry = new Triangle(gl);
+      program = new Program(gl, {
+        vertex,
+        fragment,
+        uniforms: {
+          uTime: { value: 0 },
+          uResolution: { value: new Vec2() },
+          uHueShift: { value: hueShift },
+          uNoise: { value: noiseIntensity },
+          uScan: { value: scanlineIntensity },
+          uScanFreq: { value: scanlineFrequency },
+          uWarp: { value: warpAmount },
+          uLightMode: { value: lightMode ? 1 : 0 }
+        }
+      });
+
+      mesh = new Mesh(gl, { geometry, program });
+    } catch {
+      return undefined;
+    }
 
     const resize = () => {
       const w = parent.clientWidth,
