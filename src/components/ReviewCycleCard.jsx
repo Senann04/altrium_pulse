@@ -18,22 +18,36 @@ function ReviewCycleCard({ cycle, onDelete }) {
 
       <p className="review-cycle-description">{cycle.description}</p>
 
-      <div className="review-cycle-metadata">
-        <div className="review-cycle-field-box">
-          <span>Start date</span>
-          <strong>{cycle.startDate}</strong>
+      <div className="review-cycle-details-grid">
+        <div className="review-cycle-window">
+          <div className="review-cycle-window-heading">
+            <span>Cycle window</span>
+            <small>Scheduled review period</small>
+          </div>
+          <div className="review-cycle-window-dates">
+            <div>
+              <span>Opens</span>
+              <strong>{cycle.startDate}</strong>
+            </div>
+            <div className="review-cycle-window-line" aria-hidden="true">
+              <i />
+            </div>
+            <div>
+              <span>Closes</span>
+              <strong>{cycle.endDate}</strong>
+            </div>
+          </div>
         </div>
-        <div className="review-cycle-field-box">
-          <span>End date</span>
-          <strong>{cycle.endDate}</strong>
-        </div>
-        <div className="review-cycle-field-box">
-          <span>Status</span>
-          <strong>{cycle.status}</strong>
-        </div>
-        <div className="review-cycle-field-box">
-          <span>Cadence</span>
-          <strong>{cycle.reviewType}</strong>
+
+        <div className="review-cycle-metadata">
+          <div className="review-cycle-field-box review-cycle-field-status">
+            <span>Current status</span>
+            <strong>{cycle.status}</strong>
+          </div>
+          <div className="review-cycle-field-box review-cycle-field-cadence">
+            <span>Cadence</span>
+            <strong>{cycle.reviewType}</strong>
+          </div>
         </div>
       </div>
 

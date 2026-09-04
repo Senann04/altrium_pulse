@@ -79,7 +79,7 @@ function AssignedGoalSection({ type, title }) {
   };
 
   return (
-    <section className="assigned-goal-section">
+    <section className={`assigned-goal-section assigned-goal-section-${type.toLowerCase()}`}>
       <div className="assigned-goal-section-header">
         <div>
           <span className="assigned-goal-section-kicker">{type} plan</span>
