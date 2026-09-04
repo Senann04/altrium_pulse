@@ -2,6 +2,18 @@ import SpotlightCard from "./SpotlightCard";
 import GoalProgressCard from "./GoalProgressCard";
 import "../styles/dashboardoverview.css";
 
+const STAT_ICONS = {
+  gold: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V11M10 19V5M16 19v-8M22 19H2" /></svg>
+  ),
+  green: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16 5-5 4 4 7-8" /><path d="M15 7h5v5" /></svg>
+  ),
+  blue: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></svg>
+  ),
+};
+
 const roleContent = {
   employee: {
     eyebrow: "Your performance snapshot",
@@ -53,6 +65,19 @@ const roleContent = {
   },
 };
 
+function statProgress(stat) {
+  const value = String(stat.value);
+  const number = Number.parseFloat(value);
+  if (!Number.isFinite(number)) return null;
+  if (value.includes("%")) return Math.min(100, Math.max(0, number));
+  if (value.includes("/")) {
+    const [, total] = value.split("/").map(Number);
+    return total ? Math.min(100, Math.max(0, (number / total) * 100)) : 0;
+  }
+  if (stat.label.toLowerCase().includes("rating")) return Math.min(100, Math.max(0, (number / 5) * 100));
+  return null;
+}
+
 function DashboardOverview({ role, profileData, onNavigate }) {
   const content = roleContent[role] || roleContent.employee;
   const displayName = profileData?.name || "Team member";
@@ -96,18 +121,24 @@ function DashboardOverview({ role, profileData, onNavigate }) {
       </SpotlightCard>
 
       <div className="dashboard-stats" aria-label="Performance summary">
-        {stats.map((stat) => (
-          <article key={stat.label} className="dashboard-stat-card">
-            <div className={`dashboard-stat-icon dashboard-stat-icon-${stat.tone}`} aria-hidden="true">
-              <span />
-            </div>
-            <div className="dashboard-stat-copy">
-              <span>{stat.label}</span>
-              <strong>{stat.value}</strong>
-              <small>{stat.trend}</small>
-            </div>
-          </article>
-        ))}
+        {stats.map((stat) => {
+          const progress = statProgress(stat);
+          return (
+            <article key={stat.label} className={`dashboard-stat-card dashboard-stat-card-${stat.tone}`}>
+              <div className={`dashboard-stat-icon dashboard-stat-icon-${stat.tone}`} aria-hidden="true">
+                {STAT_ICONS[stat.tone] || STAT_ICONS.gold}
+              </div>
+              <div className="dashboard-stat-copy">
+                <span>{stat.label}</span>
+                <strong>{stat.value}</strong>
+                <small>{stat.trend}</small>
+                {progress !== null ? (
+                  <span className="dashboard-stat-meter" aria-hidden="true"><i style={{ width: `${progress}%` }} /></span>
+                ) : null}
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <div className="dashboard-detail-grid">
@@ -117,10 +148,11 @@ function DashboardOverview({ role, profileData, onNavigate }) {
             <span className="dashboard-panel-count">{String(tasks.length).padStart(2, "0")}</span>
           </div>
           <div className="dashboard-task-list">
-            {tasks.map((task) => (
-              <button key={`${task.day}-${task.title}`} type="button" onClick={() => onNavigate?.(task.page)}>
+            {tasks.map((task, index) => (
+              <button className={index === 0 ? "is-next" : ""} key={`${task.day}-${task.title}`} type="button" onClick={() => onNavigate?.(task.page)}>
                 <span className="dashboard-task-date"><strong>{task.day}</strong>{task.month}</span>
                 <span className="dashboard-task-copy"><strong>{task.title}</strong><small>{task.detail}</small></span>
+                <span className="dashboard-task-status">{index === 0 ? "Due next" : "Upcoming"}</span>
                 <span className="dashboard-task-arrow" aria-hidden="true">
                   <svg viewBox="0 0 20 20"><path d="M6 14 14 6M8 6h6v6" /></svg>
                 </span>
