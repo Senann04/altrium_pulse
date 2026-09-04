@@ -31,12 +31,13 @@ function Login({ onLogin }) {
     <main className="login-page">
       <div className="login-darkveil" aria-hidden="true">
         <DarkVeil
-          hueShift={18}
-          noiseIntensity={0.018}
-          scanlineIntensity={0}
-          speed={0.16}
-          warpAmount={0.12}
-          resolutionScale={1}
+          hueShift={0}
+          noiseIntensity={0}
+          scanlineIntensity={0.6}
+          speed={2}
+          scanlineFrequency={0}
+          warpAmount={1}
+          resolutionScale={1.5}
         />
       </div>
 
