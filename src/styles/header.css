@@ -127,9 +127,10 @@
   width: 32px;
   height: 32px;
   place-items: center;
+  border: 1px solid rgba(252, 180, 0, .32);
   border-radius: 9px;
-  color: #121212;
-  background: var(--ap-gold);
+  color: var(--ap-gold-strong);
+  background: rgba(252, 180, 0, .075);
   font-family: inherit;
   font-size: 14px;
   font-weight: 800;

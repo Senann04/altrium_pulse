@@ -16,7 +16,7 @@
   border-radius: 999px;
   text-align: center;
   padding: 0.6rem;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -29,7 +29,7 @@
   border: none;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   margin-bottom: 1rem;
 }
@@ -58,7 +58,7 @@
 .peer-review-category-label {
   flex: 1;
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
 }
 
@@ -95,7 +95,7 @@
 
 .peer-review-question label {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 0.4rem;
@@ -108,7 +108,7 @@
   padding: 0.6rem;
   min-height: 60px;
   resize: vertical;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
   color: #111111;
   box-sizing: border-box;
@@ -116,14 +116,14 @@
 
 .peer-review-error {
   color: #ff6b6b;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
   margin: 0 0 0.75rem 0;
 }
 
 .peer-review-success {
   color: #fcb400;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 14px;
   text-align: center;
 }
@@ -139,7 +139,7 @@
   border: none;
   border-radius: 999px;
   padding: 0.5rem 1.5rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;

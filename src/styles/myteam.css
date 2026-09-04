@@ -22,7 +22,7 @@
 
 .my-team-heading-card h1 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 26px;
   font-weight: 400;
   margin: 0;
@@ -44,7 +44,7 @@
   border: 1px dashed rgba(252, 180, 0, 0.55);
   border-radius: 18px;
   color: #a7a7a7;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   text-align: center;
 }
 

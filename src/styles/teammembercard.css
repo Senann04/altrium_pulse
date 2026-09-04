@@ -20,7 +20,7 @@
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 1.25rem;
   font-weight: 800;
 }
@@ -37,14 +37,14 @@
 .team-member-detail strong,
 .team-member-progress strong {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
 }
 
 .team-member-identity span,
 .team-member-detail span,
 .team-member-progress span {
   color: #a7a7a7;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;

@@ -8,7 +8,7 @@
   border: 2px solid #fcb400;
   border-radius: 999px;
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 18px;
   text-align: center;
   padding: 0.6rem;
@@ -42,7 +42,7 @@
 
 .dev-goals-summary-label {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 9px;
   text-align: center;
   line-height: 1.1;
@@ -57,7 +57,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
 }

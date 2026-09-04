@@ -16,7 +16,7 @@
 
 .par-meeting-header h2 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 20px;
   font-weight: 400;
   margin: 0;
@@ -27,7 +27,7 @@
   color: #111111;
   border-radius: 999px;
   padding: 0.35rem 1.25rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 700;
 }
@@ -42,7 +42,7 @@
   border: none;
   border-radius: 999px;
   padding: 0.5rem 1rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   margin-bottom: 0.6rem;
   cursor: pointer;
@@ -60,7 +60,7 @@
 .par-meeting-error {
   margin: 0.5rem 0 0;
   color: #ff7f7f;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 0.78rem;
 }
 

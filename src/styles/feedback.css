@@ -8,7 +8,7 @@
   border-radius: 999px;
   text-align: center;
   padding: 0.6rem 1rem;
-  font-family: "Inria Sans", serif;
+  font-family: inherit;
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 1.25rem;
@@ -31,7 +31,7 @@
 .feedback-availability-note {
   margin: -0.35rem 0 1rem;
   color: #a7a7a7;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 0.78rem;
   line-height: 1.45;
   text-align: center;
@@ -49,7 +49,7 @@
 }
 
 .self-assessment-question label {
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   color: #ffffff;
   font-size: 13px;
   font-weight: 600;
@@ -63,7 +63,7 @@
   padding: 0.6rem;
   min-height: 65px;
   resize: vertical;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   color: #111111;
   box-sizing: border-box;
@@ -93,7 +93,7 @@
   border: none;
   border-radius: 999px;
   padding: 0.5rem 1.5rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -110,7 +110,7 @@
 
 .feedback-submitted-note {
   color: #fcb400;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
 }
 
@@ -140,7 +140,7 @@
   border: none;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   margin-bottom: 1rem;
 }
@@ -173,7 +173,7 @@
 }
 
 .peer-review-rating-label {
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   color: #ffffff;
   font-size: 12px;
   flex: 1;
@@ -211,7 +211,7 @@
   color: #111111;
   border-radius: 999px;
   padding: 0.15rem 0.6rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 600;
   min-width: 34px;
@@ -227,7 +227,7 @@
 }
 
 .peer-review-question label {
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   color: #ffffff;
   font-size: 13px;
   font-weight: 600;
@@ -241,7 +241,7 @@
   padding: 0.6rem;
   min-height: 60px;
   resize: vertical;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   color: #111111;
   box-sizing: border-box;
@@ -277,7 +277,7 @@
   border: 2px solid #fcb400;
   border-radius: 20px;
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 22px;
   text-align: center;
   padding: 0.75rem;
@@ -309,7 +309,7 @@
 }
 
 .overall-rating-label {
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   color: #ffffff;
   font-size: 20px;
 }
@@ -324,7 +324,7 @@
   align-items: center;
   justify-content: center;
   color: #111111;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-weight: 700;
   font-size: 16px;
 }
@@ -362,7 +362,7 @@
 }
 
 .summary-row-label {
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   color: #ffffff;
   font-size: 13px;
   display: block;
@@ -394,7 +394,7 @@
   color: #111111;
   border-radius: 999px;
   padding: 0.1rem 0.6rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
   min-width: 38px;

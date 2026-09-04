@@ -27,7 +27,7 @@
 
 .dev-goal-title {
   color: #111111;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 700;
 }
@@ -37,7 +37,7 @@
   color: #111111;
   border-radius: 999px;
   padding: 0.15rem 0.7rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 10px;
   font-weight: 600;
 }
@@ -47,7 +47,7 @@
   display: flex;
   justify-content: space-between;
   color: #1a1a1a;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   margin-bottom: 0.5rem;
 }
@@ -75,7 +75,7 @@
 
 .dev-goal-progress-value {
   color: #111111;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
   min-width: 30px;

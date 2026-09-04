@@ -14,7 +14,7 @@
 
 .goal-period-pill-label {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 600;
 }

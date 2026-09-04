@@ -175,11 +175,30 @@
 .goal-assignment-button,
 .time-goal-assignment-button,
 .par-scheduler-ok {
-  border-color: transparent;
+  border: 1px solid rgba(252, 180, 0, .34);
   border-radius: 11px;
-  color: #111;
-  background: var(--ap-gold);
+  color: var(--ap-gold-strong);
+  background: linear-gradient(135deg, rgba(252, 180, 0, .11), rgba(252, 180, 0, .025));
+  box-shadow: inset 0 0 0 1px rgba(252, 180, 0, .025);
   font-weight: 750;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.assigned-goal-add-button:hover:not(:disabled),
+.assigned-time-goal-add-button:hover:not(:disabled),
+.review-cycle-add-button:hover:not(:disabled),
+.feedback-submit-button:hover:not(:disabled),
+.peer-review-submit-button:hover:not(:disabled),
+.hrmgmt-review-submit-button:hover:not(:disabled),
+.goal-evidence-submit-button:hover:not(:disabled),
+.create-cycle-button:hover:not(:disabled),
+.goal-assignment-button:hover:not(:disabled),
+.time-goal-assignment-button:hover:not(:disabled),
+.par-scheduler-ok:hover:not(:disabled) {
+  border-color: rgba(252, 180, 0, .58);
+  color: #ffd15c;
+  background: linear-gradient(135deg, rgba(252, 180, 0, .16), rgba(252, 180, 0, .045));
+  transform: translateY(-1px);
 }
 
 .assigned-goal-filter-select,

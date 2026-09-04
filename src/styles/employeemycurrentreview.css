@@ -26,7 +26,7 @@
 
 .employee-current-review-heading-card h1 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 26px;
   margin: 0 0 0.75rem 0;
   text-align: center;
@@ -38,7 +38,7 @@
   border-radius: 999px;
   text-align: center;
   padding: 0.5rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 15px;
   font-weight: 700;
   max-width: 300px;
@@ -58,7 +58,7 @@
 
 .employee-current-review-progress-title {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 18px;
   margin: 0 0 0.75rem 0;
 }
@@ -67,7 +67,7 @@
   display: flex;
   gap: 2rem;
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
@@ -97,7 +97,7 @@
 
 .employee-current-review-par-header h2 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 20px;
   margin: 0;
 }
@@ -107,7 +107,7 @@
   color: #111111;
   border-radius: 999px;
   padding: 0.35rem 1.25rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 700;
 }
@@ -120,7 +120,7 @@
   color: #111111;
   border-radius: 999px;
   padding: 0.5rem 1rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 13px;
   margin-bottom: 0.6rem;
 }

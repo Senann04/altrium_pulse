@@ -13,20 +13,20 @@
 }
 
 .upcoming-event-title {
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   color: #ffffff;
   font-size: 14px;
   font-weight: 700;
 }
 
 .upcoming-event-date {
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   color: #d9d9d9;
   font-size: 13px;
 }
 
 .upcoming-event-time {
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   color: #d9d9d9;
   font-size: 13px;
 }

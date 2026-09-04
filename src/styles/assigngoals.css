@@ -22,7 +22,7 @@
 
 .assign-goals-heading-card h1 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 26px;
   font-weight: 400;
   margin: 0;

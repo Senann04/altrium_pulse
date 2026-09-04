@@ -15,7 +15,7 @@
 
 .assigned-goal-section-title {
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 16px;
   letter-spacing: 0.05em;
   margin: 0;
@@ -44,7 +44,7 @@
 
 .assigned-goal-filter-row label {
   color: #d9d9d9;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
 }
 
@@ -54,7 +54,7 @@
   border: none;
   border-radius: 999px;
   padding: 0.3rem 1rem;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 12px;
   font-weight: 600;
 }

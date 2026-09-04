@@ -22,7 +22,7 @@
 
 .employee-feedback-heading-card h1 {
   color: #ffffff;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-size: 26px;
   font-weight: 400;
   margin: 0;
@@ -36,7 +36,7 @@
   padding: 0.6rem;
   text-align: center;
   color: #ffffff;
-  font-family: "Inria Sans", sans-serif;
+  font-family: inherit;
   font-size: 15px;
 }
 
@@ -71,7 +71,7 @@
   border-radius: 999px;
   text-align: center;
   padding: 0.6rem;
-  font-family: "Iskoola Pota", serif;
+  font-family: inherit;
   font-weight: 700;
   margin-bottom: 0.75rem;
 }
