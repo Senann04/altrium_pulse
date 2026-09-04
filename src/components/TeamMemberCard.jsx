@@ -25,9 +25,15 @@ function TeamMemberCard({ member }) {
         aria-label={`PDP ${member.planProgress?.pdp || 0} percent, PIP ${member.planProgress?.pip || 0} percent`}
       >
         <span>Plan progress</span>
-        <div>
-          <strong>PDP {member.planProgress?.pdp || 0}%</strong>
-          <strong>PIP {member.planProgress?.pip || 0}%</strong>
+        <div className="team-member-progress-values">
+          <div>
+            <small>PDP</small>
+            <strong>{member.planProgress?.pdp || 0}%</strong>
+          </div>
+          <div>
+            <small>PIP</small>
+            <strong>{member.planProgress?.pip || 0}%</strong>
+          </div>
         </div>
       </div>
     </div>
