@@ -10,30 +10,44 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
   /* Required for the cycle-to-user linkage — not in the screenshot as a
  separate field group, but needed to establish target scope per spec. */
   const [appliesTo, setAppliesTo] = useState("both");
-  const canCreate = Boolean(name.trim() && description.trim() && startDate && endDate && reviewType.trim());
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const datesValid = Boolean(startDate && endDate && endDate >= startDate);
+  const canCreate = Boolean(name.trim() && description.trim() && datesValid && reviewType.trim());
 
   if (!isOpen) return null;
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!name.trim() || !description.trim() || !startDate || !endDate || !reviewType.trim()) return;
+    if (!datesValid) {
+      setError("End date must be on or after the start date.");
+      return;
+    }
 
-    onCreate({
-      name: name.trim(),
-      description: description.trim(),
-      startDate,
-      endDate,
-      reviewType: reviewType.trim(),
-      status: "Pending...",
-      active: true,
-      appliesTo,
-    });
-
-    setName("");
-    setDescription("");
-    setStartDate("");
-    setEndDate("");
-    setReviewType("");
-    setAppliesTo("both");
+    setSubmitting(true);
+    setError("");
+    try {
+      await onCreate({
+        name: name.trim(),
+        description: description.trim(),
+        startDate,
+        endDate,
+        reviewType: reviewType.trim(),
+        status: "Pending...",
+        active: false,
+        appliesTo,
+      });
+      setName("");
+      setDescription("");
+      setStartDate("");
+      setEndDate("");
+      setReviewType("");
+      setAppliesTo("both");
+    } catch (createError) {
+      setError(createError.message || "Unable to create this review cycle.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -87,9 +101,10 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
         </div>
 
         <div className="create-cycle-actions">
+          {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}
           <button type="button" className="create-cycle-cancel" onClick={onClose}>Cancel</button>
-          <button type="button" className="create-cycle-button" onClick={handleCreate} disabled={!canCreate}>
-            Create cycle
+          <button type="button" className="create-cycle-button" onClick={handleCreate} disabled={!canCreate || submitting}>
+            {submitting ? "Creating…" : "Create cycle"}
           </button>
         </div>
       </div>

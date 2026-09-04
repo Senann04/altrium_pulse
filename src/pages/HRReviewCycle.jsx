@@ -1,6 +1,7 @@
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
 import ReviewCycleSection from "../components/ReviewCycleSection";
+import HRReviewOperations from "../components/HRReviewOperations";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 import "../styles/hrreviewcycle.css";
 
@@ -17,6 +18,7 @@ function HRReviewCycle({ onNavigate, onSignOut, profileData }) {
           description="Create, activate and monitor organisation-wide performance review periods."
         />
         <ReviewCycleSection />
+        <HRReviewOperations scopeLabel={profileData?.department || "Assigned business unit"} />
       </div>
     </div>
   );

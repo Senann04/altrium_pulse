@@ -62,8 +62,42 @@ function SupervisorMyFeedback({ onNavigate, onSignOut, profileData, sidebarRole 
   );
 }
 
-function HRBPFeedback(props) {
-  return <SupervisorMyFeedback {...props} sidebarRole="hrbp" />;
+function HRBPFeedback({ onNavigate, onSignOut, profileData }) {
+  const feedback = profileData?.feedback || {};
+
+  return (
+    <div className="supervisor-feedback-layout">
+      <Sidebar role="hrbp" activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+
+      <div className="supervisor-feedback-main">
+        <Header title="My Feedback" profileData={profileData} />
+        <WorkspaceHeading
+          eyebrow="Personal feedback"
+          title="My Feedback"
+          description="Review feedback shared with you. Employee review administration stays in Review Cycle."
+        />
+
+        <section className="hrbp-feedback-notice">
+          <span>Clear separation</span>
+          <h2>This page is only for your own feedback</h2>
+          <p>Use Review Cycle to monitor assigned employee reviews and select their peer reviewers.</p>
+        </section>
+
+        <FeedbackSummary overallRating={feedback.overallRating} categoryRatings={feedback.categoryRatings} />
+
+        <div className="supervisor-feedback-bottom-row">
+          <div className="supervisor-feedback-well-done-card">
+            <div className="supervisor-feedback-bottom-title">Strengths</div>
+            <div className="supervisor-feedback-bottom-content">{feedback.strengths || "No strengths have been shared yet."}</div>
+          </div>
+          <div className="supervisor-feedback-improve-card">
+            <div className="supervisor-feedback-bottom-title">Development opportunities</div>
+            <div className="supervisor-feedback-bottom-content">{feedback.improvements || "No development feedback has been shared yet."}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export { HRBPFeedback };

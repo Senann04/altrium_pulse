@@ -6,16 +6,40 @@ function AssignedGoalCard({ goal, onUpdate, onDone }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(goal);
   const [viewing, setViewing] = useState(null); // "actionItem" | "evidence" | null
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
   const isDone = goal.status === "Completed";
 
-  const handleEditToggle = () => {
+  const handleEditToggle = async () => {
     if (isEditing) {
-      onUpdate(goal.id, draft);
+      setBusy(true);
+      setError("");
+      try {
+        await onUpdate(goal.id, draft);
+        setIsEditing(false);
+      } catch (updateError) {
+        setError(updateError.message || "Unable to save these changes.");
+      } finally {
+        setBusy(false);
+      }
     } else {
       setDraft(goal);
+      setError("");
+      setIsEditing(true);
     }
-    setIsEditing(!isEditing);
+  };
+
+  const handleDone = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      await onDone(goal.id);
+    } catch (completionError) {
+      setError(completionError.message || "Unable to complete this goal.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const field = (key) => (isEditing ? draft[key] : goal[key]);
@@ -118,16 +142,17 @@ function AssignedGoalCard({ goal, onUpdate, onDone }) {
       </div>
 
       <div className="assigned-goal-footer">
-        <button type="button" className="assigned-goal-edit-button" onClick={handleEditToggle}>
-          {isEditing ? "Save changes" : "Edit details"}
+        {error && <span className="hr-admin-inline-error" role="alert">{error}</span>}
+        <button type="button" className="assigned-goal-edit-button" onClick={handleEditToggle} disabled={busy}>
+          {busy && isEditing ? "Saving…" : isEditing ? "Save changes" : "Edit details"}
         </button>
         <button
           type="button"
           className="assigned-goal-done-button"
-          onClick={() => onDone(goal.id)}
-          disabled={isDone}
+          onClick={handleDone}
+          disabled={isDone || busy}
         >
-          {isDone ? "Completed" : "Mark complete"}
+          {busy && !isEditing ? "Updating…" : isDone ? "Completed" : "Mark complete"}
         </button>
       </div>
 

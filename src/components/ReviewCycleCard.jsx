@@ -56,7 +56,7 @@ function ReviewCycleCard({ cycle, onDelete }) {
         <button
           type="button"
           className="review-cycle-delete-button"
-          onClick={() => onDelete(cycle.id)}
+          onClick={() => onDelete(cycle)}
           aria-label="Delete review cycle"
         >
           <TrashIcon />

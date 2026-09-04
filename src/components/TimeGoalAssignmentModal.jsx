@@ -5,7 +5,10 @@ function TimeGoalAssignmentModal({ period, isOpen, onClose, onAssign, personDire
   const [team, setTeam] = useState("");
   const [personId, setPersonId] = useState("");
   const [personName, setPersonName] = useState("");
+  const [targetUserId, setTargetUserId] = useState("");
   const [goalText, setGoalText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
 
@@ -16,32 +19,45 @@ function TimeGoalAssignmentModal({ period, isOpen, onClose, onAssign, personDire
     setTeam(e.target.value);
     setPersonId("");
     setPersonName("");
+    setTargetUserId("");
+    setError("");
   };
 
   const handlePersonChange = (e) => {
     const selected = personDirectory.find((p) => p.id === e.target.value);
     setPersonId(e.target.value);
     setPersonName(selected ? selected.name : "");
+    setTargetUserId(selected ? selected.userId : "");
+    setError("");
   };
 
-  const handleAssign = () => {
+  const canAssign = Boolean(team && personId && personName && targetUserId && goalText.trim());
+
+  const handleAssign = async () => {
     if (!team || !personId || !personName || !goalText.trim()) return;
-
-    onAssign({
-      team,
-      personId,
-      personName,
-      targetUserId: personId,
-      targetRole: personDirectory.find((p) => p.id === personId)?.role || "employee",
-      goal: goalText.trim(),
-      status: "Ongoing",
-      progress: 0,
-    });
-
-    setTeam("");
-    setPersonId("");
-    setPersonName("");
-    setGoalText("");
+    setSubmitting(true);
+    setError("");
+    try {
+      await onAssign({
+        team,
+        personId,
+        personName,
+        targetUserId,
+        targetRole: personDirectory.find((p) => p.id === personId)?.role || "employee",
+        goal: goalText.trim(),
+        status: "Ongoing",
+        progress: 0,
+      });
+      setTeam("");
+      setPersonId("");
+      setPersonName("");
+      setTargetUserId("");
+      setGoalText("");
+    } catch (assignmentError) {
+      setError(assignmentError.message || `Unable to assign this ${period.toLowerCase()} goal.`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -95,8 +111,11 @@ function TimeGoalAssignmentModal({ period, isOpen, onClose, onAssign, personDire
         </div>
 
         <div className="time-goal-assignment-actions">
+          {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}
           <button type="button" className="time-goal-assignment-cancel" onClick={onClose}>Cancel</button>
-          <button type="button" className="time-goal-assignment-button" onClick={handleAssign}>Assign goal</button>
+          <button type="button" className="time-goal-assignment-button" onClick={handleAssign} disabled={!canAssign || submitting}>
+            {submitting ? "Assigning…" : "Assign goal"}
+          </button>
         </div>
       </div>
     </div>

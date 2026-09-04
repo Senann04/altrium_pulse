@@ -166,8 +166,49 @@ function SupervisorProjects(props) {
   return <EmployeeWorkspacePage {...props} role="supervisor" view="projects" />;
 }
 
-function HRBPProjects(props) {
-  return <EmployeeWorkspacePage {...props} role="hrbp" view="projects" />;
+function HRBPProjects({ onNavigate, onSignOut, profileData }) {
+  const members = profileData?.teamMembers || [];
+  const scopeLabel = profileData?.department || "Assigned business unit";
+
+  return (
+    <div className="app-shell">
+      <Sidebar role="hrbp" activeItem="projects" onNavigate={onNavigate} onSignOut={onSignOut} profileData={profileData} />
+      <main className="app-main employee-workspace-page">
+        <Header title="Projects" profileData={profileData} />
+        <WorkspaceHeading
+          eyebrow="Access scope"
+          title="Projects"
+          description="See the business unit and employee records available to your HRBP account."
+        />
+
+        <section className="hrbp-scope-panel">
+          <div className="hrbp-scope-heading">
+            <div><span>Assigned business unit</span><h2>{scopeLabel}</h2></div>
+            <strong>{members.length} employees in scope</strong>
+          </div>
+          <div className="hrbp-scope-member-grid">
+            {members.map((member) => (
+              <article key={member.id}>
+                <span className="hrbp-scope-avatar" aria-hidden="true">{member.name.slice(0, 1).toUpperCase()}</span>
+                <div><strong>{member.name}</strong><span>{member.employeeNumber} · {member.jobTitle}</span></div>
+                <span className="hrbp-scope-status">{member.reviewStatus}</span>
+              </article>
+            ))}
+          </div>
+          {!members.length && <p className="hr-admin-state">No employees are assigned to this HRBP account.</p>}
+        </section>
+
+        <section className="hrbp-project-state">
+          <span className="employee-workspace-empty-icon"><PageIcon type="projects" /></span>
+          <div>
+            <span>Project access</span>
+            <h2>No project assignments recorded</h2>
+            <p>The current system scopes this HRBP account by business unit. Project-level access will appear here when project records are added.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
 }
 
 function SupervisorPerformanceHistory(props) {
