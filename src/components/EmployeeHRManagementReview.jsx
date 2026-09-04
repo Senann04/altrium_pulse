@@ -2,15 +2,9 @@ import { useState } from "react";
 import { StarIcon } from "./InterfaceIcons";
 import "../styles/employeehrmanagementreview.css";
 
-/* Temporary review targets until HR/Management user data comes from Supabase. */
-const hrManagementReviewTargets = [
-  { id: "HRB1842", name: "R. Thiwen Sandul" },
-  { id: "LMS1842", name: "Senior Leadership" },
-];
-
 const categories = ["Communication", "Reliability", "Professionalism"];
 
-function EmployeeHRManagementReview() {
+function EmployeeHRManagementReview({ reviewTargets = [] }) {
   const [selectedTarget, setSelectedTarget] = useState("");
   /* Temporary category ratings until the backend schema supports these categories. */
   const [categoryRatings, setCategoryRatings] = useState({});
@@ -57,9 +51,10 @@ function EmployeeHRManagementReview() {
         aria-label="HR or management colleague to review"
         value={selectedTarget}
         onChange={(e) => setSelectedTarget(e.target.value)}
+        disabled={!reviewTargets.length}
       >
-        <option value="" disabled>Select HR or management</option>
-        {hrManagementReviewTargets.map((t) => (
+        <option value="" disabled>{reviewTargets.length ? "Select HR or management" : "No HR or management profiles available"}</option>
+        {reviewTargets.map((t) => (
           <option key={t.id} value={t.id}>{t.name}</option>
         ))}
       </select>
@@ -103,7 +98,7 @@ function EmployeeHRManagementReview() {
       {error && <p className="hrmgmt-review-error">{error}</p>}
 
       <div className="hrmgmt-review-submit-row">
-        <button type="submit" className="hrmgmt-review-submit-button">Submit feedback</button>
+        <button type="submit" className="hrmgmt-review-submit-button" disabled={!reviewTargets.length}>Submit feedback</button>
       </div>
     </form>
   );

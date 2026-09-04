@@ -57,6 +57,13 @@
   cursor: default;
 }
 
+.par-meeting-error {
+  margin: 0.5rem 0 0;
+  color: #ff7f7f;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 0.78rem;
+}
+
 .par-meeting-icon {
   font-size: 14px;
 }

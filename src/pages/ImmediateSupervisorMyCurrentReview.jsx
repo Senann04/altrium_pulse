@@ -5,23 +5,9 @@ import "../styles/immediatesupervisormycurrentreview.css";
 import PARMeeting from "../components/PARMeeting";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 
-/* Temporary supervisor review data until Supabase records are connected. */
-const immediateSupervisorCurrentReviewData = {
-  reviewCycle: {
-    id: "cycle-1",
-    name: "August 2026 Review",
-    status: "Finalizing...",
-  },
-  hrBusinessPartner: "R. Thiwen Sandul",
-  stages: [
-    { key: "self-assessment", label: "Self Assessment", status: "In progress" },
-    { key: "peer-review", label: "Peer Review", status: "In progress" },
-    { key: "normalization", label: "Normalization", status: "Pending" },
-    { key: "par-meeting", label: "PAR Meeting", status: "Pending" },
-  ],
-};
-
 function ImmediateSupervisorMyCurrentReview({ onNavigate, onSignOut, profileData }) {
+  const currentReview = profileData?.currentReview;
+
   return (
     <div className="supervisor-current-review-layout">
       <Sidebar role="supervisor" activeItem="current-review" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
@@ -33,7 +19,7 @@ function ImmediateSupervisorMyCurrentReview({ onNavigate, onSignOut, profileData
           eyebrow="Performance review"
           title="My Current Review"
           description="Follow your own review stages and schedule the conversation that closes the cycle."
-          meta={immediateSupervisorCurrentReviewData.reviewCycle.name}
+          meta={currentReview?.cycleName || profileData?.parCycle || "No active review"}
         />
 
         <div className="supervisor-current-review-progress-card">
@@ -42,17 +28,24 @@ function ImmediateSupervisorMyCurrentReview({ onNavigate, onSignOut, profileData
           <div className="supervisor-current-review-people-row">
             <span>
               HR Business Partner :{" "}
-              <strong>{immediateSupervisorCurrentReviewData.hrBusinessPartner}</strong>
+              <strong>{profileData?.hrBusinessPartner || "Not assigned"}</strong>
             </span>
           </div>
 
-          <ReviewProgressFlow
-            stages={immediateSupervisorCurrentReviewData.stages}
-            centerStatus={immediateSupervisorCurrentReviewData.reviewCycle.status}
-          />
+          {currentReview ? (
+            <ReviewProgressFlow
+              stages={currentReview.stages}
+              centerStatus={currentReview.status}
+            />
+          ) : (
+            <div className="supervisor-current-review-empty">
+              <strong>No personal review assigned</strong>
+              <span>Your review progress will appear here once HR assigns you to an active cycle.</span>
+            </div>
+          )}
         </div>
 
-        <PARMeeting role="supervisor" />
+        <PARMeeting role="supervisor" meeting={profileData?.meeting} reviewId={currentReview?.id} />
       </div>
     </div>
   );

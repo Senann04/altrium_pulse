@@ -52,6 +52,9 @@ function SelfAssessmentForm({ reviewId, initialAnswers, submittedAt }) {
   return (
     <form className="self-assessment-form" onSubmit={handleSubmit}>
       <div className="feedback-title-pill">Self Assessment</div>
+      {!reviewId && (
+        <p className="feedback-availability-note">No active personal review is assigned to you.</p>
+      )}
 
       {QUESTIONS.map((question, index) => (
         <div className="self-assessment-question" key={index}>
@@ -63,7 +66,7 @@ function SelfAssessmentForm({ reviewId, initialAnswers, submittedAt }) {
             value={answers[index]}
             onChange={(e) => handleChange(index, e.target.value)}
             placeholder="Write a clear, specific response…"
-            disabled={submitted}
+            disabled={submitted || !reviewId}
           />
         </div>
       ))}

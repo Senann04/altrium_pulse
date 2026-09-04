@@ -5,7 +5,14 @@ import EmployeeMyFeedback from "./pages/EmployeeMyFeedback";
 import EmployeeMyProgress from "./pages/EmployeeMyProgress";
 import EmployeeMyCurrentReview from "./pages/EmployeeMycurrentReview";
 import EmployeeProfile from "./pages/EmployeeProfile";
-import { EmployeeCalendar, EmployeePerformanceHistory, EmployeeProjects } from "./pages/EmployeeWorkspacePages";
+import {
+  EmployeeCalendar,
+  EmployeePerformanceHistory,
+  EmployeeProjects,
+  SupervisorCalendar,
+  SupervisorPerformanceHistory,
+  SupervisorProjects,
+} from "./pages/EmployeeWorkspacePages";
 import HRBPDashboard from "./pages/HRBPDashboard";
 import HRBPProfile from "./pages/HRBPProfile";
 import HRReviewCycle from "./pages/HRReviewCycle";
@@ -42,8 +49,11 @@ const rolePages = {
     dashboard: ImmediateSupervisorDashboard,
     "current-review": ImmediateSupervisorMyCurrentReview,
     feedback: ImmediateSupervisorFeedback,
+    projects: SupervisorProjects,
     progress: ImmediateSupervisorMyProgress,
     team: MyTeam,
+    history: SupervisorPerformanceHistory,
+    calendar: SupervisorCalendar,
     profile: ImmediateSupervisorProfile,
   },
   hr_partner: {

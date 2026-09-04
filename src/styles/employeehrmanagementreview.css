@@ -136,3 +136,9 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+.hrmgmt-review-submit-button:disabled,
+.hrmgmt-review-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

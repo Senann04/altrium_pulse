@@ -74,3 +74,28 @@
 .supervisor-current-review-people-row strong {
   color: #ffffff;
 }
+
+.supervisor-current-review-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px dashed rgba(252, 180, 0, 0.55);
+  border-radius: 18px;
+  color: #d9d9d9;
+  text-align: center;
+}
+
+.supervisor-current-review-empty strong {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 1rem;
+}
+
+.supervisor-current-review-empty span {
+  max-width: 520px;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}

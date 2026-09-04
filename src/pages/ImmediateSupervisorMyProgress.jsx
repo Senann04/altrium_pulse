@@ -1,29 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
 import AssignedGoalRow from "../components/AssignedGoalRow.jsx";
+import EmployeeDevelopmentGoals from "../components/EmployeeDevelopmentGoals.jsx";
+import GoalEvidenceSubmission from "../components/GoalEvidenceSubmission.jsx";
 import WorkspaceHeading from "../components/WorkspaceHeading";
-import { getAssignedTimeGoals, subscribeToAssignedTimeGoals } from "../services/assignedTimeGoalsStorage.js";
+import { submitGoalEvidence } from "../services/goalEvidenceService.js";
 import "../styles/immediatesupervisormyprogress.css";
 
-// Temporary current-user identity until Supabase Auth/profile is connected.
-const currentSupervisor = { id: "IMS00089", name: "Kasun Silva" };
-
 function SupervisorMyProgress({ onNavigate, onSignOut, profileData }) {
-  const [allGoals, setAllGoals] = useState(getAssignedTimeGoals());
+  const [selectedGoal, setSelectedGoal] = useState(null);
+  const timeGoals = profileData?.goals || [];
+  const plans = profileData?.developmentPlans || [];
+  const weekly = timeGoals.filter((goal) => goal.period === "Weekly");
+  const monthly = timeGoals.filter((goal) => goal.period === "Monthly");
+  const yearly = timeGoals.filter((goal) => goal.period === "Yearly");
+  const pdpGoals = plans.filter((goal) => goal.type === "PDP");
+  const pipGoals = plans.filter((goal) => goal.type === "PIP");
 
-  useEffect(() => {
-    return subscribeToAssignedTimeGoals(() => setAllGoals(getAssignedTimeGoals()));
-  }, []);
-
-  // Only goals targeting this supervisor — never Employee-targeted goals.
-  const mine = allGoals.filter(
-    (g) => g.targetRole === "supervisor" && g.targetUserId === currentSupervisor.id
-  );
-
-  const weekly = mine.filter((g) => g.period === "Weekly");
-  const monthly = mine.filter((g) => g.period === "Monthly");
-  const yearly = mine.filter((g) => g.period === "Yearly");
+  const handleEvidenceSubmitted = async (goalId, files) => {
+    await submitGoalEvidence({
+      planId: goalId,
+      actionItemFile: files.actionItemFile,
+      evidenceFile: files.evidenceFile,
+    });
+  };
 
   return (
     <div className="supervisor-progress-layout">
@@ -57,7 +58,16 @@ function SupervisorMyProgress({ onNavigate, onSignOut, profileData }) {
             {yearly.map((g) => <AssignedGoalRow key={g.id} goal={g} />)}
           </div>
         </div>
+
+        <EmployeeDevelopmentGoals title="PDP Goals" goals={pdpGoals} onSelectGoal={setSelectedGoal} />
+        <EmployeeDevelopmentGoals title="PIP Goals" goals={pipGoals} onSelectGoal={setSelectedGoal} />
       </div>
+
+      <GoalEvidenceSubmission
+        goal={selectedGoal}
+        onClose={() => setSelectedGoal(null)}
+        onSubmitEvidence={handleEvidenceSubmitted}
+      />
     </div>
   );
 }

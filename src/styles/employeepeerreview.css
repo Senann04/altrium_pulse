@@ -144,3 +144,9 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+.peer-review-submit-button:disabled,
+.peer-review-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

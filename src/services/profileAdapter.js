@@ -237,6 +237,24 @@ export async function loadProfileView(userId) {
   const allScopedReviews = visibleReviews.filter((review) => scopedIds.has(review.employee_id));
   const scopedGoals = (goalsResult.data || []).filter((goal) => scopedIds.has(goal.employee_id));
   const scopedPlans = (plansResult.data || []).filter((plan) => scopedIds.has(plan.employee_id));
+  const teamMembers = scopedEmployees.map((employee) => {
+    const employeeReview = scopedReviews.find((review) => review.employee_id === employee.id);
+    const employeeGoals = scopedGoals.filter((goal) => goal.employee_id === employee.id);
+    const completedEmployeeGoals = employeeGoals.filter((goal) => goal.status === "completed").length;
+
+    return {
+      id: employee.id,
+      employeeNumber: employee.employee_number || employee.id,
+      name: employee.full_name,
+      jobTitle: employee.job_title || "Employee",
+      department: departmentResult.data?.name || "Unassigned team",
+      reviewStatus: employeeReview
+        ? REVIEW_STATUS_LABELS[employeeReview.status] || employeeReview.status
+        : "No review assigned",
+      goalsCompleted: completedEmployeeGoals,
+      goalsTotal: employeeGoals.length,
+    };
+  });
 
   const ownGoals = (goalsResult.data || [])
     .filter((goal) => goal.employee_id === userId)
@@ -325,6 +343,15 @@ export async function loadProfileView(userId) {
       teammates: directory
         .filter((person) => person.role === "employee" && person.department_id === profile.department_id && person.id !== userId)
         .map((person) => ({ id: person.id, employeeNumber: person.employee_number || person.id, name: person.full_name, jobTitle: person.job_title || "Employee" })),
+      reviewTargets: directory
+        .filter((person) => ["hr_partner", "senior_management"].includes(person.role) && person.id !== userId)
+        .map((person) => ({
+          id: person.id,
+          employeeNumber: person.employee_number || person.id,
+          name: person.full_name,
+          jobTitle: person.job_title || (person.role === "hr_partner" ? "HR Business Partner" : "Senior Management"),
+        })),
+      teamMembers,
       goals: ownGoals,
       developmentPlans: ownPlans,
       notifications: (notificationsResult.data || []).map((notification) => ({ ...notification, createdLabel: formatDateTime(notification.created_at) })),
@@ -354,7 +381,7 @@ export async function loadProfileView(userId) {
           allReviews: allScopedReviews,
           goals: scopedGoals,
           plans: scopedPlans,
-          feedbackRequests: feedbackRequestsResult.data || [],
+          feedbackRequests: (feedbackRequestsResult.data || []).filter((request) => request.reviewer_id === userId),
           latestRating,
         }),
         tasks,

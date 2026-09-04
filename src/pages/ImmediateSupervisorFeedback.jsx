@@ -7,20 +7,10 @@ import FeedbackSummary from "../components/feedbacksummary.jsx";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 import "../styles/immediatesupervisormyfeedback.css";
 
-// temporary values until Supabase provides real Feedback records
-const supervisorFeedbackData = {
-  overallRating: "4.5",
-  // category ratings are frontend-only until the backend schema supports them
-  categoryRatings: [
-    { name: "Communication", value: 87 },
-    { name: "Reliability", value: 95 },
-    { name: "Professionalism", value: 78 },
-  ],
-  strengths: "",
-  improvements: "",
-};
-
 function SupervisorMyFeedback({ onNavigate, onSignOut, profileData }) {
+  const feedback = profileData?.feedback || {};
+  const currentReview = profileData?.currentReview;
+
   return (
     <div className="supervisor-feedback-layout">
       <Sidebar role="supervisor" activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
@@ -36,34 +26,35 @@ function SupervisorMyFeedback({ onNavigate, onSignOut, profileData }) {
 
         <div className="supervisor-feedback-subheading">Provide Feedback</div>
 
-        {/* row 1: Self Assessment + first Peer Review */}
         <div className="supervisor-feedback-row">
-          <SelfAssessmentForm />
-          <EmployeePeerReview />
+          <SelfAssessmentForm
+            reviewId={currentReview?.id}
+            initialAnswers={currentReview?.selfAssessment}
+            submittedAt={currentReview?.employeeSubmittedAt}
+          />
+          <EmployeePeerReview peerOptions={profileData?.teammates || []} />
         </div>
 
-        {/* row 2: second Peer Review + HR and Management review */}
         <div className="supervisor-feedback-row">
-          <EmployeePeerReview />
-          <EmployeeHRManagementReview />
+          <EmployeeHRManagementReview reviewTargets={profileData?.reviewTargets || []} />
         </div>
 
         <div className="supervisor-feedback-subheading">Feedback for Me</div>
 
         <FeedbackSummary
-          overallRating={supervisorFeedbackData.overallRating}
-          categoryRatings={supervisorFeedbackData.categoryRatings}
+          overallRating={feedback.overallRating}
+          categoryRatings={feedback.categoryRatings}
         />
 
         <div className="supervisor-feedback-bottom-row">
           <div className="supervisor-feedback-well-done-card">
             <div className="supervisor-feedback-bottom-title">Strengths</div>
-            <div className="supervisor-feedback-bottom-content">{supervisorFeedbackData.strengths || "No strengths have been shared yet."}</div>
+            <div className="supervisor-feedback-bottom-content">{feedback.strengths || "No strengths have been shared yet."}</div>
           </div>
 
           <div className="supervisor-feedback-improve-card">
             <div className="supervisor-feedback-bottom-title">Development opportunities</div>
-            <div className="supervisor-feedback-bottom-content">{supervisorFeedbackData.improvements || "No development feedback has been shared yet."}</div>
+            <div className="supervisor-feedback-bottom-content">{feedback.improvements || "No development feedback has been shared yet."}</div>
           </div>
         </div>
       </div>

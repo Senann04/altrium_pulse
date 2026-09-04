@@ -52,8 +52,9 @@ function EmployeePeerReview({ peerOptions = [] }) {
         aria-label="Teammate to review"
         value={selectedPeer}
         onChange={(e) => setSelectedPeer(e.target.value)}
+        disabled={!peerOptions.length}
       >
-        <option value="" disabled>Select a teammate</option>
+        <option value="" disabled>{peerOptions.length ? "Select a teammate" : "No teammates available"}</option>
         {peerOptions.map((p) => (
           <option key={p.id} value={p.id}>{p.name}</option>
         ))}
@@ -108,7 +109,7 @@ function EmployeePeerReview({ peerOptions = [] }) {
       {error && <p className="peer-review-error">{error}</p>}
 
       <div className="peer-review-submit-row">
-        <button type="submit" className="peer-review-submit-button">Submit review</button>
+        <button type="submit" className="peer-review-submit-button" disabled={!peerOptions.length}>Submit review</button>
       </div>
     </form>
   );

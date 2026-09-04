@@ -2,27 +2,81 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(252, 180, 0, 0.55);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .team-member-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  background: #ffffff;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #fcb400;
+  color: #111111;
   object-fit: cover;
   flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
 }
 
-.team-member-name {
-  flex: 1;
-  background: #fcb400;
-  border-radius: 999px;
-  padding: 0.9rem 1.25rem;
+.team-member-identity {
+  flex: 1.2;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
-.team-member-id {
+.team-member-identity strong,
+.team-member-detail strong,
+.team-member-progress strong {
+  color: #ffffff;
+  font-family: "Inria Sans", sans-serif;
+}
+
+.team-member-identity span,
+.team-member-detail span,
+.team-member-progress span {
+  color: #a7a7a7;
+  font-family: "Inria Sans", sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.team-member-detail,
+.team-member-progress {
   flex: 1;
-  background: #fcb400;
-  border-radius: 999px;
-  padding: 0.9rem 1.25rem;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.team-member-progress {
+  flex: 0 0 auto;
+  min-width: 96px;
+  padding: 0.65rem 0.9rem;
+  border-radius: 12px;
+  background: rgba(252, 180, 0, 0.12);
+}
+
+.team-member-progress strong {
+  color: #fcb400;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 900px) {
+  .team-member-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .team-member-identity {
+    flex-basis: calc(100% - 72px);
+  }
 }

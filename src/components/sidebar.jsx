@@ -97,11 +97,19 @@ const MENUS = {
       items: [
         { key: "current-review", label: "My Current Review", icon: "review" },
         { key: "feedback", label: "My Feedback", icon: "feedback" },
+        { key: "projects", label: "Projects", icon: "projects" },
         { key: "progress", label: "My Progress", icon: "progress" },
       ],
     },
     { label: "People", items: [{ key: "team", label: "My Team", icon: "team" }] },
-    { label: "Account", items: [{ key: "profile", label: "My Profile", icon: "profile" }] },
+    {
+      label: "Workspace",
+      items: [
+        { key: "history", label: "Performance History", icon: "history" },
+        { key: "calendar", label: "Calendar", icon: "calendar" },
+        { key: "profile", label: "My Profile", icon: "profile" },
+      ],
+    },
   ],
   leadership: [
     { label: "Overview", items: [{ key: "dashboard", label: "Dashboard", icon: "dashboard" }] },

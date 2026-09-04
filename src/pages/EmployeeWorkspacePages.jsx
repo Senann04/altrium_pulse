@@ -28,21 +28,25 @@ function PageIcon({ type }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z" /><path d="m4 7 8 4 8-4v10l-8 4-8-4V7Z" /><path d="M12 11v10" /></svg>;
 }
 
-function EmployeeWorkspacePage({ view, onNavigate, onSignOut, profileData }) {
+function EmployeeWorkspacePage({ view, role = "employee", onNavigate, onSignOut, profileData }) {
   const content = pageContent[view];
   const cycleLabel = profileData?.parCycle || "Current PAR cycle";
   const completedReviews = view === "history" ? profileData?.completedReviews || [] : [];
+  const workspaceLabel = role === "supervisor" ? "Supervisor workspace" : "Employee workspace";
+  const emptyDescription = role === "supervisor" && view === "projects"
+    ? "Projects assigned to you will appear here with their owner, deadline and progress."
+    : content.emptyDescription;
 
   return (
     <div className="app-shell">
-      <Sidebar role="employee" activeItem={view} onNavigate={onNavigate} onSignOut={onSignOut} profileData={profileData} />
+      <Sidebar role={role} activeItem={view} onNavigate={onNavigate} onSignOut={onSignOut} profileData={profileData} />
       <main className="app-main employee-workspace-page">
         <Header title={content.title} profileData={profileData} />
         <WorkspaceHeading eyebrow={content.eyebrow} title={content.title} description={content.description} />
 
         <section className="employee-workspace-panel">
           <div className="employee-workspace-panel-heading">
-            <div><span>Employee workspace</span><h2>{content.title}</h2></div>
+            <div><span>{workspaceLabel}</span><h2>{content.title}</h2></div>
             <span className="employee-workspace-cycle">{cycleLabel}</span>
           </div>
           {completedReviews.length ? (
@@ -65,7 +69,7 @@ function EmployeeWorkspacePage({ view, onNavigate, onSignOut, profileData }) {
           ) : (
             <div className="employee-workspace-empty">
               <span className="employee-workspace-empty-icon"><PageIcon type={view} /></span>
-              <div><h3>{content.emptyTitle}</h3><p>{content.emptyDescription}</p></div>
+              <div><h3>{content.emptyTitle}</h3><p>{emptyDescription}</p></div>
             </div>
           )}
         </section>
@@ -82,7 +86,7 @@ function EmployeePerformanceHistory(props) {
   return <EmployeeWorkspacePage {...props} view="history" />;
 }
 
-function EmployeeCalendar({ onNavigate, onSignOut, profileData }) {
+function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileData }) {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
@@ -107,7 +111,7 @@ function EmployeeCalendar({ onNavigate, onSignOut, profileData }) {
 
   return (
     <div className="app-shell">
-      <Sidebar role="employee" activeItem="calendar" onNavigate={onNavigate} onSignOut={onSignOut} profileData={profileData} />
+      <Sidebar role={role} activeItem="calendar" onNavigate={onNavigate} onSignOut={onSignOut} profileData={profileData} />
       <main className="app-main employee-workspace-page">
         <Header title="Calendar" profileData={profileData} />
         <WorkspaceHeading eyebrow="Schedule" title="Calendar" description="Keep review milestones, meetings and goal deadlines in one place." />
@@ -152,4 +156,23 @@ function EmployeeCalendar({ onNavigate, onSignOut, profileData }) {
   );
 }
 
-export { EmployeeCalendar, EmployeePerformanceHistory, EmployeeProjects };
+function SupervisorProjects(props) {
+  return <EmployeeWorkspacePage {...props} role="supervisor" view="projects" />;
+}
+
+function SupervisorPerformanceHistory(props) {
+  return <EmployeeWorkspacePage {...props} role="supervisor" view="history" />;
+}
+
+function SupervisorCalendar(props) {
+  return <EmployeeCalendar {...props} role="supervisor" />;
+}
+
+export {
+  EmployeeCalendar,
+  EmployeePerformanceHistory,
+  EmployeeProjects,
+  SupervisorCalendar,
+  SupervisorPerformanceHistory,
+  SupervisorProjects,
+};
