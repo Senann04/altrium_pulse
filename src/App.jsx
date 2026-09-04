@@ -9,6 +9,7 @@ import {
   EmployeeCalendar,
   EmployeePerformanceHistory,
   EmployeeProjects,
+  HRBPProjects,
   SupervisorCalendar,
   SupervisorPerformanceHistory,
   SupervisorProjects,
@@ -17,7 +18,7 @@ import HRBPDashboard from "./pages/HRBPDashboard";
 import HRBPProfile from "./pages/HRBPProfile";
 import HRReviewCycle from "./pages/HRReviewCycle";
 import ImmediateSupervisorDashboard from "./pages/ImmediateSupervisorDashboard";
-import ImmediateSupervisorFeedback from "./pages/ImmediateSupervisorFeedback";
+import ImmediateSupervisorFeedback, { HRBPFeedback } from "./pages/ImmediateSupervisorFeedback";
 import ImmediateSupervisorMyCurrentReview from "./pages/ImmediateSupervisorMyCurrentReview";
 import ImmediateSupervisorMyProgress from "./pages/ImmediateSupervisorMyProgress";
 import ImmediateSupervisorProfile from "./pages/ImmediateSupervisorProfile";
@@ -59,6 +60,8 @@ const rolePages = {
   hr_partner: {
     dashboard: HRBPDashboard,
     "review-cycle": HRReviewCycle,
+    feedback: HRBPFeedback,
+    projects: HRBPProjects,
     "assign-goals": AssignGoals,
     profile: HRBPProfile,
   },

@@ -3,7 +3,7 @@ import "../styles/goalassignmentmodal.css";
 
 /* Reusable overlay for assigning either a PDP or a PIP goal — the `type` prop tells the caller 
 (AssignedGoalSection) which section is assigning, this component itself has no PDP/PIP branching. */
-function GoalAssignmentModal({ isOpen, onClose, onAssign, employeeDirectory }) {
+function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirectory }) {
   const [team, setTeam] = useState("");
   const [employeeId, setEmployeeId] = useState("");
   const [employeeName, setEmployeeName] = useState("");
@@ -53,6 +53,15 @@ function GoalAssignmentModal({ isOpen, onClose, onAssign, employeeDirectory }) {
   return (
     <div className="goal-assignment-overlay" onClick={onClose}>
       <div className="goal-assignment-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="goal-assignment-header">
+          <div>
+            <span>Goal administration</span>
+            <h2>Assign {type} goal</h2>
+          </div>
+          <button type="button" className="goal-assignment-close" onClick={onClose} aria-label={`Close assign ${type} goal`}>
+            ×
+          </button>
+        </div>
         <div className="goal-assignment-field">
           <label>Team:</label>
           <select value={team} onChange={handleTeamChange}>
@@ -91,9 +100,10 @@ function GoalAssignmentModal({ isOpen, onClose, onAssign, employeeDirectory }) {
           <textarea value={goalText} onChange={(e) => setGoalText(e.target.value)} />
         </div>
 
-        <button type="button" className="goal-assignment-button" onClick={handleAssign}>
-          ASSIGN
-        </button>
+        <div className="goal-assignment-actions">
+          <button type="button" className="goal-assignment-cancel" onClick={onClose}>Cancel</button>
+          <button type="button" className="goal-assignment-button" onClick={handleAssign}>Assign goal</button>
+        </div>
       </div>
     </div>
   );

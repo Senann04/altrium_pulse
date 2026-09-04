@@ -81,14 +81,18 @@ function AssignedGoalSection({ type, title }) {
   return (
     <section className="assigned-goal-section">
       <div className="assigned-goal-section-header">
-        <h2 className="assigned-goal-section-title">{title}</h2>
+        <div>
+          <span className="assigned-goal-section-kicker">{type} plan</span>
+          <h2 className="assigned-goal-section-title">{title}</h2>
+        </div>
         <button
           type="button"
           className="assigned-goal-add-button"
           onClick={() => setIsModalOpen(true)}
           aria-label={`Assign new ${type} goal`}
         >
-          +
+          <span aria-hidden="true">+</span>
+          Assign {type}
         </button>
       </div>
 

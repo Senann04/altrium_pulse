@@ -32,10 +32,16 @@ function EmployeeWorkspacePage({ view, role = "employee", onNavigate, onSignOut,
   const content = pageContent[view];
   const cycleLabel = profileData?.parCycle || "Current PAR cycle";
   const completedReviews = view === "history" ? profileData?.completedReviews || [] : [];
-  const workspaceLabel = role === "supervisor" ? "Supervisor workspace" : "Employee workspace";
-  const emptyDescription = role === "supervisor" && view === "projects"
-    ? "Projects assigned to you will appear here with their owner, deadline and progress."
-    : content.emptyDescription;
+  const workspaceLabel = role === "supervisor"
+    ? "Supervisor workspace"
+    : role === "hrbp"
+      ? "People operations workspace"
+      : "Employee workspace";
+  const emptyDescription = role === "hrbp" && view === "projects"
+    ? "Organisation-wide projects connected to review goals will appear here with their owner, deadline and progress."
+    : role === "supervisor" && view === "projects"
+      ? "Projects assigned to you will appear here with their owner, deadline and progress."
+      : content.emptyDescription;
 
   return (
     <div className="app-shell">
@@ -160,6 +166,10 @@ function SupervisorProjects(props) {
   return <EmployeeWorkspacePage {...props} role="supervisor" view="projects" />;
 }
 
+function HRBPProjects(props) {
+  return <EmployeeWorkspacePage {...props} role="hrbp" view="projects" />;
+}
+
 function SupervisorPerformanceHistory(props) {
   return <EmployeeWorkspacePage {...props} role="supervisor" view="history" />;
 }
@@ -172,6 +182,7 @@ export {
   EmployeeCalendar,
   EmployeePerformanceHistory,
   EmployeeProjects,
+  HRBPProjects,
   SupervisorCalendar,
   SupervisorPerformanceHistory,
   SupervisorProjects,

@@ -48,13 +48,18 @@ function ReviewCycleSection() {
   return (
     <section className="review-cycle-section">
       <div className="review-cycle-add-row">
+        <div className="review-cycle-toolbar-copy">
+          <span>Review schedule</span>
+          <strong>{cycles.length} {cycles.length === 1 ? "cycle" : "cycles"} configured</strong>
+        </div>
         <button
           type="button"
           className="review-cycle-add-button"
           onClick={() => setIsModalOpen(true)}
           aria-label="Create new review cycle"
         >
-          <span aria-hidden="true">+</span> Create cycle
+          <span aria-hidden="true">+</span>
+          Create cycle
         </button>
       </div>
 

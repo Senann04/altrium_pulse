@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../styles/timegoalassignmentmodal.css";
 
-function TimeGoalAssignmentModal({ isOpen, onClose, onAssign, personDirectory }) {
+function TimeGoalAssignmentModal({ period, isOpen, onClose, onAssign, personDirectory }) {
   const [team, setTeam] = useState("");
   const [personId, setPersonId] = useState("");
   const [personName, setPersonName] = useState("");
@@ -47,6 +47,15 @@ function TimeGoalAssignmentModal({ isOpen, onClose, onAssign, personDirectory })
   return (
     <div className="time-goal-assignment-overlay" onClick={onClose}>
       <div className="time-goal-assignment-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="time-goal-assignment-header">
+          <div>
+            <span>Goal administration</span>
+            <h2>Assign {period.toLowerCase()} goal</h2>
+          </div>
+          <button type="button" className="time-goal-assignment-close" onClick={onClose} aria-label={`Close assign ${period} goal`}>
+            ×
+          </button>
+        </div>
         <div className="time-goal-assignment-field">
           <label>Team:</label>
           <select value={team} onChange={handleTeamChange}>
@@ -85,9 +94,10 @@ function TimeGoalAssignmentModal({ isOpen, onClose, onAssign, personDirectory })
           <textarea value={goalText} onChange={(e) => setGoalText(e.target.value)} />
         </div>
 
-        <button type="button" className="time-goal-assignment-button" onClick={handleAssign}>
-          ASSIGN
-        </button>
+        <div className="time-goal-assignment-actions">
+          <button type="button" className="time-goal-assignment-cancel" onClick={onClose}>Cancel</button>
+          <button type="button" className="time-goal-assignment-button" onClick={handleAssign}>Assign goal</button>
+        </div>
       </div>
     </div>
   );

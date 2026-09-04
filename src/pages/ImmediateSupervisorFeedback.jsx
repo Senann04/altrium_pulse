@@ -7,13 +7,13 @@ import FeedbackSummary from "../components/feedbacksummary.jsx";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 import "../styles/immediatesupervisormyfeedback.css";
 
-function SupervisorMyFeedback({ onNavigate, onSignOut, profileData }) {
+function SupervisorMyFeedback({ onNavigate, onSignOut, profileData, sidebarRole = "supervisor" }) {
   const feedback = profileData?.feedback || {};
   const currentReview = profileData?.currentReview;
 
   return (
     <div className="supervisor-feedback-layout">
-      <Sidebar role="supervisor" activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
+      <Sidebar role={sidebarRole} activeItem="feedback" onNavigate={onNavigate} profileData={profileData} onSignOut={onSignOut} />
 
       <div className="supervisor-feedback-main">
         <Header title="My Feedback" profileData={profileData} />
@@ -62,4 +62,9 @@ function SupervisorMyFeedback({ onNavigate, onSignOut, profileData }) {
   );
 }
 
+function HRBPFeedback(props) {
+  return <SupervisorMyFeedback {...props} sidebarRole="hrbp" />;
+}
+
+export { HRBPFeedback };
 export default SupervisorMyFeedback;

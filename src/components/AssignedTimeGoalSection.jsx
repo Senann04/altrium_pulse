@@ -38,14 +38,18 @@ function AssignedTimeGoalSection({ period, title }) {
   return (
     <section className="assigned-time-goal-section">
       <div className="assigned-time-goal-header">
-        <h2 className="assigned-time-goal-title">{title}</h2>
+        <div>
+          <span className="assigned-time-goal-kicker">{period} schedule</span>
+          <h2 className="assigned-time-goal-title">{title}</h2>
+        </div>
         <button
           type="button"
           className="assigned-time-goal-add-button"
           onClick={() => setIsModalOpen(true)}
           aria-label={`Assign new ${period} goal`}
         >
-          +
+          <span aria-hidden="true">+</span>
+          Assign goal
         </button>
       </div>
 

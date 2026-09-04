@@ -121,6 +121,8 @@ const MENUS = {
       label: "Performance",
       items: [
         { key: "review-cycle", label: "Review Cycle", icon: "cycle" },
+        { key: "feedback", label: "My Feedback", icon: "feedback" },
+        { key: "projects", label: "Projects", icon: "projects" },
         { key: "assign-goals", label: "Assign Goals", icon: "goals" },
       ],
     },

@@ -24,9 +24,9 @@ function AssignedGoalCard({ goal, onUpdate, onDone }) {
   return (
     <div className={`assigned-goal-card${isDone ? " done" : ""}`}>
       <div className="assigned-goal-card-header">
-        <span />
+        <span className="assigned-goal-status">{goal.status}</span>
         <button type="button" className="assigned-goal-edit-button" onClick={handleEditToggle}>
-          {isEditing ? "Save" : "Edit"}
+          {isEditing ? "Save changes" : "Edit details"}
         </button>
       </div>
 
@@ -67,7 +67,7 @@ function AssignedGoalCard({ goal, onUpdate, onDone }) {
       </div>
 
       <div className="assigned-goal-progress-row">
-        <label>Progress</label>
+        <label>Progress <strong>{field("progress")}%</strong></label>
         <input
           type="range"
           min="0"
@@ -88,7 +88,7 @@ function AssignedGoalCard({ goal, onUpdate, onDone }) {
           <div className="assigned-goal-value assigned-goal-inline-value">{goal.actionItem}</div>
         )}
         <button type="button" className="assigned-goal-view-button" onClick={() => setViewing("actionItem")}>
-          View
+          View details
         </button>
       </div>
 
@@ -97,10 +97,10 @@ function AssignedGoalCard({ goal, onUpdate, onDone }) {
         {isEditing ? (
           <input value={field("evidence")} onChange={(e) => updateDraft("evidence", e.target.value)} />
         ) : (
-          <div className="assigned-goal-value assigned-goal-inline-value">{goal.evidence}</div>
+          <div className="assigned-goal-value assigned-goal-inline-value">{goal.evidence || "No evidence submitted"}</div>
         )}
         <button type="button" className="assigned-goal-view-button" onClick={() => setViewing("evidence")}>
-          View
+          View details
         </button>
       </div>
 
@@ -111,7 +111,7 @@ function AssignedGoalCard({ goal, onUpdate, onDone }) {
           onClick={() => onDone(goal.id)}
           disabled={isDone}
         >
-          {isDone ? "Done" : "Done"}
+          {isDone ? "Completed" : "Mark complete"}
         </button>
       </div>
 
