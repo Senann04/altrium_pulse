@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AnimatedLoginBackdrop from "../components/AnimatedLoginBackdrop";
 import SpotlightCard from "../components/SpotlightCard";
 import logo from "../assets/altriumlogo.svg";
 import altriumLogo from "../assets/altrium-logo-white.svg";
@@ -28,6 +29,8 @@ function Login({ onLogin }) {
 
   return (
     <main className="login-page">
+      <AnimatedLoginBackdrop />
+
       <div className="login-intro" aria-hidden="true">
         <div className="login-intro-parent">
           <img src={altriumLogo} alt="" className="login-intro-parent-logo" />
@@ -38,11 +41,6 @@ function Login({ onLogin }) {
           <span>People performance, in motion.</span>
         </div>
         <span className="login-intro-line" />
-      </div>
-
-      <div className="login-ambient" aria-hidden="true">
-        <span className="login-ambient-orbit login-ambient-orbit-one" />
-        <span className="login-ambient-orbit login-ambient-orbit-two" />
       </div>
 
       <section className="login-stage" aria-label="Altrium Pulse sign in">
