@@ -240,6 +240,7 @@ export async function loadProfileView(userId) {
   const teamMembers = scopedEmployees.map((employee) => {
     const employeeReview = scopedReviews.find((review) => review.employee_id === employee.id);
     const employeeGoals = scopedGoals.filter((goal) => goal.employee_id === employee.id);
+    const employeePlans = scopedPlans.filter((plan) => plan.employee_id === employee.id);
     const completedEmployeeGoals = employeeGoals.filter((goal) => goal.status === "completed").length;
 
     return {
@@ -253,6 +254,10 @@ export async function loadProfileView(userId) {
         : "No review assigned",
       goalsCompleted: completedEmployeeGoals,
       goalsTotal: employeeGoals.length,
+      planProgress: {
+        pdp: average(employeePlans.filter((plan) => plan.type === "pdp"), "progress"),
+        pip: average(employeePlans.filter((plan) => plan.type === "pip"), "progress"),
+      },
     };
   });
 

@@ -17,7 +17,7 @@ function MyTeam({ onNavigate, onSignOut, profileData }) {
         <WorkspaceHeading
           eyebrow="Team workspace"
           title="My Team"
-          description="Review the people you support and keep their performance conversations moving."
+          description="Review the people you support, their current review stage and team-plan progress."
           meta={`${teamMembers.length} team ${teamMembers.length === 1 ? "member" : "members"}`}
         />
 

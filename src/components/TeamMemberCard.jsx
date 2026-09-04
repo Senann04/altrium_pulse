@@ -20,9 +20,15 @@ function TeamMemberCard({ member }) {
         <span>Current review</span>
         <strong>{member.reviewStatus}</strong>
       </div>
-      <div className="team-member-progress" aria-label={`${member.goalsCompleted} of ${member.goalsTotal} goals completed`}>
-        <span>Goals completed</span>
-        <strong>{member.goalsCompleted}/{member.goalsTotal}</strong>
+      <div
+        className="team-member-progress"
+        aria-label={`PDP ${member.planProgress?.pdp || 0} percent, PIP ${member.planProgress?.pip || 0} percent`}
+      >
+        <span>Plan progress</span>
+        <div>
+          <strong>PDP {member.planProgress?.pdp || 0}%</strong>
+          <strong>PIP {member.planProgress?.pip || 0}%</strong>
+        </div>
       </div>
     </div>
   );

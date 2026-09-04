@@ -60,7 +60,11 @@ function DashboardOverview({ role, profileData, onNavigate }) {
   const stats = profileData?.dashboard?.stats || content.stats;
   const tasks = profileData?.dashboard?.tasks || [];
   const planProgress = profileData?.dashboard?.planProgress || { pdp: 0, pip: 0 };
-  const progressPage = role === "hrbp" ? "assign-goals" : role === "leadership" ? "profile" : "progress";
+  const progressPage = role === "supervisor" ? "team" : role === "hrbp" ? "assign-goals" : role === "leadership" ? "profile" : "progress";
+  const progressTitle = role === "supervisor" ? "Team plan progress" : "Goal progress";
+  const progressAction = role === "supervisor" ? "View team" : "View all";
+  const pdpTitle = role === "supervisor" ? "Team PDP" : "Development plan";
+  const pipTitle = role === "supervisor" ? "Team PIP" : "Performance plan";
 
   return (
     <div className="dashboard-overview">
@@ -123,11 +127,11 @@ function DashboardOverview({ role, profileData, onNavigate }) {
 
         <section className="dashboard-panel dashboard-progress-panel">
           <div className="dashboard-panel-heading">
-            <div><span>Current cycle</span><h3>Goal progress</h3></div>
-            <button type="button" onClick={() => onNavigate?.(progressPage)}>View all</button>
+            <div><span>Current cycle</span><h3>{progressTitle}</h3></div>
+            <button type="button" onClick={() => onNavigate?.(progressPage)}>{progressAction}</button>
           </div>
-          <GoalProgressCard title="Development plan" progress={planProgress.pdp} />
-          <GoalProgressCard title="Performance plan" progress={planProgress.pip} />
+          <GoalProgressCard title={pdpTitle} progress={planProgress.pdp} />
+          <GoalProgressCard title={pipTitle} progress={planProgress.pip} />
           <div className="dashboard-cycle-note">
             <span>●</span> {profileData?.dashboard?.cycleStatus || "No active cycle"}
             <small>{profileData?.dashboard?.nextReviewLabel || "No deadline scheduled"}</small>
