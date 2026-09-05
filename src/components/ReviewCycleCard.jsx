@@ -1,8 +1,15 @@
 import "../styles/reviewcyclecard.css";
-import { TrashIcon } from "./InterfaceIcons";
 /* Reusable for both HRBP and Leadership — the `cycle` prop contains all the data needed to render 
 the card, so this component never needs to know which dashboard it's rendering on. */
-function ReviewCycleCard({ cycle, onDelete }) {
+function formatDeadline(value) {
+  if (!value) return "Not set";
+  return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+    .format(new Date(`${value}T00:00:00`));
+}
+
+function ReviewCycleCard({ cycle, canManage = false, busy = false, onStatusChange }) {
+  const nextStatus = cycle.status === "Draft" ? "active" : cycle.status === "Active" ? "closed" : "";
+  const nextLabel = nextStatus === "active" ? "Start cycle" : "Close cycle";
   return (
     <article className="review-cycle-card">
       <header className="review-cycle-card-header">
@@ -51,17 +58,19 @@ function ReviewCycleCard({ cycle, onDelete }) {
         </div>
       </div>
 
+      <div className="review-cycle-phase-dates" aria-label="Workflow deadlines">
+        <div><span>Self-assessment</span><strong>{formatDeadline(cycle.selfReviewDue)}</strong></div>
+        <div><span>Peer feedback</span><strong>{formatDeadline(cycle.feedbackDue)}</strong></div>
+        <div><span>Supervisor review</span><strong>{formatDeadline(cycle.supervisorReviewDue)}</strong></div>
+      </div>
+
       <div className="review-cycle-footer">
-        <span>Created for organisation-wide performance reviews</span>
-        <button
-          type="button"
-          className="review-cycle-delete-button"
-          onClick={() => onDelete(cycle)}
-          aria-label="Delete review cycle"
-        >
-          <TrashIcon />
-          <span>Delete</span>
-        </button>
+        <span>Shared schedule · confidential records stay scoped</span>
+        {canManage && nextStatus && (
+          <button type="button" onClick={() => onStatusChange(cycle.id, nextStatus)} disabled={busy}>
+            {busy ? "Updating…" : nextLabel}
+          </button>
+        )}
       </div>
     </article>
   );

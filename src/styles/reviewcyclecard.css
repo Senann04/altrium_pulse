@@ -1,74 +1,77 @@
 .review-cycle-card {
-  background: #111111;
-  border: 2px solid #fcb400;
-  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
   padding: 1.25rem;
-  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 94% 0%, rgba(211, 157, 50, 0.09), transparent 33%),
+    #101112;
 }
 
-.review-cycle-name-pill {
-  background: #fcb400;
-  color: #111111;
-  border-radius: 999px;
-  text-align: center;
-  padding: 0.5rem;
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-}
-
-.review-cycle-description {
-  background: #ffffff;
-  color: #111111;
-  border-radius: 12px;
-  padding: 0.75rem;
-  font-family: inherit;
-  font-size: 12px;
-  line-height: 1.4;
-  margin-bottom: 0.75rem;
-}
-
-.review-cycle-row {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.review-cycle-field-box {
-  flex: 1;
-  background: #ffffff;
-  color: #111111;
-  border-radius: 999px;
-  padding: 0.4rem 0.9rem;
-  font-family: inherit;
-  font-size: 12px;
-  text-align: center;
-}
-
+.review-cycle-card-header,
 .review-cycle-footer {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
+  justify-content: space-between;
+  gap: 1rem;
 }
-
+.review-cycle-card-header > div { display: grid; gap: 0.25rem; }
+.review-cycle-card-header > div > span,
+.review-cycle-window-heading > span,
+.review-cycle-field-box > span {
+  color: #8f8d86;
+  font-size: 0.68rem;
+  font-weight: 720;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.review-cycle-name-pill { margin: 0; color: #f7f4ec; font-size: 1.15rem; }
 .review-cycle-active-label {
-  background: #111111;
-  color: #fcb400;
-  border: 1.5px solid #fcb400;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.38rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
-  padding: 0.3rem 1rem;
-  font-family: inherit;
-  font-size: 12px;
+  color: #aaa79f;
+  font-size: 0.72rem;
   font-weight: 700;
 }
+.review-cycle-active-label i { width: 6px; height: 6px; border-radius: 50%; background: #77756f; }
+.review-cycle-active-label.is-active { border-color: rgba(117, 197, 151, 0.28); color: #8ed2ab; }
+.review-cycle-active-label.is-active i { background: #74c497; box-shadow: 0 0 10px rgba(116, 196, 151, 0.48); }
+.review-cycle-description { max-width: 720px; margin: 0.85rem 0 1rem; color: #aaa79f; line-height: 1.55; }
 
-.review-cycle-delete-button {
-  background: #fcb400;
-  border: none;
-  border-radius: 10px;
-  width: 34px;
-  height: 34px;
-  cursor: pointer;
+.review-cycle-details-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, 0.8fr); gap: 0.85rem; }
+.review-cycle-window,
+.review-cycle-field-box {
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.026);
+}
+.review-cycle-window { padding: 0.9rem 1rem; }
+.review-cycle-window-heading { display: flex; justify-content: space-between; gap: 1rem; }
+.review-cycle-window-heading small { color: #74726c; }
+.review-cycle-window-dates { display: grid; grid-template-columns: auto minmax(45px, 1fr) auto; align-items: end; gap: 0.75rem; margin-top: 0.85rem; }
+.review-cycle-window-dates > div:not(.review-cycle-window-line) { display: grid; gap: 0.2rem; }
+.review-cycle-window-dates span { color: #797770; font-size: 0.68rem; }
+.review-cycle-window-dates strong { color: #ece8df; font-size: 0.88rem; }
+.review-cycle-window-line { padding-bottom: 0.4rem; }
+.review-cycle-window-line i { display: block; height: 1px; background: linear-gradient(90deg, rgba(205, 153, 52, 0.5), rgba(255, 255, 255, 0.08)); }
+.review-cycle-metadata { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+.review-cycle-field-box { display: grid; align-content: center; gap: 0.35rem; padding: 0.85rem; }
+.review-cycle-field-box strong { color: #e6e2d8; font-size: 0.83rem; text-transform: capitalize; }
+.review-cycle-phase-dates { display: grid; grid-template-columns: repeat(3,1fr); gap: .7rem; margin-top: .85rem; }
+.review-cycle-phase-dates > div { display: grid; gap: .25rem; padding: .75rem .85rem; border: 1px solid rgba(255,255,255,.065); border-radius: 12px; background: rgba(255,255,255,.018); }
+.review-cycle-phase-dates span { color: #807d76; font-size: .65rem; text-transform: uppercase; }
+.review-cycle-phase-dates strong { color: #d8d4ca; font-size: .77rem; }
+.review-cycle-footer { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.065); }
+.review-cycle-footer > span { color: #77746e; font-size: 0.73rem; }
+
+@media (max-width: 760px) {
+  .review-cycle-details-grid { grid-template-columns: 1fr; }
+  .review-cycle-phase-dates { grid-template-columns: 1fr; }
+  .review-cycle-card-header, .review-cycle-footer { align-items: flex-start; flex-direction: column; }
+  .review-cycle-footer button { width: 100%; }
 }

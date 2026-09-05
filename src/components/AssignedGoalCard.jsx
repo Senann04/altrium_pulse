@@ -1,173 +1,107 @@
 import { useState } from "react";
 import "../styles/assignedgoalcard.css";
 
-/* Reusable for both PDP and PIP goal cards — renders whatever goal object it receives, no type-specific branching.*/
-function AssignedGoalCard({ goal, onUpdate, onDone }) {
+function statusLabel(value) {
+  return String(value || "pending").replaceAll("_", " ").replace(/^./, (character) => character.toUpperCase());
+}
+
+function AssignedGoalCard({ goal, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(goal);
-  const [viewing, setViewing] = useState(null); // "actionItem" | "evidence" | null
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-
-  const isDone = goal.status === "Completed";
+  const agreementsPending = goal.employeeAgreementStatus === "pending" && goal.supervisorAgreementStatus === "pending";
+  const canEdit = goal.status === "Pending" && agreementsPending;
 
   const handleEditToggle = async () => {
-    if (isEditing) {
-      setBusy(true);
-      setError("");
-      try {
-        await onUpdate(goal.id, draft);
-        setIsEditing(false);
-      } catch (updateError) {
-        setError(updateError.message || "Unable to save these changes.");
-      } finally {
-        setBusy(false);
-      }
-    } else {
+    if (!isEditing) {
       setDraft(goal);
       setError("");
       setIsEditing(true);
+      return;
     }
-  };
 
-  const handleDone = async () => {
     setBusy(true);
     setError("");
     try {
-      await onDone(goal.id);
-    } catch (completionError) {
-      setError(completionError.message || "Unable to complete this goal.");
+      await onUpdate(goal.id, draft);
+      setIsEditing(false);
+    } catch (updateError) {
+      setError(updateError.message || "Unable to save these changes.");
     } finally {
       setBusy(false);
     }
   };
 
-  const field = (key) => (isEditing ? draft[key] : goal[key]);
-  const updateDraft = (key, value) => setDraft({ ...draft, [key]: value });
+  const updateDraft = (key, value) => setDraft((current) => ({ ...current, [key]: value }));
+  const progress = isEditing ? draft.progress : goal.progress;
 
   return (
-    <div className={`assigned-goal-card${isDone ? " done" : ""}`}>
-      <div className="assigned-goal-card-header">
+    <article className="assigned-goal-card">
+      <header className="assigned-goal-card-header">
         <div className="assigned-goal-heading">
           <span>{goal.type} development plan</span>
           <strong>{goal.employeeName}</strong>
+          <small>{goal.employeeId} · {goal.team}</small>
         </div>
         <span className="assigned-goal-status">{goal.status}</span>
-      </div>
+      </header>
 
-      <div className="assigned-goal-meta-grid">
-        <div className="assigned-goal-meta">
-          <span>Team</span>
-          {isEditing ? (
-            <input value={field("team")} onChange={(e) => updateDraft("team", e.target.value)} />
-          ) : (
-            <strong>{goal.team}</strong>
-          )}
-        </div>
-        <div className="assigned-goal-meta">
-          <span>Employee</span>
-          {isEditing ? (
-            <input value={field("employeeName")} onChange={(e) => updateDraft("employeeName", e.target.value)} />
-          ) : (
-            <strong>{goal.employeeName}</strong>
-          )}
-        </div>
-        <div className="assigned-goal-meta">
-          <span>Employee ID</span>
-          {isEditing ? (
-            <input value={field("employeeId")} onChange={(e) => updateDraft("employeeId", e.target.value)} />
-          ) : (
-            <strong>{goal.employeeId}</strong>
-          )}
-        </div>
-      </div>
-
-      <div className="assigned-goal-objective">
+      <section className="assigned-goal-objective">
         <span>Primary objective</span>
         {isEditing ? (
-          <textarea value={field("goal")} onChange={(e) => updateDraft("goal", e.target.value)} />
+          <textarea value={draft.goal} onChange={(event) => updateDraft("goal", event.target.value)} />
         ) : (
           <p>{goal.goal}</p>
         )}
+        {goal.reason && <small>{goal.reason}</small>}
+      </section>
+
+      <div className="assigned-goal-dates">
+        <div><span>Starts</span><strong>{goal.startDate || "Not set"}</strong></div>
+        <div><span>Target</span><strong>{goal.endDate || "Not set"}</strong></div>
+        <div><span>Progress</span><strong>{progress}%</strong></div>
       </div>
 
-      <div className="assigned-goal-progress-panel">
-        <div className="assigned-goal-progress-heading">
-          <div>
-            <span>Plan progress</span>
-            <small>Current completion level</small>
-          </div>
-          <strong>{field("progress")}%</strong>
-        </div>
+      {isEditing && (
         <input
           type="range"
           min="0"
           max="100"
-          value={field("progress")}
-          disabled={!isEditing}
-          onChange={(e) => updateDraft("progress", Number(e.target.value))}
+          value={progress}
+          onChange={(event) => updateDraft("progress", Number(event.target.value))}
           className="assigned-goal-progress-slider"
-          style={{ "--progress": `${field("progress")}%` }}
+          style={{ "--progress": `${progress}%` }}
         />
-      </div>
-
-      <div className="assigned-goal-action-grid">
-        <div className="assigned-goal-action-card">
-          <div>
-            <span>Next action</span>
-            {isEditing ? (
-              <input value={field("actionItem")} onChange={(e) => updateDraft("actionItem", e.target.value)} />
-            ) : (
-              <strong>{goal.actionItem}</strong>
-            )}
-          </div>
-          <button type="button" className="assigned-goal-view-button" onClick={() => setViewing("actionItem")}>
-            View details
-          </button>
-        </div>
-
-        <div className="assigned-goal-action-card assigned-goal-evidence-card">
-          <div>
-            <span>Evidence</span>
-            {isEditing ? (
-              <input value={field("evidence")} onChange={(e) => updateDraft("evidence", e.target.value)} />
-            ) : (
-              <strong>{goal.evidence || "No evidence submitted"}</strong>
-            )}
-          </div>
-          <button type="button" className="assigned-goal-view-button" onClick={() => setViewing("evidence")}>
-            View details
-          </button>
-        </div>
-      </div>
-
-      <div className="assigned-goal-footer">
-        {error && <span className="hr-admin-inline-error" role="alert">{error}</span>}
-        <button type="button" className="assigned-goal-edit-button" onClick={handleEditToggle} disabled={busy}>
-          {busy && isEditing ? "Saving…" : isEditing ? "Save changes" : "Edit details"}
-        </button>
-        <button
-          type="button"
-          className="assigned-goal-done-button"
-          onClick={handleDone}
-          disabled={isDone || busy}
-        >
-          {busy && !isEditing ? "Updating…" : isDone ? "Completed" : "Mark complete"}
-        </button>
-      </div>
-
-      {viewing && (
-        <div className="assigned-goal-view-popup" onClick={() => setViewing(null)}>
-          <div className="assigned-goal-view-popup-content" onClick={(e) => e.stopPropagation()}>
-            <strong>{viewing === "actionItem" ? "Action Item" : "Evidence"}</strong>
-            <p>{goal[viewing] || "Nothing recorded yet."}</p>
-            <button type="button" onClick={() => setViewing(null)}>
-              Close
-            </button>
-          </div>
-        </div>
       )}
-    </div>
+
+      <section className="assigned-goal-action-list">
+        <div className="assigned-goal-subheading"><span>Action plan</span><strong>{goal.actionItems.length} actions</strong></div>
+        {goal.actionItems.map((action, index) => (
+          <div className="assigned-goal-action-item" key={action.id || index}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <div><strong>{action.title}</strong><small>Due {action.dueDate || "not set"}</small></div>
+            <em>{statusLabel(action.status)}</em>
+          </div>
+        ))}
+        {!goal.actionItems.length && <p>No action items recorded.</p>}
+      </section>
+
+      <section className="assigned-goal-agreements">
+        <div><span>Employee agreement</span><strong>{statusLabel(goal.employeeAgreementStatus)}</strong></div>
+        <div><span>Supervisor agreement</span><strong>{statusLabel(goal.supervisorAgreementStatus)}</strong></div>
+      </section>
+
+      <footer className="assigned-goal-footer">
+        <span>{canEdit ? "Editable until either participant responds" : "Plan changes are locked after agreement starts"}</span>
+        {error && <span className="hr-admin-inline-error" role="alert">{error}</span>}
+        {canEdit && (
+          <button type="button" className="assigned-goal-edit-button" onClick={handleEditToggle} disabled={busy}>
+            {busy ? "Saving…" : isEditing ? "Save changes" : "Edit draft"}
+          </button>
+        )}
+      </footer>
+    </article>
   );
 }
 

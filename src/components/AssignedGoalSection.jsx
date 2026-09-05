@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import AssignedGoalCard from "./AssignedGoalCard";
 import GoalAssignmentModal from "./GoalAssignmentModal";
 import {
-  completeDevelopmentPlan,
   createDevelopmentPlan,
   loadAssignedDevelopmentPlans,
   loadPeopleDirectory,
@@ -13,16 +12,16 @@ import "../styles/assignedgoalsection.css";
 function AssignedGoalSection({ type, title }) {
   const [goals, setGoals] = useState([]);
   const [employeeDirectory, setEmployeeDirectory] = useState([]);
-  const [teamFilter, setTeamFilter] = useState("All Teams");
+  const [teamFilter, setTeamFilter] = useState("All assigned teams");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const teams = ["All Teams", ...new Set(employeeDirectory.map((e) => e.team))];
+  const teams = ["All assigned teams", ...new Set(employeeDirectory.map((e) => e.team))];
 
   // Local filtering only — no backend query yet.
   const visibleGoals =
-    teamFilter === "All Teams" ? goals : goals.filter((g) => g.team === teamFilter);
+    teamFilter === "All assigned teams" ? goals : goals.filter((g) => g.team === teamFilter);
 
   const refresh = useCallback(async () => {
     setError("");
@@ -48,17 +47,12 @@ function AssignedGoalSection({ type, title }) {
   const handleAssign = async (newGoal) => {
     await createDevelopmentPlan(type, newGoal);
     await refresh();
-    setTeamFilter("All Teams");
+    setTeamFilter("All assigned teams");
     setIsModalOpen(false);
   };
 
   const handleUpdate = async (goalId, updatedFields) => {
     await updateDevelopmentPlan(goalId, updatedFields);
-    await refresh();
-  };
-
-  const handleDone = async (goalId) => {
-    await completeDevelopmentPlan(goalId);
     await refresh();
   };
 
@@ -81,7 +75,7 @@ function AssignedGoalSection({ type, title }) {
       </div>
 
       <div className="assigned-goal-filter-row">
-        <label htmlFor={`${type}-team-filter`}>Filter by Team:</label>
+        <label htmlFor={`${type}-team-filter`}>Assigned team:</label>
         <select
           id={`${type}-team-filter`}
           className="assigned-goal-filter-select"
@@ -100,14 +94,13 @@ function AssignedGoalSection({ type, title }) {
         {loading && <p className="hr-admin-state">Loading assigned {type} goals…</p>}
         {error && <p className="hr-admin-state is-error" role="alert">{error}</p>}
         {!loading && !error && !visibleGoals.length && (
-          <p className="hr-admin-state">No {type} goals are assigned within your business unit.</p>
+          <p className="hr-admin-state">No {type} goals are assigned within your assigned teams.</p>
         )}
         {visibleGoals.map((goal) => (
           <AssignedGoalCard
             key={goal.id}
             goal={goal}
             onUpdate={handleUpdate}
-            onDone={handleDone}
           />
         ))}
       </div>

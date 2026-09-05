@@ -1,117 +1,137 @@
-import { useState } from "react";
-import { StarIcon } from "./InterfaceIcons";
+import { useCallback, useEffect, useState } from "react";
+import { loadAssignedPeerRequests, submitAssignedPeerFeedback } from "../services/performanceWorkflowService";
 import "../styles/employeepeerreview.css";
 
-const categories = ["Team Work", "Communication", "Reliability", "Professionalism", "Technical Contribution"];
+function formatDate(value) {
+  if (!value) return "No deadline";
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(`${value}T00:00:00`));
+}
 
-function EmployeePeerReview({ peerOptions = [] }) {
-  const [selectedPeer, setSelectedPeer] = useState("");
-  /* Temporary category ratings until the backend schema supports rating categories. */
-  const [categoryRatings, setCategoryRatings] = useState({});
-  const [doWell, setDoWell] = useState("");
-  const [improve, setImprove] = useState("");
+function AssignedPeerReviewCard({ request, onSubmitted }) {
+  const [rating, setRating] = useState("");
+  const [strengths, setStrengths] = useState("");
+  const [improvements, setImprovements] = useState("");
+  const [comments, setComments] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const selectedPeerData = peerOptions.find((peer) => peer.id === selectedPeer);
+  const isPending = request.status === "pending";
+  const canSubmit = isPending && rating && strengths.trim() && improvements.trim();
 
-  const handleStarClick = (category, star) => {
-    setCategoryRatings((prev) => ({ ...prev, [category]: star }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!selectedPeer) return setError("Please select a peer to review.");
-    if (categories.some((c) => !categoryRatings[c])) return setError("Please rate every category.");
-    if (!doWell.trim()) return setError("Please answer what this employee does well.");
-    if (!improve.trim()) return setError("Please answer what they could improve.");
-
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!canSubmit || submitting) return;
+    setSubmitting(true);
     setError("");
-    // Frontend-only peer review record for now — backend developer
-    // will later insert this into Supabase instead.
-    const review = { peerId: selectedPeer, categoryRatings, doWell, improve };
-    console.log("Peer review submitted:", review);
-    setSubmitted(true);
+    try {
+      await submitAssignedPeerFeedback(request, { rating, strengths, improvements, comments });
+      await onSubmitted();
+    } catch (submissionError) {
+      setError(submissionError.message || "Unable to submit this peer review.");
+    } finally {
+      setSubmitting(false);
+    }
   };
-
-  if (submitted) {
-    return (
-      <div className="peer-review-card">
-        <div className="peer-review-title-pill">Peer Review</div>
-        <p className="peer-review-success">Peer review submitted successfully.</p>
-      </div>
-    );
-  }
 
   return (
-    <form className="peer-review-card" onSubmit={handleSubmit}>
-      <div className="peer-review-title-pill">Peer Review</div>
-
-      <select
-        className="peer-review-select"
-        aria-label="Teammate to review"
-        value={selectedPeer}
-        onChange={(e) => setSelectedPeer(e.target.value)}
-        disabled={!peerOptions.length}
-      >
-        <option value="" disabled>{peerOptions.length ? "Select a teammate" : "No teammates available"}</option>
-        {peerOptions.map((p) => (
-          <option key={p.id} value={p.id}>{p.name}</option>
-        ))}
-      </select>
-
-      <div className="peer-review-person">
-        <span className="peer-review-avatar" aria-hidden="true">
-          {selectedPeerData?.name?.charAt(0) || "–"}
+    <form className={`assigned-peer-card${isPending ? "" : " is-complete"}`} onSubmit={handleSubmit}>
+      <header className="assigned-peer-card-header">
+        <span className="assigned-peer-avatar" aria-hidden="true">
+          {request.employeeName.slice(0, 1).toUpperCase()}
         </span>
-        <span>
-          <strong>{selectedPeerData?.name || "Choose who you are reviewing"}</strong>
-          <small>{selectedPeerData?.employeeNumber || "Employee profile"}</small>
-        </span>
+        <div>
+          <strong>{request.employeeName}</strong>
+          <span>{request.employeeNumber} · {request.employeeJobTitle || request.cycleName}</span>
+        </div>
+        <span className="assigned-peer-status">{isPending ? "Awaiting feedback" : "Submitted"}</span>
+      </header>
+
+      <div className="assigned-peer-context">
+        <span>{request.cycleName}</span>
+        <span>Due {formatDate(request.dueDate || request.cycleEndDate)}</span>
       </div>
 
-      <div className="peer-review-categories">
-        {categories.map((category) => {
-          const rating = categoryRatings[category] || 0;
-          return (
-            <div className="peer-review-category-row" key={category}>
-              <span className="peer-review-category-label">{category}</span>
-              <div className="peer-review-stars">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    type="button"
-                    key={star}
-                    className={`peer-review-star${star <= rating ? " filled" : ""}`}
-                    onClick={() => handleStarClick(category, star)}
-                    aria-label={`${category}: ${star} stars`}
-                    aria-pressed={star <= rating}
-                  >
-                    <StarIcon />
-                  </button>
-                ))}
-              </div>
-              <span className="peer-review-rating-pill">{rating || "–"}/5</span>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="peer-review-question">
-        <label>1. What does this employee do well?</label>
-        <textarea value={doWell} onChange={(e) => setDoWell(e.target.value)} placeholder="Share a specific strength…" />
-      </div>
-
-      <div className="peer-review-question">
-        <label>2. What could they improve?</label>
-        <textarea value={improve} onChange={(e) => setImprove(e.target.value)} placeholder="Share a constructive suggestion…" />
-      </div>
-
-      {error && <p className="peer-review-error">{error}</p>}
-
-      <div className="peer-review-submit-row">
-        <button type="submit" className="peer-review-submit-button" disabled={!peerOptions.length}>Submit review</button>
-      </div>
+      {isPending ? (
+        <>
+          <label className="assigned-peer-field">
+            <span>Overall contribution</span>
+            <select value={rating} onChange={(event) => setRating(event.target.value)} required>
+              <option value="">Choose rating</option>
+              {[1, 2, 3, 4, 5].map((value) => (
+                <option key={value} value={value}>{value} / 5</option>
+              ))}
+            </select>
+          </label>
+          <label className="assigned-peer-field">
+            <span>What does this colleague do well?</span>
+            <textarea value={strengths} onChange={(event) => setStrengths(event.target.value)} required />
+          </label>
+          <label className="assigned-peer-field">
+            <span>What could they improve?</span>
+            <textarea value={improvements} onChange={(event) => setImprovements(event.target.value)} required />
+          </label>
+          <label className="assigned-peer-field">
+            <span>Additional context <small>Optional</small></span>
+            <textarea value={comments} onChange={(event) => setComments(event.target.value)} />
+          </label>
+          {error && <p className="peer-review-error" role="alert">{error}</p>}
+          <footer className="assigned-peer-footer">
+            <small>Your identity is retained for HR and the supervisor, but hidden from the employee.</small>
+            <button type="submit" disabled={!canSubmit || submitting}>
+              {submitting ? "Submitting…" : "Submit once"}
+            </button>
+          </footer>
+        </>
+      ) : (
+        <p className="assigned-peer-complete-note">
+          Submitted {request.respondedAt ? formatDate(request.respondedAt.slice(0, 10)) : "successfully"}. This assignment is now locked.
+        </p>
+      )}
     </form>
+  );
+}
+
+function EmployeePeerReview() {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const refresh = useCallback(async () => {
+    setError("");
+    try {
+      setRequests(await loadAssignedPeerRequests());
+    } catch (loadError) {
+      setError(loadError.message || "Unable to load peer-review assignments.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const initialLoad = window.setTimeout(refresh, 0);
+    return () => window.clearTimeout(initialLoad);
+  }, [refresh]);
+
+  return (
+    <section className="peer-review-card assigned-peer-workspace">
+      <div className="peer-review-title-pill">Assigned Peer Reviews</div>
+      <p className="assigned-peer-intro">
+        Only reviews assigned by HR appear here. Each request accepts one confidential submission.
+      </p>
+      {loading && <p className="assigned-peer-state">Loading assignments…</p>}
+      {error && <p className="assigned-peer-state is-error" role="alert">{error}</p>}
+      {!loading && !error && !requests.length && (
+        <p className="assigned-peer-state">You have no peer-review assignments.</p>
+      )}
+      <div className="assigned-peer-list">
+        {requests.map((request) => (
+          <AssignedPeerReviewCard key={request.id} request={request} onSubmitted={refresh} />
+        ))}
+      </div>
+    </section>
   );
 }
 

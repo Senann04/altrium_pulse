@@ -66,6 +66,11 @@ const ICONS = {
       <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
     </svg>
   ),
+  normalize: (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 19h16M6 16l4-4 3 2 5-7" /><path d="M15 7h3v3" />
+    </svg>
+  ),
 };
 
 // Role -> grouped menu items. The groups keep longer role menus easy to scan.
@@ -116,6 +121,7 @@ const MENUS = {
     {
       label: "Organisation",
       items: [
+        { key: "normalization", label: "Normalization", icon: "normalize" },
         { key: "feedback", label: "My Feedback", icon: "feedback" },
         { key: "projects", label: "Projects", icon: "projects" },
         { key: "calendar", label: "Calendar", icon: "calendar" },

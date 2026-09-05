@@ -42,8 +42,8 @@ const roleContent = {
   hrbp: {
     eyebrow: "People operations snapshot",
     title: "Keep every review cycle moving.",
-    description: "Coordinate goals, monitor participation and support consistent performance decisions.",
-    primaryAction: { label: "Manage review cycle", page: "review-cycle" },
+    description: "Coordinate goals, monitor participation and support consistent decisions across your assigned teams.",
+    primaryAction: { label: "Review assigned teams", page: "review-cycle" },
     secondaryAction: { label: "Assign goals", page: "assign-goals" },
     stats: [
       { label: "Cycle completion", value: "76%", trend: "+14% this week", tone: "gold" },
@@ -86,10 +86,10 @@ function DashboardOverview({ role, profileData, onNavigate }) {
   const tasks = profileData?.dashboard?.tasks || [];
   const planProgress = profileData?.dashboard?.planProgress || { pdp: 0, pip: 0 };
   const progressPage = role === "supervisor" ? "team" : role === "hrbp" ? "assign-goals" : role === "leadership" ? "projects" : "progress";
-  const progressTitle = role === "supervisor" ? "Team plan progress" : role === "leadership" ? "Organisation plan progress" : "Goal progress";
-  const progressAction = role === "supervisor" ? "View team" : role === "leadership" ? "View portfolio" : "View all";
-  const pdpTitle = role === "supervisor" ? "Team PDP" : role === "leadership" ? "Organisation PDP" : "Development plan";
-  const pipTitle = role === "supervisor" ? "Team PIP" : role === "leadership" ? "Organisation PIP" : "Performance plan";
+  const progressTitle = role === "supervisor" ? "Team plan progress" : role === "hrbp" ? "Assigned-team plan progress" : role === "leadership" ? "Organisation plan progress" : "Goal progress";
+  const progressAction = role === "supervisor" ? "View team" : role === "hrbp" ? "View assigned goals" : role === "leadership" ? "View portfolio" : "View all";
+  const pdpTitle = role === "supervisor" ? "Team PDP" : role === "hrbp" ? "Assigned PDP" : role === "leadership" ? "Organisation PDP" : "Development plan";
+  const pipTitle = role === "supervisor" ? "Team PIP" : role === "hrbp" ? "Assigned PIP" : role === "leadership" ? "Organisation PIP" : "Performance plan";
 
   return (
     <div className="dashboard-overview">

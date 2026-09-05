@@ -1,39 +1,55 @@
 .review-cycle-section {
-  max-width: 500px;
+  width: min(100%, 1120px);
 }
-
-.review-cycle-heading-card {
-  background: #111111;
-  border: 2px solid #fcb400;
-  border-radius: 20px;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 26px;
-  text-align: center;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-}
-
 .review-cycle-add-row {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018));
 }
 
-.review-cycle-add-button {
-  background: #ffffff;
-  color: #111111;
-  border: none;
-  border-radius: 10px;
-  width: 36px;
-  height: 36px;
-  font-size: 22px;
-  font-weight: 700;
+.review-cycle-toolbar-copy { display: grid; gap: 0.25rem; }
+.review-cycle-toolbar-copy > span {
+  color: #c99635;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.review-cycle-toolbar-copy strong { color: #f7f4ec; font-size: 1.05rem; }
+.review-cycle-toolbar-copy small { color: #98958d; line-height: 1.5; }
+
+.review-cycle-create-button,
+.review-cycle-footer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0 0.95rem;
+  border: 1px solid rgba(222, 171, 70, 0.42);
+  border-radius: 11px;
+  color: #f1c66f;
+  background: rgba(218, 163, 56, 0.08);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 720;
   cursor: pointer;
 }
+.review-cycle-create-button:hover,
+.review-cycle-footer button:hover:not(:disabled) { background: rgba(218, 163, 56, 0.14); }
+.review-cycle-create-button:focus-visible,
+.review-cycle-footer button:focus-visible { outline: 2px solid #d5a13e; outline-offset: 2px; }
+.review-cycle-footer button:disabled { cursor: wait; opacity: 0.55; }
 
-.review-cycle-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.review-cycle-list { display: grid; gap: 1rem; }
+
+@media (max-width: 720px) {
+  .review-cycle-add-row { align-items: flex-start; flex-direction: column; }
+  .review-cycle-create-button { width: 100%; }
 }

@@ -31,7 +31,11 @@ function HRBPProfile({ onNavigate, onSignOut, profileData = emptyProfile }) {
           meta={profileData.identifier || "HR partner record"}
         />
 
-        <ProfileDetailsCard profileData={profileData} />
+        <ProfileDetailsCard
+          profileData={profileData}
+          teamLabel="Assigned teams"
+          teamValue={profileData.assignedTeams?.join(", ") || "No teams assigned"}
+        />
 
         <div className="employee-profile-signout-row">
           <button type="button" className="employee-profile-signout-button" onClick={handleSignOut}>

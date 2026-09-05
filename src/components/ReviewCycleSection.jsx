@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import ReviewCycleCard from "./ReviewCycleCard";
 import CreateReviewCycleModal from "./CreateReviewCycleModal";
-import { createReviewCycle, deleteReviewCycle, loadReviewCycles } from "../services/workflowService";
+import { createReviewCycle, loadReviewCycles, setReviewCycleStatus } from "../services/workflowService";
 import "../styles/reviewcyclesection.css";
 
-function ReviewCycleSection() {
+function ReviewCycleSection({ canManage = false }) {
   const [cycles, setCycles] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [changingCycleId, setChangingCycleId] = useState("");
 
   const refresh = useCallback(async () => {
     setError("");
@@ -26,21 +27,22 @@ function ReviewCycleSection() {
     return () => window.clearTimeout(initialLoad);
   }, [refresh]);
 
-  const handleCreate = async (newCycle) => {
-    await createReviewCycle(newCycle);
+  const handleCreate = async (cycle) => {
+    await createReviewCycle(cycle);
     await refresh();
-    setIsModalOpen(false);
+    setModalOpen(false);
   };
 
-  const handleDelete = async (cycle) => {
-    const confirmed = window.confirm(`Delete “${cycle.name}”? This cannot be undone.`);
-    if (!confirmed) return;
+  const handleStatusChange = async (cycleId, status) => {
+    setChangingCycleId(cycleId);
     setError("");
     try {
-      await deleteReviewCycle(cycle.id);
+      await setReviewCycleStatus(cycleId, status);
       await refresh();
-    } catch (deleteError) {
-      setError(deleteError.message || "Unable to delete this review cycle.");
+    } catch (statusError) {
+      setError(statusError.message || "Unable to update this review cycle.");
+    } finally {
+      setChangingCycleId("");
     }
   };
 
@@ -48,18 +50,15 @@ function ReviewCycleSection() {
     <section className="review-cycle-section">
       <div className="review-cycle-add-row">
         <div className="review-cycle-toolbar-copy">
-          <span>Review schedule</span>
-          <strong>{cycles.length} {cycles.length === 1 ? "cycle" : "cycles"} configured</strong>
+          <span>Company review schedule</span>
+          <strong>{cycles.length} {cycles.length === 1 ? "cycle" : "cycles"} visible</strong>
+          <small>Cycle dates are shared company-wide. Employee records remain limited to your assigned teams and projects.</small>
         </div>
-        <button
-          type="button"
-          className="review-cycle-add-button"
-          onClick={() => setIsModalOpen(true)}
-          aria-label="Create new review cycle"
-        >
-          <span aria-hidden="true">+</span>
-          Create cycle
-        </button>
+        {canManage && (
+          <button type="button" className="review-cycle-create-button" onClick={() => setModalOpen(true)}>
+            <span aria-hidden="true">+</span> Create cycle
+          </button>
+        )}
       </div>
 
       <div className="review-cycle-list">
@@ -67,15 +66,16 @@ function ReviewCycleSection() {
         {error && <p className="hr-admin-state is-error" role="alert">{error}</p>}
         {!loading && !error && !cycles.length && <p className="hr-admin-state">No review cycles have been configured.</p>}
         {cycles.map((cycle) => (
-          <ReviewCycleCard key={cycle.id} cycle={cycle} onDelete={handleDelete} />
+          <ReviewCycleCard
+            key={cycle.id}
+            cycle={cycle}
+            canManage={canManage}
+            busy={changingCycleId === cycle.id}
+            onStatusChange={handleStatusChange}
+          />
         ))}
       </div>
-
-      <CreateReviewCycleModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCreate={handleCreate}
-      />
+      <CreateReviewCycleModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onCreate={handleCreate} />
     </section>
   );
 }

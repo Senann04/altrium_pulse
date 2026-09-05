@@ -69,7 +69,23 @@ function mapAssignedPlan(row) {
     actionId: action?.id || null,
     actionItem: action?.description || action?.title || "",
     actionItemCompleted: action?.status === "completed",
+    actionItems: (row.actions || []).map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description || "",
+      ownerId: item.owner_id,
+      dueDate: item.due_date,
+      status: item.status,
+      completedAt: item.completed_at,
+    })),
     evidence: row.evidence || "",
+    reason: row.reason || "",
+    startDate: row.start_date || "",
+    endDate: row.end_date || "",
+    employeeAgreementStatus: row.employee_agreement_status || "pending",
+    employeeAgreedAt: row.employee_agreed_at,
+    supervisorAgreementStatus: row.supervisor_agreement_status || "pending",
+    supervisorAgreedAt: row.supervisor_agreed_at,
   };
 }
 
@@ -93,9 +109,9 @@ export async function loadPeopleDirectory({ includeSupervisors = true, managedOn
       .single();
     if (managerError) throw managerError;
 
-    if (managerProfile.role === "hr_partner") query = query.eq("hr_partner_id", user.id);
-    else if (managerProfile.role === "supervisor") query = query.eq("manager_id", user.id);
-    else if (managerProfile.role !== "senior_management") query = query.eq("id", user.id);
+    // Profile RLS already returns the HRBP's assigned-team/project union.
+    if (managerProfile.role === "supervisor") query = query.eq("manager_id", user.id);
+    else if (!["hr_partner", "senior_management"].includes(managerProfile.role)) query = query.eq("id", user.id);
   }
 
   const { data, error } = await query;
@@ -110,6 +126,13 @@ const assignedPlanSelect = `
   status,
   progress,
   evidence,
+  reason,
+  start_date,
+  end_date,
+  employee_agreement_status,
+  employee_agreed_at,
+  supervisor_agreement_status,
+  supervisor_agreed_at,
   employee_id,
   employee:profiles!development_plans_employee_id_fkey(
     id,
@@ -117,7 +140,7 @@ const assignedPlanSelect = `
     full_name,
     department:departments(name)
   ),
-  actions:development_plan_actions(id, title, description, status, completed_at)
+  actions:development_plan_actions(id, title, description, owner_id, due_date, status, completed_at)
 `;
 
 export async function loadAssignedDevelopmentPlans(type) {
@@ -134,44 +157,36 @@ export async function loadAssignedDevelopmentPlans(type) {
 
 export async function createDevelopmentPlan(type, goal) {
   const client = requireSupabase();
-  const user = await requireCurrentUser();
+  await requireCurrentUser();
   if (!goal.employeeUserId) throw new Error("A valid employee must be selected.");
 
-  const today = new Date().toISOString().slice(0, 10);
-  const { data: plan, error: planError } = await client
-    .from("development_plans")
-    .insert({
-      employee_id: goal.employeeUserId,
-      owner_id: goal.employeeUserId,
-      type: type.toLowerCase(),
-      title: goal.goal,
-      start_date: today,
-      status: "active",
-      progress: goal.progress ?? 0,
-      evidence: goal.evidence || null,
-      created_by: user.id,
-    })
-    .select("id")
-    .single();
+  const actionItems = Array.isArray(goal.actionItems)
+    ? goal.actionItems.filter((item) => item.title?.trim())
+    : goal.actionItem?.trim()
+      ? [{ title: goal.actionItem.trim(), dueDate: goal.endDate || null }]
+      : [];
+  const { data: plan, error: planError } = await client.rpc("create_development_plan", {
+    p_employee_id: goal.employeeUserId,
+    p_review_id: goal.reviewId || null,
+    p_type: type.toLowerCase(),
+    p_title: goal.goal,
+    p_reason: goal.reason,
+    p_start_date: goal.startDate,
+    p_end_date: goal.endDate,
+    p_actions: actionItems.map((item) => ({
+      title: item.title.trim(),
+      description: item.description?.trim() || item.title.trim(),
+      dueDate: item.dueDate,
+    })),
+  });
 
   if (planError) throw planError;
-
-  if (goal.actionItem?.trim()) {
-    const { error: actionError } = await client.from("development_plan_actions").insert({
-      plan_id: plan.id,
-      title: goal.actionItem.trim(),
-      description: goal.actionItem.trim(),
-      owner_id: goal.employeeUserId,
-      status: goal.actionItemCompleted ? "completed" : "not_started",
-      completed_at: goal.actionItemCompleted ? new Date().toISOString() : null,
-    });
-    if (actionError) throw actionError;
-  }
+  const savedPlan = firstRelation(plan);
 
   const { data: saved, error: loadError } = await client
     .from("development_plans")
     .select(assignedPlanSelect)
-    .eq("id", plan.id)
+    .eq("id", savedPlan.id)
     .single();
 
   if (loadError) throw loadError;
@@ -180,64 +195,14 @@ export async function createDevelopmentPlan(type, goal) {
 
 export async function updateDevelopmentPlan(goalId, fields) {
   const client = requireSupabase();
-  const planUpdate = {};
-  if (fields.goal !== undefined) planUpdate.title = fields.goal;
-  if (fields.progress !== undefined) planUpdate.progress = fields.progress;
-  if (fields.evidence !== undefined) planUpdate.evidence = fields.evidence || null;
-  if (fields.status === "Completed") planUpdate.status = "completed";
-
-  if (Object.keys(planUpdate).length) {
-    const { error } = await client.from("development_plans").update(planUpdate).eq("id", goalId);
-    if (error) throw error;
-  }
-
-  if (fields.actionId) {
-    const actionUpdate = {};
-    if (fields.actionItem !== undefined) {
-      actionUpdate.title = fields.actionItem || "Action item";
-      actionUpdate.description = fields.actionItem || null;
-    }
-    if (fields.actionItemCompleted !== undefined) {
-      actionUpdate.status = fields.actionItemCompleted ? "completed" : "in_progress";
-      actionUpdate.completed_at = fields.actionItemCompleted ? new Date().toISOString() : null;
-    }
-    if (Object.keys(actionUpdate).length) {
-      const { error } = await client
-        .from("development_plan_actions")
-        .update(actionUpdate)
-        .eq("id", fields.actionId)
-        .eq("plan_id", goalId);
-      if (error) throw error;
-    }
-  } else if (fields.actionItem?.trim()) {
-    const { data: plan, error: planError } = await client
-      .from("development_plans")
-      .select("employee_id")
-      .eq("id", goalId)
-      .single();
-    if (planError) throw planError;
-
-    const { error } = await client.from("development_plan_actions").insert({
-      plan_id: goalId,
-      title: fields.actionItem.trim(),
-      description: fields.actionItem.trim(),
-      owner_id: plan.employee_id,
-      status: fields.actionItemCompleted ? "completed" : "not_started",
-      completed_at: fields.actionItemCompleted ? new Date().toISOString() : null,
-    });
-    if (error) throw error;
-  }
-
-  return { id: goalId, ...fields, ...planUpdate };
-}
-
-export async function completeDevelopmentPlan(goalId) {
-  const client = requireSupabase();
-  const { error } = await client
-    .from("development_plans")
-    .update({ status: "completed", progress: 100 })
-    .eq("id", goalId);
+  await requireCurrentUser();
+  const { data, error } = await client.rpc("update_draft_development_plan", {
+    p_plan_id: goalId,
+    p_title: String(fields.goal || "").trim(),
+    p_progress: Number(fields.progress ?? 0),
+  });
   if (error) throw error;
+  return firstRelation(data);
 }
 
 export async function loadMyDevelopmentPlans(type) {
@@ -245,7 +210,7 @@ export async function loadMyDevelopmentPlans(type) {
   const user = await requireCurrentUser();
   const { data, error } = await client
     .from("development_plans")
-    .select("id, title, start_date, end_date, status, progress")
+    .select("id, title, reason, start_date, end_date, status, progress, employee_agreement_status, employee_agreed_at, supervisor_agreement_status, supervisor_agreed_at, actions:development_plan_actions(id, title, description, owner_id, due_date, status, completed_at)")
     .eq("employee_id", user.id)
     .eq("type", type.toLowerCase())
     .order("created_at", { ascending: false });
@@ -259,6 +224,12 @@ export async function loadMyDevelopmentPlans(type) {
     start_date: row.start_date,
     target_date: row.end_date || "",
     progress: row.progress ?? 0,
+    reason: row.reason || "",
+    employeeAgreementStatus: row.employee_agreement_status || "pending",
+    employeeAgreedAt: row.employee_agreed_at,
+    supervisorAgreementStatus: row.supervisor_agreement_status || "pending",
+    supervisorAgreedAt: row.supervisor_agreed_at,
+    actionItems: row.actions || [],
   }));
 }
 
@@ -346,10 +317,13 @@ function mapReviewCycle(row) {
     description: row.description || "",
     startDate: formatDate(row.start_date),
     endDate: formatDate(row.end_date),
-    status: row.status === "draft" ? "Pending..." : row.status,
+    status: row.status === "draft" ? "Draft" : row.status === "closed" ? "Closed" : "Active",
     reviewType: row.review_type || "Performance Review",
     active: row.status === "active",
     appliesTo: row.applies_to || "both",
+    selfReviewDue: row.self_review_due || "",
+    feedbackDue: row.feedback_due || "",
+    supervisorReviewDue: row.supervisor_review_due || "",
   };
 }
 
@@ -357,7 +331,7 @@ export async function loadReviewCycles() {
   const client = requireSupabase();
   const { data, error } = await client
     .from("review_cycles")
-    .select("id, name, description, start_date, end_date, status, review_type, applies_to")
+    .select("id, name, description, start_date, end_date, self_review_due, feedback_due, supervisor_review_due, status, review_type, applies_to")
     .order("start_date", { ascending: false });
   if (error) throw error;
   return (data || []).map(mapReviewCycle);
@@ -365,29 +339,32 @@ export async function loadReviewCycles() {
 
 export async function createReviewCycle(cycle) {
   const client = requireSupabase();
-  const user = await requireCurrentUser();
+  await requireCurrentUser();
   const { data, error } = await client
-    .from("review_cycles")
-    .insert({
-      name: cycle.name,
-      description: cycle.description || null,
-      start_date: cycle.startDate,
-      end_date: cycle.endDate,
-      status: cycle.active ? "active" : "draft",
-      review_type: cycle.reviewType || null,
-      applies_to: cycle.appliesTo || "both",
-      created_by: user.id,
-    })
-    .select("id, name, description, start_date, end_date, status, review_type, applies_to")
-    .single();
+    .rpc("create_review_cycle", {
+      p_name: cycle.name,
+      p_description: cycle.description || "",
+      p_start_date: cycle.startDate,
+      p_end_date: cycle.endDate,
+      p_self_review_due: cycle.selfReviewDue || null,
+      p_feedback_due: cycle.feedbackDue || null,
+      p_supervisor_review_due: cycle.supervisorReviewDue || null,
+      p_review_type: cycle.reviewType || "Performance Review",
+      p_applies_to: cycle.appliesTo || "both",
+    });
   if (error) throw error;
-  return mapReviewCycle(data);
+  return mapReviewCycle(firstRelation(data));
 }
 
-export async function deleteReviewCycle(cycleId) {
+export async function setReviewCycleStatus(cycleId, status) {
   const client = requireSupabase();
-  const { error } = await client.from("review_cycles").delete().eq("id", cycleId);
+  await requireCurrentUser();
+  const { data, error } = await client.rpc("set_review_cycle_status", {
+    p_cycle_id: cycleId,
+    p_status: status,
+  });
   if (error) throw error;
+  return mapReviewCycle(firstRelation(data));
 }
 
 function mapParMeeting(row) {
@@ -400,6 +377,7 @@ function mapParMeeting(row) {
     date: date.toISOString().slice(0, 10),
     time: date.toTimeString().slice(0, 5),
     status: row.status === "scheduled" ? "Scheduled" : row.status,
+    notes: row.notes || "",
   };
 }
 
@@ -408,7 +386,7 @@ export async function loadParMeeting(reviewId) {
   const user = await requireCurrentUser();
   let query = client
     .from("par_meetings")
-    .select("id, review_id, employee_id, supervisor_id, scheduled_at, status")
+    .select("id, review_id, employee_id, supervisor_id, scheduled_at, status, notes")
     .order("scheduled_at", { ascending: false })
     .limit(1);
 
@@ -453,14 +431,15 @@ export async function saveParMeeting(meeting, { reviewId, employeeId } = {}) {
     employee_id: review.employee_id,
     supervisor_id: review.supervisor_id || user.id,
     scheduled_at: scheduledAt,
-    status: "scheduled",
+    status: meeting.status || "scheduled",
+    notes: meeting.notes?.trim() || null,
     created_by: user.id,
   };
 
   const { data, error } = await client
     .from("par_meetings")
     .upsert(payload, { onConflict: "review_id" })
-    .select("id, review_id, employee_id, supervisor_id, scheduled_at, status")
+    .select("id, review_id, employee_id, supervisor_id, scheduled_at, status, notes")
     .single();
   if (error) throw error;
   return mapParMeeting(data);
@@ -494,15 +473,20 @@ const reviewStatusLabels = {
 
 export async function loadHrReviewOperations() {
   const client = requireSupabase();
-  const user = await requireCurrentUser();
+  await requireCurrentUser();
 
-  const [reviewsResult, requestsResult, directory] = await Promise.all([
+  const [reviewsResult, requestsResult, meetingsResult, normalizationResult, directory] = await Promise.all([
     client
       .from("reviews")
       .select(`
         id,
         status,
         due_date,
+        supervisor_summary,
+        supervisor_rating,
+        hr_comments,
+        overall_rating,
+        completed_at,
         cycle:review_cycles(id, name, status, start_date, end_date),
         employee:profiles!reviews_employee_id_fkey(
           id,
@@ -512,7 +496,6 @@ export async function loadHrReviewOperations() {
           department:departments(name)
         )
       `)
-      .eq("hr_partner_id", user.id)
       .order("created_at", { ascending: false }),
     client
       .from("feedback_requests")
@@ -527,11 +510,19 @@ export async function loadHrReviewOperations() {
       `)
       .eq("feedback_type", "peer")
       .order("created_at", { ascending: false }),
+    client
+      .from("par_meetings")
+      .select("id, review_id, scheduled_at, status, notes"),
+    client
+      .from("normalization_decisions")
+      .select("review_id, status, proposed_rating, normalized_rating, rationale, decided_at"),
     loadPeopleDirectory({ includeSupervisors: false, managedOnly: true }),
   ]);
 
   if (reviewsResult.error) throw reviewsResult.error;
   if (requestsResult.error) throw requestsResult.error;
+  if (meetingsResult.error) throw meetingsResult.error;
+  if (normalizationResult.error) throw normalizationResult.error;
 
   const reviews = reviewsResult.data || [];
   const reviewIds = new Set(reviews.map((review) => review.id));
@@ -555,6 +546,8 @@ export async function loadHrReviewOperations() {
             dueDate: request.due_date,
           };
         });
+      const meeting = (meetingsResult.data || []).find((item) => item.review_id === review.id) || null;
+      const normalization = (normalizationResult.data || []).find((item) => item.review_id === review.id) || null;
 
       return {
         id: review.id,
@@ -569,6 +562,13 @@ export async function loadHrReviewOperations() {
         status: reviewStatusLabels[review.status] || review.status,
         statusKey: review.status,
         dueDate: review.due_date,
+        supervisorSummary: review.supervisor_summary || "",
+        supervisorRating: review.supervisor_rating,
+        hrComments: review.hr_comments || "",
+        overallRating: review.overall_rating,
+        completedAt: review.completed_at,
+        meeting,
+        normalization,
         peerRequests,
         reviewerOptions: directory.filter((person) => person.userId !== employee?.id),
       };

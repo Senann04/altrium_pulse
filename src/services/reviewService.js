@@ -150,8 +150,8 @@ export async function saveSupervisorReview(
   const client = requireSupabase();
   await requireCurrentUser();
   const numericRating = Number(rating);
-  if (!Number.isFinite(numericRating) || numericRating < 0) {
-    throw new Error("A valid non-negative rating is required.");
+  if (!Number.isFinite(numericRating) || numericRating < 0 || numericRating > 5) {
+    throw new Error("A rating between 0 and 5 is required.");
   }
 
   const { data, error } = await client.rpc("save_supervisor_review", {
@@ -168,8 +168,8 @@ export async function completeHrReview(reviewId, { comments, overallRating = nul
   const client = requireSupabase();
   await requireCurrentUser();
   const rating = overallRating === null || overallRating === "" ? null : Number(overallRating);
-  if (rating !== null && (!Number.isFinite(rating) || rating < 0)) {
-    throw new Error("Overall rating must be a non-negative number.");
+  if (rating !== null && (!Number.isFinite(rating) || rating < 0 || rating > 5)) {
+    throw new Error("Overall rating must be between 0 and 5.");
   }
 
   const { data, error } = await client.rpc("complete_hr_review", {

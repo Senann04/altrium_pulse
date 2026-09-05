@@ -634,6 +634,7 @@
   text-transform: uppercase;
 }
 .review-cycle-toolbar-copy strong { color: var(--ap-text); font-size: 17px; }
+.review-cycle-toolbar-copy small { max-width: 620px; color: var(--ap-text-faint); font-size: 11px; line-height: 1.5; }
 
 .review-cycle-add-button,
 .assigned-goal-add-button,
@@ -1460,6 +1461,29 @@
 }
 .hr-review-assignment-row button:disabled { opacity: .42; cursor: not-allowed; }
 
+.hr-review-operation-filters { display: grid; grid-template-columns: minmax(220px,1fr) minmax(170px,.35fr); gap: 10px; margin: 12px 0; }
+.hr-review-operation-filters label,
+.hr-review-completion-row label { display: grid; gap: 6px; }
+.hr-review-operation-filters label > span,
+.hr-review-completion-row label > span,
+.hr-review-gates span { color: var(--ap-text-soft); font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.hr-review-operation-filters input,
+.hr-review-operation-filters select,
+.hr-review-completion-row input,
+.hr-review-completion-row textarea { min-height: 38px; box-sizing: border-box; border: 1px solid var(--ap-line); border-radius: 9px; color: var(--ap-text); background: rgba(255,255,255,.028); font: inherit; font-size: 11px; padding: 8px 10px; }
+.hr-review-gates { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 11px; }
+.hr-review-gates > div { display: grid; gap: 4px; padding: 10px; border: 1px solid var(--ap-line); border-radius: 10px; background: rgba(255,255,255,.02); }
+.hr-review-gates strong { color: var(--ap-text-muted); font-size: 11px; text-transform: capitalize; }
+.hr-review-gates .is-ready { border-color: rgba(103,211,145,.2); background: rgba(103,211,145,.045); }
+.hr-review-gates .is-ready strong { color: var(--ap-success); }
+.hr-review-completion-row { display: grid; grid-template-columns: minmax(220px,1fr) 130px auto; align-items: end; gap: 9px; margin-top: 11px; padding-top: 11px; border-top: 1px solid var(--ap-line); }
+.hr-review-completion-row textarea { min-height: 58px; resize: vertical; }
+.hr-review-completion-row button { min-height: 38px; padding: 0 12px; border: 1px solid rgba(252,180,0,.34); border-radius: 9px; color: var(--ap-gold); background: var(--ap-gold-soft); font: inherit; font-size: 11px; font-weight: 720; cursor: pointer; }
+.hr-review-completion-row button:disabled { opacity: .38; cursor: not-allowed; }
+.hr-review-complete-state { display: flex; justify-content: space-between; gap: 12px; margin-top: 11px; padding: 10px; border: 1px solid rgba(103,211,145,.18); border-radius: 10px; background: rgba(103,211,145,.04); }
+.hr-review-complete-state strong { color: var(--ap-success); font-size: 11px; }
+.hr-review-complete-state span { color: var(--ap-text-soft); font-size: 11px; }
+
 .hrbp-feedback-notice {
   padding: 20px 22px;
   border: 1px solid rgba(105,167,255,.17);
@@ -1502,6 +1526,8 @@
   .hr-review-operations-heading { align-items: stretch; flex-direction: column; }
   .hr-review-operations-heading > label { min-width: 0; }
   .hr-review-assignment-row { grid-template-columns: 1fr; }
+  .hr-review-operation-filters,
+  .hr-review-completion-row { grid-template-columns: 1fr; }
   .hr-review-peer-summary { grid-template-columns: 1fr; }
   .hrbp-scope-member-grid { grid-template-columns: 1fr; }
 }

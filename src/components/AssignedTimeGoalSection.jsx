@@ -7,7 +7,7 @@ import "../styles/assignedtimegoalsection.css";
 function AssignedTimeGoalSection({ period, title }) {
   const [allGoals, setAllGoals] = useState([]);
   const [personDirectory, setPersonDirectory] = useState([]);
-  const [teamFilter, setTeamFilter] = useState("All Teams");
+  const [teamFilter, setTeamFilter] = useState("All assigned teams");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -34,9 +34,9 @@ function AssignedTimeGoalSection({ period, title }) {
   }, [refresh]);
 
   const periodGoals = allGoals.filter((g) => g.period === period);
-  const teams = ["All Teams", ...new Set(personDirectory.map((p) => p.team))];
+  const teams = ["All assigned teams", ...new Set(personDirectory.map((p) => p.team))];
   const visibleGoals =
-    teamFilter === "All Teams" ? periodGoals : periodGoals.filter((g) => g.team === teamFilter);
+    teamFilter === "All assigned teams" ? periodGoals : periodGoals.filter((g) => g.team === teamFilter);
 
   const handleAssign = async (newGoal) => {
     await createTimeGoal({ ...newGoal, period });
@@ -63,7 +63,7 @@ function AssignedTimeGoalSection({ period, title }) {
       </div>
 
       <div className="assigned-time-goal-filter-row">
-        <label htmlFor={`${period}-team-filter`}>Filter by Team:</label>
+        <label htmlFor={`${period}-team-filter`}>Assigned team:</label>
         <select
           id={`${period}-team-filter`}
           className="assigned-time-goal-filter-select"
@@ -79,7 +79,7 @@ function AssignedTimeGoalSection({ period, title }) {
       <div className="assigned-time-goal-card-grid">
         {loading && <p>Loading assigned goals…</p>}
         {error && <p className="is-error" role="alert">{error}</p>}
-        {!loading && !error && visibleGoals.length === 0 && <p>No assigned time goals found within your business unit.</p>}
+        {!loading && !error && visibleGoals.length === 0 && <p>No time goals found within your assigned teams.</p>}
         {visibleGoals.map((goal) => (
           <AssignedTimeGoalCard key={goal.id} goal={goal} />
         ))}

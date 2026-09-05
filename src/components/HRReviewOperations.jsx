@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { assignPeerReviewer, loadHrReviewOperations } from "../services/workflowService";
+import { completeHrReview } from "../services/reviewService";
 
 const statusTone = {
   "Not started": "neutral",
@@ -11,13 +12,20 @@ const statusTone = {
   Reopened: "red",
 };
 
-function ReviewOperationCard({ review, onAssign }) {
+function ReviewOperationCard({ review, onAssign, onCompleted }) {
   const [reviewerId, setReviewerId] = useState("");
   const [dueDate, setDueDate] = useState(review.dueDate || review.cycleEndDate || "");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [comments, setComments] = useState(review.hrComments || "");
+  const [overallRating, setOverallRating] = useState(review.normalization?.normalized_rating ?? review.supervisorRating ?? "");
+  const [completing, setCompleting] = useState(false);
   const assignedIds = new Set(review.peerRequests.map((request) => request.reviewerId));
   const reviewerOptions = review.reviewerOptions.filter((person) => !assignedIds.has(person.userId));
+  const canAssign = ["not_started", "self_review", "peer_feedback", "reopened"].includes(review.statusKey);
+  const normalizationReady = review.normalization?.status === "approved";
+  const meetingReady = review.meeting?.status === "completed" && Boolean(review.meeting?.notes?.trim());
+  const canComplete = ["hr_review", "reopened"].includes(review.statusKey) && normalizationReady && meetingReady;
 
   const handleAssign = async () => {
     if (!reviewerId) return;
@@ -30,6 +38,20 @@ function ReviewOperationCard({ review, onAssign }) {
       setError(assignmentError.message || "Unable to assign this peer reviewer.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleComplete = async () => {
+    if (!canComplete || !comments.trim() || overallRating === "") return;
+    setCompleting(true);
+    setError("");
+    try {
+      await completeHrReview(review.id, { comments, overallRating });
+      await onCompleted();
+    } catch (completionError) {
+      setError(completionError.message || "Unable to complete this review.");
+    } finally {
+      setCompleting(false);
     }
   };
 
@@ -64,29 +86,47 @@ function ReviewOperationCard({ review, onAssign }) {
       <div className="hr-review-assignment-row">
         <label>
           <span>Select peer reviewer</span>
-          <select value={reviewerId} onChange={(event) => setReviewerId(event.target.value)} disabled={!reviewerOptions.length || submitting}>
-            <option value="">{reviewerOptions.length ? "Choose a teammate" : "No additional peers available"}</option>
+          <select value={reviewerId} onChange={(event) => setReviewerId(event.target.value)} disabled={!canAssign || !reviewerOptions.length || submitting}>
+            <option value="">{canAssign ? (reviewerOptions.length ? "Choose an eligible colleague" : "No additional peers available") : "Reviewer assignment is closed"}</option>
             {reviewerOptions.map((person) => (
-              <option key={person.userId} value={person.userId}>{person.name} · {person.id}</option>
+              <option key={person.userId} value={person.userId}>{person.name} · {person.team} · {person.id}</option>
             ))}
           </select>
         </label>
         <label>
           <span>Feedback due</span>
-          <input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} disabled={submitting} />
+          <input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} disabled={!canAssign || submitting} />
         </label>
-        <button type="button" onClick={handleAssign} disabled={!reviewerId || submitting}>
+        <button type="button" onClick={handleAssign} disabled={!canAssign || !reviewerId || submitting}>
           {submitting ? "Assigning…" : "Assign reviewer"}
         </button>
       </div>
+
+      <div className="hr-review-gates">
+        <div className={normalizationReady ? "is-ready" : ""}><span>Normalization</span><strong>{review.normalization?.status?.replace("_", " ") || "Pending"}</strong></div>
+        <div className={meetingReady ? "is-ready" : ""}><span>PAR outcome</span><strong>{meetingReady ? "Recorded" : "Required"}</strong></div>
+        <div><span>Final rating</span><strong>{review.overallRating ?? review.normalization?.normalized_rating ?? "–"}</strong></div>
+      </div>
+
+      {review.statusKey === "completed" ? (
+        <div className="hr-review-complete-state"><strong>Review completed</strong><span>{review.hrComments || "No HR completion note was recorded."}</span></div>
+      ) : (
+        <div className="hr-review-completion-row">
+          <label><span>HR completion note</span><textarea value={comments} onChange={(event) => setComments(event.target.value)} disabled={!canComplete || completing} /></label>
+          <label><span>Normalized rating</span><input type="number" min="0" max="5" step="0.1" value={overallRating} onChange={(event) => setOverallRating(event.target.value)} disabled={!canComplete || completing} /></label>
+          <button type="button" onClick={handleComplete} disabled={!canComplete || !comments.trim() || overallRating === "" || completing}>{completing ? "Completing…" : "Complete review"}</button>
+        </div>
+      )}
       {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}
     </article>
   );
 }
 
-function HRReviewOperations({ scopeLabel = "Assigned business unit" }) {
+function HRReviewOperations({ assignedTeams = [], assignedProjects = [] }) {
   const [reviews, setReviews] = useState([]);
   const [selectedCycle, setSelectedCycle] = useState("");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -112,12 +152,22 @@ function HRReviewOperations({ scopeLabel = "Assigned business unit" }) {
   }, [refresh]);
 
   const cycleNames = useMemo(() => [...new Set(reviews.map((review) => review.cycleName))], [reviews]);
-  const visibleReviews = reviews.filter((review) => review.cycleName === selectedCycle);
-  const completed = visibleReviews.filter((review) => review.statusKey === "completed").length;
-  const pendingPeerRequests = visibleReviews.reduce(
+  const cycleReviews = reviews.filter((review) => review.cycleName === selectedCycle);
+  const visibleReviews = cycleReviews.filter((review) => {
+    const matchesSearch = `${review.employeeName} ${review.employeeNumber} ${review.team}`.toLowerCase().includes(search.toLowerCase());
+    return matchesSearch && (statusFilter === "all" || review.statusKey === statusFilter);
+  });
+  const completed = cycleReviews.filter((review) => review.statusKey === "completed").length;
+  const pendingPeerRequests = cycleReviews.reduce(
     (total, review) => total + review.peerRequests.filter((request) => request.status === "pending").length,
     0,
   );
+  const scopeParts = [
+    assignedTeams.length ? `Teams: ${assignedTeams.join(", ")}` : "",
+    assignedProjects.length ? `Projects: ${assignedProjects.join(", ")}` : "",
+  ].filter(Boolean);
+  const scopeLabel = scopeParts.join(" · ") || "No scope assigned";
+  const statuses = [...new Set(cycleReviews.map((review) => review.statusKey))];
 
   const handleAssign = async (reviewId, reviewerId, dueDate) => {
     await assignPeerReviewer(reviewId, reviewerId, dueDate);
@@ -130,7 +180,7 @@ function HRReviewOperations({ scopeLabel = "Assigned business unit" }) {
         <div>
           <span>Assigned review scope</span>
           <h2>Completion and peer reviewers</h2>
-          <p>Monitor only the employee reviews assigned to your HRBP account.</p>
+          <p>Monitor employee reviews only across the teams assigned to your HRBP account.</p>
         </div>
         <label>
           <span>Review cycle</span>
@@ -140,10 +190,15 @@ function HRReviewOperations({ scopeLabel = "Assigned business unit" }) {
         </label>
       </div>
 
+      <div className="hr-review-operation-filters">
+        <label><span>Search assigned reviews</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Employee, ID or team" /></label>
+        <label><span>Status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">All statuses</option>{statuses.map((value) => <option key={value} value={value}>{String(value).replaceAll("_", " ")}</option>)}</select></label>
+      </div>
+
       <div className="hr-review-operations-summary">
-        <div><span>Business unit</span><strong>{scopeLabel}</strong></div>
-        <div><span>Assigned reviews</span><strong>{visibleReviews.length}</strong></div>
-        <div><span>Completed</span><strong>{completed}/{visibleReviews.length}</strong></div>
+        <div><span>Assigned teams</span><strong>{scopeLabel}</strong></div>
+        <div><span>Assigned reviews</span><strong>{cycleReviews.length}</strong></div>
+        <div><span>Completed</span><strong>{completed}/{cycleReviews.length}</strong></div>
         <div><span>Peer requests pending</span><strong>{pendingPeerRequests}</strong></div>
       </div>
 
@@ -154,7 +209,7 @@ function HRReviewOperations({ scopeLabel = "Assigned business unit" }) {
       )}
       <div className="hr-review-operation-list">
         {visibleReviews.map((review) => (
-          <ReviewOperationCard key={review.id} review={review} onAssign={handleAssign} />
+          <ReviewOperationCard key={review.id} review={review} onAssign={handleAssign} onCompleted={refresh} />
         ))}
       </div>
     </section>
