@@ -109,7 +109,7 @@ export async function loadSupervisorReviewOperations() {
       overall_rating,
       completed_at,
       due_date,
-      employee:profiles!reviews_employee_id_fkey(id, employee_number, full_name, job_title, department:departments(name)),
+      employee:profiles!reviews_employee_id_fkey(id, employee_number, full_name, job_title, department:departments!profiles_department_id_fkey(name)),
       cycle:review_cycles(id, name, start_date, end_date, status)
     `)
     .eq("supervisor_id", user.id)
@@ -270,10 +270,10 @@ export async function loadVisibleProjects() {
       status,
       start_date,
       end_date,
-      department:departments(name),
+      department:departments!projects_department_id_fkey(name),
       members:project_members(
         responsibility,
-        user:profiles(id, employee_number, full_name, job_title)
+        user:profiles!project_members_user_id_fkey(id, employee_number, full_name, job_title)
       )
     `)
     .order("name");

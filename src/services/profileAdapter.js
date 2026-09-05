@@ -217,13 +217,13 @@ export async function loadProfileView(userId) {
     profile.role === "hr_partner"
       ? supabase
           .from("hr_partner_departments")
-          .select("department_id, department:departments(id, name)")
+          .select("department_id, department:departments!hr_partner_departments_department_id_fkey(id, name)")
           .eq("hr_partner_id", userId)
       : Promise.resolve({ data: [], error: null }),
     profile.role === "hr_partner"
       ? supabase
           .from("hr_partner_projects")
-          .select("project_id, project:projects(id, code, name)")
+          .select("project_id, project:projects!hr_partner_projects_project_id_fkey(id, code, name)")
           .eq("hr_partner_id", userId)
       : Promise.resolve({ data: [], error: null }),
     profile.role === "hr_partner"
@@ -233,7 +233,7 @@ export async function loadProfileView(userId) {
           .eq("user_id", userId)
           .maybeSingle()
       : Promise.resolve({ data: null, error: null }),
-    supabase.from("profiles").select("id, employee_number, full_name, email, role, job_title, department_id, manager_id, hr_partner_id, department:departments(name)").eq("is_active", true).order("full_name"),
+    supabase.from("profiles").select("id, employee_number, full_name, email, role, job_title, department_id, manager_id, hr_partner_id, department:departments!profiles_department_id_fkey(name)").eq("is_active", true).order("full_name"),
     supabase.from("review_cycles").select("id, name, start_date, end_date, self_review_due, feedback_due, supervisor_review_due, status").order("start_date", { ascending: false }),
     supabase.from("reviews").select(reviewColumns).order("created_at", { ascending: false }),
     supabase.from("goals").select("id, review_id, employee_id, title, description, target_date, status, progress, period").order("created_at", { ascending: false }),
