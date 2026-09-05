@@ -13,6 +13,7 @@ const statusTone = {
 };
 
 function ReviewOperationCard({ review, onAssign, onCompleted }) {
+  const [workedTogether, setWorkedTogether] = useState(false);
   const [reviewerId, setReviewerId] = useState("");
   const [dueDate, setDueDate] = useState(review.dueDate || review.cycleEndDate || "");
   const [submitting, setSubmitting] = useState(false);
@@ -28,12 +29,13 @@ function ReviewOperationCard({ review, onAssign, onCompleted }) {
   const canComplete = ["hr_review", "reopened"].includes(review.statusKey) && normalizationReady && meetingReady;
 
   const handleAssign = async () => {
-    if (!reviewerId) return;
+    if (!reviewerId || !workedTogether) return;
     setSubmitting(true);
     setError("");
     try {
       await onAssign(review.id, reviewerId, dueDate || null);
       setReviewerId("");
+      setWorkedTogether(false);
     } catch (assignmentError) {
       setError(assignmentError.message || "Unable to assign this peer reviewer.");
     } finally {
@@ -83,6 +85,7 @@ function ReviewOperationCard({ review, onAssign, onCompleted }) {
         </div>
       </div>
 
+      <label><input type="checkbox" checked={workedTogether} disabled={!canAssign || submitting} onChange={(e) => setWorkedTogether(e.target.checked)} /> I confirm this colleague worked closely with the employee.</label>
       <div className="hr-review-assignment-row">
         <label>
           <span>Select peer reviewer</span>
@@ -97,7 +100,7 @@ function ReviewOperationCard({ review, onAssign, onCompleted }) {
           <span>Feedback due</span>
           <input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} disabled={!canAssign || submitting} />
         </label>
-        <button type="button" onClick={handleAssign} disabled={!canAssign || !reviewerId || submitting}>
+        <button type="button" onClick={handleAssign} disabled={!canAssign || !reviewerId || !workedTogether || submitting}>
           {submitting ? "Assigning…" : "Assign reviewer"}
         </button>
       </div>
@@ -166,7 +169,8 @@ function HRReviewOperations({ assignedTeams = [], assignedProjects = [] }) {
     assignedTeams.length ? `Teams: ${assignedTeams.join(", ")}` : "",
     assignedProjects.length ? `Projects: ${assignedProjects.join(", ")}` : "",
   ].filter(Boolean);
-  const scopeLabel = scopeParts.join(" · ") || "No scope assigned";
+  const cycleTeams = [...new Set(cycleReviews.map((review) => review.team))];
+  const scopeLabel = cycleTeams.length ? cycleTeams.join(", ") : scopeParts.join(" · ") || "No scope assigned";
   const statuses = [...new Set(cycleReviews.map((review) => review.statusKey))];
 
   const handleAssign = async (reviewId, reviewerId, dueDate) => {
@@ -180,7 +184,7 @@ function HRReviewOperations({ assignedTeams = [], assignedProjects = [] }) {
         <div>
           <span>Assigned review scope</span>
           <h2>Completion and peer reviewers</h2>
-          <p>Monitor employee reviews only across the teams assigned to your HRBP account.</p>
+          <p>Monitor reviews assigned to you for each cycle. Peer reviewers must have worked closely with the employee.</p>
         </div>
         <label>
           <span>Review cycle</span>

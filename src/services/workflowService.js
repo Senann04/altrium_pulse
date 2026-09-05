@@ -475,7 +475,7 @@ export async function loadHrReviewOperations() {
   const client = requireSupabase();
   await requireCurrentUser();
 
-  const [reviewsResult, requestsResult, meetingsResult, normalizationResult, directory] = await Promise.all([
+  const [reviewsResult, requestsResult, meetingsResult, normalizationResult] = await Promise.all([
     client
       .from("reviews")
       .select(`
@@ -487,6 +487,7 @@ export async function loadHrReviewOperations() {
         hr_comments,
         overall_rating,
         completed_at,
+        department_name_snapshot,
         cycle:review_cycles(id, name, status, start_date, end_date),
         employee:profiles!reviews_employee_id_fkey(
           id,
@@ -516,7 +517,6 @@ export async function loadHrReviewOperations() {
     client
       .from("normalization_decisions")
       .select("review_id, status, proposed_rating, normalized_rating, rationale, decided_at"),
-    loadPeopleDirectory({ includeSupervisors: false, managedOnly: true }),
   ]);
 
   if (reviewsResult.error) throw reviewsResult.error;
@@ -525,6 +525,12 @@ export async function loadHrReviewOperations() {
   if (normalizationResult.error) throw normalizationResult.error;
 
   const reviews = reviewsResult.data || [];
+  const peerResults = await Promise.all(reviews.map(async (review) => {
+    const result = await client.rpc("get_eligible_cycle_peers", { p_review_id: review.id });
+    if (result.error) throw result.error;
+    return [review.id, (result.data || []).map((person) => ({ userId: person.id, id: person.employee_number, name: person.full_name, team: person.team }))];
+  }));
+  const peersByReview = new Map(peerResults);
   const reviewIds = new Set(reviews.map((review) => review.id));
   const requests = (requestsResult.data || []).filter((request) => reviewIds.has(request.review_id));
 
@@ -554,7 +560,7 @@ export async function loadHrReviewOperations() {
         employeeId: employee?.id || "",
         employeeNumber: employee?.employee_number || "",
         employeeName: employee?.full_name || "Employee",
-        team: department?.name || "Unassigned",
+        team: review.department_name_snapshot || department?.name || "Unassigned",
         cycleName: cycle?.name || "Review cycle",
         cycleStatus: cycle?.status || "draft",
         cycleStartDate: cycle?.start_date || "",
@@ -570,7 +576,7 @@ export async function loadHrReviewOperations() {
         meeting,
         normalization,
         peerRequests,
-        reviewerOptions: directory.filter((person) => person.userId !== employee?.id),
+        reviewerOptions: peersByReview.get(review.id) || [],
       };
     })
     .sort((left, right) => {

@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import CycleHRAllocation from "./CycleHRAllocation";
+import { Fragment } from "react";
 import ReviewCycleCard from "./ReviewCycleCard";
 import CreateReviewCycleModal from "./CreateReviewCycleModal";
 import { createReviewCycle, loadReviewCycles, setReviewCycleStatus } from "../services/workflowService";
@@ -66,13 +68,15 @@ function ReviewCycleSection({ canManage = false }) {
         {error && <p className="hr-admin-state is-error" role="alert">{error}</p>}
         {!loading && !error && !cycles.length && <p className="hr-admin-state">No review cycles have been configured.</p>}
         {cycles.map((cycle) => (
+          <Fragment key={cycle.id}>
           <ReviewCycleCard
-            key={cycle.id}
             cycle={cycle}
             canManage={canManage}
             busy={changingCycleId === cycle.id}
             onStatusChange={handleStatusChange}
           />
+          <CycleHRAllocation cycle={cycle} />
+          </Fragment>
         ))}
       </div>
       <CreateReviewCycleModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onCreate={handleCreate} />

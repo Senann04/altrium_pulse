@@ -1,0 +1,52 @@
+-- Run after the allocation migration. Every test mutation is rolled back.
+begin;
+do $$
+declare leon uuid;jane uuid;nova_hr uuid;cyc uuid;dep uuid;moved uuid;historical uuid;result jsonb;v integer;ok boolean;
+begin
+select id into leon from public.profiles where email='leon.hrhead@example.com';
+select id into jane from public.profiles where email='janehr@gmail.com';
+select hr_partner_id,department_id into nova_hr,dep from public.hr_partner_departments where hr_partner_id<>jane limit 1;
+perform set_config('request.jwt.claim.sub',leon::text,true);
+insert into public.review_cycles(name,start_date,end_date,self_review_due,feedback_due,supervisor_review_due,status,created_by,applies_to) values('ROLLBACK allocation test','2027-01-01','2027-03-31','2027-01-31','2027-02-15','2027-03-15','draft',leon,'employee') returning id into cyc;
+result:=public.get_cycle_allocation(cyc);v:=(result->>'revision')::int;
+if v<>1 or jsonb_array_length(result->'employees')<>6 then raise exception 'TEST: automatic roster wrong';end if;
+if exists(select 1 from public.cycle_employee_assignments where cycle_id=cyc and hr_partner_id is null) then raise exception 'TEST: initial allocation unresolved';end if;
+ok:=false;begin perform public.set_review_cycle_status(cyc,'active');exception when others then if sqlerrm like '%approve%' then ok:=true;else raise;end if;end;
+if not ok then raise exception 'TEST: start without approval succeeded';end if;
+perform set_config('request.jwt.claim.sub',jane::text,true);
+ok:=false;begin perform public.update_cycle_allocation(cyc,v,'approve');exception when others then if sqlerrm like '%administrator%' then ok:=true;else raise;end if;end;
+if not ok then raise exception 'TEST: Jane approved';end if;
+perform set_config('request.jwt.claim.sub',leon::text,true);
+ok:=false;begin perform public.update_cycle_allocation(cyc,0,'generate');exception when others then if sqlerrm like '%another session%' then ok:=true;else raise;end if;end;
+if not ok then raise exception 'TEST: stale revision accepted';end if;
+select employee_id into moved from public.cycle_employee_assignments where cycle_id=cyc and hr_partner_id=jane limit 1;
+select id into historical from public.reviews where employee_id=moved and hr_partner_id=jane order by created_at limit 1;
+result:=public.update_cycle_allocation(cyc,v,'employee',jsonb_build_object('employee_id',moved,'department_id',dep,'hr_partner_id',nova_hr));v:=(result->>'revision')::int;
+result:=public.update_cycle_allocation(cyc,v,'pool',jsonb_build_object('hr_partner_id',nova_hr,'available',true,'capacity',1,'department_ids',jsonb_build_array(dep),'project_ids','[]'::jsonb));v:=(result->>'revision')::int;
+result:=public.update_cycle_allocation(cyc,v,'generate');v:=(result->>'revision')::int;
+ok:=false;begin perform public.update_cycle_allocation(cyc,v,'approve');exception when others then if sqlerrm like '%missing or ineligible%' then ok:=true;else raise;end if;end;
+if not ok then raise exception 'TEST: incomplete proposal approved';end if;
+result:=public.update_cycle_allocation(cyc,v,'pool',jsonb_build_object('hr_partner_id',nova_hr,'available',true,'capacity',30,'department_ids',jsonb_build_array(dep),'project_ids','[]'::jsonb));v:=(result->>'revision')::int;
+result:=public.update_cycle_allocation(cyc,v,'generate');v:=(result->>'revision')::int;
+result:=public.update_cycle_allocation(cyc,v,'approve');v:=(result->>'revision')::int;
+if result->>'approvedAt' is null then raise exception 'TEST: approval not recorded';end if;
+-- Isolate activation; original statuses and notifications roll back with the test.
+update public.review_cycles set status='closed' where status='active';
+perform public.set_review_cycle_status(cyc,'active');
+if (select count(*) from public.reviews where cycle_id=cyc)<>6 then raise exception 'TEST: review creation wrong';end if;
+if not exists(select 1 from public.reviews where cycle_id=cyc and employee_id=moved and hr_partner_id=nova_hr and department_id_snapshot=dep) then raise exception 'TEST: approved assignment not used';end if;
+perform set_config('request.jwt.claim.sub',nova_hr::text,true);
+if private.can_manage_review(historical) then raise exception 'TEST: new HR acquired historic review';end if;
+if not private.can_manage_employee(moved) then raise exception 'TEST: new HR cannot manage current employee';end if;
+perform set_config('request.jwt.claim.sub',jane::text,true);
+if not private.can_manage_review(historical) then raise exception 'TEST: old HR lost historical review';end if;
+if private.can_manage_employee(moved) then raise exception 'TEST: old HR retains current employee';end if;
+perform set_config('request.jwt.claim.sub',moved::text,true);
+if private.can_assign_peer_reviewer(historical,moved) then raise exception 'TEST: employee can select own reviewer';end if;
+perform set_config('request.jwt.claim.sub',leon::text,true);
+ok:=false;begin perform public.update_cycle_allocation(cyc,v,'generate');exception when others then if sqlerrm like '%draft%' then ok:=true;else raise;end if;end;
+if not ok then raise exception 'TEST: active roster editable';end if;
+if has_table_privilege('authenticated','public.cycle_employee_assignments','insert') or has_table_privilege('anon','public.cycle_employee_assignments','select') then raise exception 'TEST: direct allocation access allowed';end if;
+end $$;
+select 'PASS: auto-generation, eligibility, capacity, approval, revision, startup, team transfer, historical access, employee denial and active lock' as result;
+rollback;

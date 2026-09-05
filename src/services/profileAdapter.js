@@ -208,7 +208,7 @@ export async function loadProfileView(userId) {
 
   const reviewColumns = profile.role === "senior_management"
     ? "id, cycle_id, employee_id, status, overall_rating, completed_at, due_date"
-    : "id, cycle_id, employee_id, supervisor_id, hr_partner_id, status, employee_summary, employee_submitted_at, supervisor_summary, supervisor_rating, supervisor_submitted_at, hr_comments, overall_rating, completed_at, due_date";
+    : "id, cycle_id, employee_id, supervisor_id, hr_partner_id, status, employee_summary, employee_submitted_at, supervisor_summary, supervisor_rating, supervisor_submitted_at, hr_comments, overall_rating, completed_at, due_date, department_name_snapshot";
 
   const [departmentResult, assignedDepartmentsResult, assignedProjectsResult, cycleAdministratorResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, managementMetricsResult] = await Promise.all([
     profile.department_id
@@ -254,10 +254,6 @@ export async function loadProfileView(userId) {
   if (failed) throw failed.error;
 
   const directory = directoryResult.data || [];
-  const assignedDepartments = (assignedDepartmentsResult.data || [])
-    .map((assignment) => firstRelation(assignment.department))
-    .filter(Boolean)
-    .sort((left, right) => left.name.localeCompare(right.name));
   const assignedProjects = (assignedProjectsResult.data || [])
     .map((assignment) => firstRelation(assignment.project))
     .filter(Boolean)
@@ -278,7 +274,7 @@ export async function loadProfileView(userId) {
     if (person.role !== "employee") return false;
     if (profile.role === "employee") return person.id === userId;
     if (profile.role === "supervisor") return person.manager_id === userId;
-    if (profile.role === "hr_partner") return true; // RLS already returns the assigned-team/project union.
+    if (profile.role === "hr_partner") return visibleReviews.some((review) => review.employee_id === person.id && review.hr_partner_id === userId && (!activeCycle || review.cycle_id === activeCycle.id));
     return profile.role === "senior_management";
   });
   const scopedIds = new Set(scopedEmployees.map((employee) => employee.id));
@@ -405,7 +401,7 @@ export async function loadProfileView(userId) {
       id: profile.id,
       identifier: profile.employee_number || profile.email || "",
       department: departmentResult.data?.name || "Unassigned team",
-      assignedTeams: assignedDepartments.map((department) => department.name),
+      assignedTeams: [...new Set(scopedReviews.map((review) => review.department_name_snapshot).filter(Boolean))],
       assignedProjects: assignedProjects.map((project) => project.name),
       canManageReviewCycles: Boolean(cycleAdministratorResult.data),
       parCycle: activeCycle?.name || "No active review cycle",
