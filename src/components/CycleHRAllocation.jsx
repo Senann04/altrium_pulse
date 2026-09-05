@@ -49,11 +49,17 @@ export default function CycleHRAllocation({ cycle }) {
     } catch (err) { setError(err.message); } finally { setBusy(false); }
   };
   if (!allowed) return null;
+  if (locked && data && !data.employees.length && !error) return (
+    <aside className="cycle-allocation-existing" aria-label={`HRBP allocation for ${cycle.name}`}>
+      <strong>Existing HRBP assignments</strong>
+      <p>This cycle started before automatic allocation was introduced. Its existing review owners are preserved.</p>
+    </aside>
+  );
   const unresolved = data?.employees.filter((p) => !p.hr_partner_id || !p.eligible_hr_ids.includes(p.hr_partner_id)).length || 0;
   const overCapacity = data?.pool.some((p) => p.assigned > p.capacity);
   const employees = data?.employees.filter((p) => `${p.employee_name} ${p.employee_number} ${p.department_name}`.toLowerCase().includes(search.toLowerCase())) || [];
   return <section className="cycle-allocation" aria-label={`HRBP allocation for ${cycle.name}`}>
-    <div className="allocation-heading"><div><span>Head of HR</span><h3>Cycle HRBP allocation</h3><p>Set eligible teams and capacity. The system balances assignments; you review and approve them before the cycle starts.</p></div><strong>{data?.approvedAt ? "Approved" : locked ? "Historical cycle" : "Awaiting approval"}</strong></div>
+    <div className="allocation-heading"><div><span>Head of HR</span><h3>Cycle HRBP allocation</h3><p>Set eligible teams and capacity. The system balances assignments; you review and approve them before the cycle starts.</p></div><strong>{data?.approvedAt ? "Approved" : locked ? "Assignments locked" : "Awaiting approval"}</strong></div>
     {error && <p role="alert" className="hr-admin-inline-error">{error} <button type="button" onClick={load} disabled={busy}>Reload</button></p>}
     {notice && <p role="status">{notice}</p>}
     {!data ? <p>Loading allocation…</p> : <>
