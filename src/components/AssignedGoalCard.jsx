@@ -1,3 +1,4 @@
+import PlanEvidenceList from "./PlanEvidenceList";
 import { useState } from "react";
 import "../styles/assignedgoalcard.css";
 
@@ -91,6 +92,8 @@ function AssignedGoalCard({ goal, onUpdate }) {
         <div><span>Employee agreement</span><strong>{statusLabel(goal.employeeAgreementStatus)}</strong></div>
         <div><span>Supervisor agreement</span><strong>{statusLabel(goal.supervisorAgreementStatus)}</strong></div>
       </section>
+
+      <PlanEvidenceList planId={goal.id} />
 
       <footer className="assigned-goal-footer">
         <span>{canEdit ? "Editable until either participant responds" : "Plan changes are locked after agreement starts"}</span>

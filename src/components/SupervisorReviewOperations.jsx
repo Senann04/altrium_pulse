@@ -1,3 +1,4 @@
+import PlanEvidenceList from "./PlanEvidenceList";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { saveSupervisorReview } from "../services/reviewService";
 import { saveParMeeting } from "../services/workflowService";
@@ -53,6 +54,7 @@ function PlanAgreementRow({ plan, onRespond, busyPlan }) {
           </button>
         </div>
       )}
+      <PlanEvidenceList planId={plan.id} />
     </article>
   );
 }

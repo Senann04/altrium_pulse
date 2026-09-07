@@ -114,10 +114,10 @@ export async function listGoalEvidence(planId) {
   return data || [];
 }
 
-export async function createGoalEvidenceDownloadUrl(objectPath, expiresIn = 300) {
+export async function createGoalEvidenceDownloadUrl(objectPath, expiresIn = 300, downloadName = null) {
   const client = requireSupabase();
   await requireCurrentUser();
-  const { data, error } = await client.storage.from(BUCKET).createSignedUrl(objectPath, expiresIn);
+  const { data, error } = await client.storage.from(BUCKET).createSignedUrl(objectPath, expiresIn, downloadName ? { download: downloadName } : {});
   if (error) throw error;
   return data.signedUrl;
 }
