@@ -7,12 +7,21 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reviewType, setReviewType] = useState("");
+  const [selfReviewDue, setSelfReviewDue] = useState("");
+  const [feedbackDue, setFeedbackDue] = useState("");
+  const [supervisorReviewDue, setSupervisorReviewDue] = useState("");
   /* Required for the cycle-to-user linkage — not in the screenshot as a
  separate field group, but needed to establish target scope per spec. */
   const [appliesTo, setAppliesTo] = useState("both");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const datesValid = Boolean(startDate && endDate && endDate >= startDate);
+  const datesValid = Boolean(
+    startDate && endDate && selfReviewDue && feedbackDue && supervisorReviewDue
+    && startDate <= selfReviewDue
+    && selfReviewDue <= feedbackDue
+    && feedbackDue <= supervisorReviewDue
+    && supervisorReviewDue <= endDate
+  );
   const canCreate = Boolean(name.trim() && description.trim() && datesValid && reviewType.trim());
 
   if (!isOpen) return null;
@@ -20,7 +29,7 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
   const handleCreate = async () => {
     if (!name.trim() || !description.trim() || !startDate || !endDate || !reviewType.trim()) return;
     if (!datesValid) {
-      setError("End date must be on or after the start date.");
+      setError("Deadlines must follow the workflow order and stay inside the cycle dates.");
       return;
     }
 
@@ -32,6 +41,9 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
         description: description.trim(),
         startDate,
         endDate,
+        selfReviewDue,
+        feedbackDue,
+        supervisorReviewDue,
         reviewType: reviewType.trim(),
         status: "Pending...",
         active: false,
@@ -42,6 +54,9 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
       setStartDate("");
       setEndDate("");
       setReviewType("");
+      setSelfReviewDue("");
+      setFeedbackDue("");
+      setSupervisorReviewDue("");
       setAppliesTo("both");
     } catch (createError) {
       setError(createError.message || "Unable to create this review cycle.");
@@ -83,6 +98,24 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
             <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
           </div>
         </div>
+
+        <fieldset className="create-cycle-phases">
+          <legend>Workflow deadlines</legend>
+          <div className="create-cycle-date-row">
+            <div className="create-cycle-field">
+              <label>Self-assessment due</label>
+              <input type="date" value={selfReviewDue} onChange={(e) => setSelfReviewDue(e.target.value)} />
+            </div>
+            <div className="create-cycle-field">
+              <label>Peer feedback due</label>
+              <input type="date" value={feedbackDue} onChange={(e) => setFeedbackDue(e.target.value)} />
+            </div>
+            <div className="create-cycle-field">
+              <label>Supervisor review due</label>
+              <input type="date" value={supervisorReviewDue} onChange={(e) => setSupervisorReviewDue(e.target.value)} />
+            </div>
+          </div>
+        </fieldset>
 
         <div className="create-cycle-field create-cycle-type-field">
           <label>Review Type:</label>

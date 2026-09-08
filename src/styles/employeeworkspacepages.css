@@ -54,6 +54,10 @@
 .employee-history-copy strong { color: var(--ap-text); font-size: 15px; }
 .employee-history-copy span { color: var(--ap-text-muted); font-size: 12px; }
 .employee-history-copy small { color: var(--ap-text-soft); font-size: 10px; }
+.employee-history-detail { margin-top: 5px; }
+.employee-history-detail summary { width: fit-content; color: var(--ap-gold); font-size: 10px; cursor: pointer; }
+.employee-history-detail p { margin: 6px 0 0; color: var(--ap-text-muted); font-size: 10px; line-height: 1.5; }
+.employee-history-detail b { color: var(--ap-text); font-weight: 650; }
 .employee-history-rating { display: flex; min-width: 90px; padding-left: 16px; flex-direction: column; align-items: flex-end; gap: 4px; border-left: 1px solid var(--ap-line); }
 .employee-history-rating span { color: var(--ap-text-soft); font-size: 10px; text-transform: uppercase; }
 .employee-history-rating strong { color: var(--ap-gold); font-size: 25px; }
@@ -78,3 +82,23 @@
   .employee-calendar-grid > span { min-height: 42px; }
   .employee-workspace-empty { min-height: 190px; flex-direction: column; text-align: center; }
 }
+
+.project-portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 14px; padding-top: 18px; }
+.project-portfolio-card { padding: 17px; border: 1px solid var(--ap-line); border-radius: 16px; background: linear-gradient(145deg,rgba(255,255,255,.042),rgba(255,255,255,.014)); }
+.project-portfolio-card header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.project-portfolio-card header > div { display: grid; gap: 3px; }
+.project-portfolio-card header > div > span,
+.project-member-list > span { color: var(--ap-gold); font-size: 10px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+.project-portfolio-card h3 { margin: 0; color: var(--ap-text); font-size: 16px; }
+.project-portfolio-card > p { min-height: 2.7em; color: var(--ap-text-muted); font-size: 12px; line-height: 1.5; }
+.project-status { padding: 5px 8px; border: 1px solid var(--ap-line); border-radius: 999px; color: var(--ap-text-soft); font-size: 10px; text-transform: capitalize; }
+.project-status-active { border-color: rgba(103,211,145,.25); color: var(--ap-success); }
+.project-portfolio-card dl { display: grid; grid-template-columns: repeat(2,1fr); gap: 9px; margin: 14px 0; }
+.project-portfolio-card dl div { display: grid; gap: 3px; padding: 10px; border-radius: 11px; background: rgba(255,255,255,.024); }
+.project-portfolio-card dt { color: var(--ap-text-soft); font-size: 9px; text-transform: uppercase; }
+.project-portfolio-card dd { margin: 0; color: var(--ap-text-muted); font-size: 11px; }
+.project-member-list { display: grid; gap: 7px; padding-top: 13px; border-top: 1px solid var(--ap-line); }
+.project-member-list div { display: flex; justify-content: space-between; gap: 12px; color: var(--ap-text-muted); font-size: 11px; }
+.project-member-list small { color: var(--ap-text-soft); }
+.hrbp-project-state { display: block; margin-top: 16px; }
+@media (max-width: 520px) { .project-portfolio-card dl { grid-template-columns: 1fr; } }

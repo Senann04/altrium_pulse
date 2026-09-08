@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import WorkspaceHeading from "../components/WorkspaceHeading";
+import { loadVisibleProjects } from "../services/performanceWorkflowService";
 import "../styles/appshell.css";
 import "../styles/employeeworkspacepages.css";
 
@@ -26,6 +28,57 @@ function PageIcon({ type }) {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5v5h5" /><path d="M5.3 9A8.5 8.5 0 1 1 4 14" /><path d="M12 7.5V12l3 2" /></svg>;
   }
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z" /><path d="m4 7 8 4 8-4v10l-8 4-8-4V7Z" /><path d="M12 11v10" /></svg>;
+}
+
+function ProjectPortfolio() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    loadVisibleProjects()
+      .then((rows) => { if (active) setProjects(rows); })
+      .catch((loadError) => { if (active) setError(loadError.message || "Unable to load projects."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  if (loading) return <p className="hr-admin-state">Loading project access…</p>;
+  if (error) return <p className="hr-admin-state is-error" role="alert">{error}</p>;
+  if (!projects.length) {
+    return (
+      <div className="employee-workspace-empty">
+        <span className="employee-workspace-empty-icon"><PageIcon type="projects" /></span>
+        <div><h3>No projects assigned</h3><p>Your team-based access still applies. Project records will appear only after a project membership or HRBP project assignment is recorded.</p></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="project-portfolio-grid">
+      {projects.map((project) => (
+        <article className="project-portfolio-card" key={project.id}>
+          <header>
+            <div><span>{project.code}</span><h3>{project.name}</h3></div>
+            <span className={`project-status project-status-${project.status}`}>{project.status}</span>
+          </header>
+          <p>{project.description || "No project description has been added."}</p>
+          <dl>
+            <div><dt>Business unit</dt><dd>{project.departmentName}</dd></div>
+            <div><dt>Schedule</dt><dd>{project.start_date || "Not set"} – {project.end_date || "Ongoing"}</dd></div>
+          </dl>
+          <div className="project-member-list">
+            <span>Visible members</span>
+            {project.members.map((member) => (
+              <div key={member.id}><strong>{member.full_name}</strong><small>{member.responsibility}</small></div>
+            ))}
+            {!project.members.length && <small>No visible members in your access scope.</small>}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
 }
 
 function EmployeeWorkspacePage({ view, role = "employee", onNavigate, onSignOut, profileData }) {
@@ -55,7 +108,9 @@ function EmployeeWorkspacePage({ view, role = "employee", onNavigate, onSignOut,
             <div><span>{workspaceLabel}</span><h2>{content.title}</h2></div>
             <span className="employee-workspace-cycle">{cycleLabel}</span>
           </div>
-          {completedReviews.length ? (
+          {view === "projects" ? (
+            <ProjectPortfolio />
+          ) : completedReviews.length ? (
             <div className="employee-history-list">
               {completedReviews.map((review) => (
                 <article className="employee-history-item" key={review.id}>
@@ -64,6 +119,11 @@ function EmployeeWorkspacePage({ view, role = "employee", onNavigate, onSignOut,
                     <strong>{review.cycleName}</strong>
                     <span>{review.startDate} – {review.endDate}</span>
                     <small>Completed {review.completedAt}</small>
+                    <details className="employee-history-detail">
+                      <summary>View review summary</summary>
+                      <p><b>Supervisor:</b> {review.supervisorSummary || "No supervisor summary recorded."}</p>
+                      <p><b>HR outcome:</b> {review.hrComments || "No HR outcome note recorded."}</p>
+                    </details>
                   </div>
                   <div className="employee-history-rating">
                     <span>Final rating</span>
@@ -175,7 +235,9 @@ function SupervisorProjects(props) {
 
 function HRBPProjects({ onNavigate, onSignOut, profileData }) {
   const members = profileData?.teamMembers || [];
-  const scopeLabel = profileData?.department || "Assigned business unit";
+  const assignedTeams = profileData?.assignedTeams || [];
+  const assignedProjects = profileData?.assignedProjects || [];
+  const scopeLabel = assignedTeams.length ? assignedTeams.join(", ") : "No teams assigned";
 
   return (
     <div className="app-shell">
@@ -185,19 +247,19 @@ function HRBPProjects({ onNavigate, onSignOut, profileData }) {
         <WorkspaceHeading
           eyebrow="Access scope"
           title="Projects"
-          description="See the business unit and employee records available to your HRBP account."
+          description="See the teams and employee records available to your HRBP account."
         />
 
         <section className="hrbp-scope-panel">
           <div className="hrbp-scope-heading">
-            <div><span>Assigned business unit</span><h2>{scopeLabel}</h2></div>
-            <strong>{members.length} employees in scope</strong>
+            <div><span>Assigned teams</span><h2>{scopeLabel}</h2></div>
+            <strong>{members.length} employees · {assignedTeams.length} {assignedTeams.length === 1 ? "team" : "teams"} · {assignedProjects.length} {assignedProjects.length === 1 ? "project" : "projects"}</strong>
           </div>
           <div className="hrbp-scope-member-grid">
             {members.map((member) => (
               <article key={member.id}>
                 <span className="hrbp-scope-avatar" aria-hidden="true">{member.name.slice(0, 1).toUpperCase()}</span>
-                <div><strong>{member.name}</strong><span>{member.employeeNumber} · {member.jobTitle}</span></div>
+                <div><strong>{member.name}</strong><span>{member.employeeNumber} · {member.jobTitle} · {member.department}</span></div>
                 <span className="hrbp-scope-status">{member.reviewStatus}</span>
               </article>
             ))}
@@ -205,13 +267,11 @@ function HRBPProjects({ onNavigate, onSignOut, profileData }) {
           {!members.length && <p className="hr-admin-state">No employees are assigned to this HRBP account.</p>}
         </section>
 
-        <section className="hrbp-project-state">
-          <span className="employee-workspace-empty-icon"><PageIcon type="projects" /></span>
-          <div>
-            <span>Project access</span>
-            <h2>No project assignments recorded</h2>
-            <p>The current system scopes this HRBP account by business unit. Project-level access will appear here when project records are added.</p>
+        <section className="employee-workspace-panel hrbp-project-state">
+          <div className="employee-workspace-panel-heading">
+            <div><span>Project access</span><h2>Assigned projects</h2></div>
           </div>
+          <ProjectPortfolio />
         </section>
       </main>
     </div>

@@ -1,152 +1,31 @@
-.peer-review-card {
-  background: #111111;
-  border: 2px solid #fcb400;
-  border-radius: 25px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 320px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-}
-
-.peer-review-title-pill {
-  background: #fcb400;
-  color: #111111;
-  border-radius: 999px;
-  text-align: center;
-  padding: 0.6rem;
-  font-family: inherit;
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-.peer-review-select {
-  width: 100%;
-  background: #ffffff;
-  color: #111111;
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem 0.75rem;
-  font-family: inherit;
-  font-size: 13px;
-  margin-bottom: 1rem;
-}
-
-.peer-review-avatar {
-  width: 100px;
-  height: 100px;
-  background: #808080;
-  border-radius: 10px;
-  margin: 0 auto 1.25rem auto;
-}
-
-.peer-review-categories {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.peer-review-category-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.peer-review-category-label {
-  flex: 1;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 12px;
-}
-
-.peer-review-stars {
-  display: flex;
-  gap: 2px;
-}
-
-.peer-review-star {
-  background: none;
-  border: none;
-  font-size: 14px;
-  color: #555555;
-  cursor: pointer;
-  padding: 0;
-}
-
-.peer-review-star.filled {
-  color: #fcb400;
-}
-
-.peer-review-rating-pill {
-  width: 34px;
-  height: 14px;
-  background: #ffffff;
-  border-radius: 999px;
-}
-
-.peer-review-question {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
-}
-
-.peer-review-question label {
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-}
-
-.peer-review-question textarea {
-  background: #808080;
-  border: none;
-  border-radius: 10px;
-  padding: 0.6rem;
-  min-height: 60px;
-  resize: vertical;
-  font-family: inherit;
-  font-size: 12px;
-  color: #111111;
-  box-sizing: border-box;
-}
-
-.peer-review-error {
-  color: #ff6b6b;
-  font-family: inherit;
-  font-size: 12px;
-  margin: 0 0 0.75rem 0;
-}
-
-.peer-review-success {
-  color: #fcb400;
-  font-family: inherit;
-  font-size: 14px;
-  text-align: center;
-}
-
-.peer-review-submit-row {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.peer-review-submit-button {
-  background: #fcb400;
-  color: #111111;
-  border: none;
-  border-radius: 999px;
-  padding: 0.5rem 1.5rem;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.peer-review-submit-button:disabled,
-.peer-review-select:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
+.peer-review-card { width: 100%; box-sizing: border-box; padding: 20px; border: 1px solid var(--ap-line); border-radius: 18px; background: radial-gradient(circle at 96% 0,rgba(252,180,0,.05),transparent 28%),var(--ap-surface); }
+.peer-review-title-pill { color: var(--ap-text); font-size: 19px; font-weight: 750; letter-spacing: -.02em; }
+.assigned-peer-intro { max-width: 660px; margin: 6px 0 16px; color: var(--ap-text-soft); font-size: 12px; line-height: 1.5; }
+.assigned-peer-list { display: grid; gap: 11px; }
+.assigned-peer-card { padding: 15px; border: 1px solid var(--ap-line); border-radius: 14px; background: #0d0f13; }
+.assigned-peer-card.is-complete { opacity: .78; }
+.assigned-peer-card-header { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--ap-line); }
+.assigned-peer-avatar { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid rgba(252,180,0,.2); border-radius: 10px; color: var(--ap-gold); background: var(--ap-gold-soft); font-size: 12px; font-weight: 800; }
+.assigned-peer-card-header > div { display: grid; min-width: 0; gap: 3px; }
+.assigned-peer-card-header strong { overflow: hidden; color: var(--ap-text); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.assigned-peer-card-header div span { color: var(--ap-text-soft); font-size: 10px; }
+.assigned-peer-status { padding: 5px 8px; border: 1px solid rgba(252,180,0,.21); border-radius: 999px; color: var(--ap-gold); background: var(--ap-gold-soft); font-size: 9px; }
+.assigned-peer-context { display: flex; justify-content: space-between; gap: 10px; margin: 11px 0; color: var(--ap-text-soft); font-size: 10px; }
+.assigned-peer-field { display: grid; gap: 6px; margin-top: 9px; }
+.assigned-peer-field > span { color: var(--ap-text-muted); font-size: 10px; font-weight: 650; }
+.assigned-peer-field > span small { color: var(--ap-text-soft); font-weight: 400; }
+.assigned-peer-field select,
+.assigned-peer-field textarea { width: 100%; box-sizing: border-box; border: 1px solid var(--ap-line); border-radius: 9px; color: var(--ap-text); background: rgba(255,255,255,.026); font: inherit; font-size: 11px; padding: 9px 10px; }
+.assigned-peer-field select { min-height: 39px; }
+.assigned-peer-field textarea { min-height: 74px; resize: vertical; }
+.assigned-peer-field select:focus,
+.assigned-peer-field textarea:focus { outline: none; border-color: rgba(252,180,0,.35); box-shadow: 0 0 0 3px rgba(252,180,0,.05); }
+.assigned-peer-footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 13px; padding-top: 13px; border-top: 1px solid var(--ap-line); }
+.assigned-peer-footer small { max-width: 520px; color: var(--ap-text-soft); font-size: 9px; line-height: 1.45; }
+.assigned-peer-footer button { min-height: 39px; padding: 0 13px; border: 1px solid rgba(252,180,0,.31); border-radius: 9px; color: var(--ap-gold); background: var(--ap-gold-soft); font: inherit; font-size: 10px; font-weight: 750; cursor: pointer; }
+.assigned-peer-footer button:disabled { opacity: .38; cursor: not-allowed; }
+.assigned-peer-state,
+.assigned-peer-complete-note { color: var(--ap-text-soft); font-size: 11px; }
+.assigned-peer-state.is-error,
+.peer-review-error { color: var(--ap-danger); font-size: 10px; }
+@media (max-width: 600px) { .assigned-peer-card-header { grid-template-columns: auto minmax(0,1fr); } .assigned-peer-status { grid-column: 2; justify-self: start; } .assigned-peer-footer { align-items: stretch; flex-direction: column; } .assigned-peer-footer button { width: 100%; } }

@@ -9,6 +9,10 @@ function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirector
   const [employeeName, setEmployeeName] = useState("");
   const [employeeUserId, setEmployeeUserId] = useState("");
   const [goalText, setGoalText] = useState("");
+  const [reason, setReason] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [actionItems, setActionItems] = useState([{ title: "", dueDate: "" }]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -33,7 +37,15 @@ function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirector
     setError("");
   };
 
-  const canAssign = Boolean(team && employeeId && employeeName && employeeUserId && goalText.trim());
+  const actionsValid = actionItems.length > 0 && actionItems.every((item) => (
+    item.title.trim() && item.dueDate && (!startDate || item.dueDate >= startDate) && (!endDate || item.dueDate <= endDate)
+  ));
+  const datesValid = Boolean(startDate && endDate && startDate <= endDate);
+  const canAssign = Boolean(team && employeeId && employeeName && employeeUserId && goalText.trim() && reason.trim() && datesValid && actionsValid);
+
+  const updateAction = (index, field, value) => {
+    setActionItems((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item));
+  };
 
   const handleAssign = async () => {
     if (!team || !employeeId || !employeeName || !goalText.trim()) return;
@@ -46,6 +58,10 @@ function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirector
         employeeUserId,
         employeeName,
         goal: goalText.trim(),
+        reason: reason.trim(),
+        startDate,
+        endDate,
+        actionItems,
         status: "In Progress",
         progress: 0,
         actionItem: "",
@@ -57,6 +73,10 @@ function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirector
       setEmployeeName("");
       setEmployeeUserId("");
       setGoalText("");
+      setReason("");
+      setStartDate("");
+      setEndDate("");
+      setActionItems([{ title: "", dueDate: "" }]);
     } catch (assignmentError) {
       setError(assignmentError.message || `Unable to assign this ${type} goal.`);
     } finally {
@@ -113,6 +133,44 @@ function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirector
           <label>Goal:</label>
           <textarea value={goalText} onChange={(e) => setGoalText(e.target.value)} />
         </div>
+
+        <div className="goal-assignment-field goal-assignment-goal-field">
+          <label>Reason and expected outcome:</label>
+          <textarea value={reason} onChange={(e) => setReason(e.target.value)} />
+        </div>
+
+        <div className="goal-assignment-date-grid">
+          <div className="goal-assignment-field">
+            <label>Start date:</label>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          </div>
+          <div className="goal-assignment-field">
+            <label>Target date:</label>
+            <input type="date" min={startDate || undefined} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          </div>
+        </div>
+
+        <fieldset className="goal-assignment-action-list">
+          <legend>Action plan</legend>
+          {actionItems.map((item, index) => (
+            <div className="goal-assignment-action-row" key={`action-${index + 1}`}>
+              <label>
+                <span>Action {index + 1}</span>
+                <input value={item.title} onChange={(e) => updateAction(index, "title", e.target.value)} />
+              </label>
+              <label>
+                <span>Due date</span>
+                <input type="date" min={startDate || undefined} max={endDate || undefined} value={item.dueDate} onChange={(e) => updateAction(index, "dueDate", e.target.value)} />
+              </label>
+              {actionItems.length > 1 && (
+                <button type="button" onClick={() => setActionItems((items) => items.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remove action ${index + 1}`}>×</button>
+              )}
+            </div>
+          ))}
+          <button type="button" className="goal-assignment-add-action" onClick={() => setActionItems((items) => [...items, { title: "", dueDate: "" }])}>
+            + Add action
+          </button>
+        </fieldset>
 
         <div className="goal-assignment-actions">
           {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}

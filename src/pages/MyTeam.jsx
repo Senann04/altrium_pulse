@@ -1,6 +1,7 @@
 import Sidebar from "../components/sidebar.jsx";
 import Header from "../components/header.jsx";
 import TeamMemberCard from "../components/TeamMemberCard";
+import SupervisorReviewOperations from "../components/SupervisorReviewOperations";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 import "../styles/myteam.css";
 
@@ -32,6 +33,8 @@ function MyTeam({ onNavigate, onSignOut, profileData }) {
             </div>
           )}
         </div>
+
+        <SupervisorReviewOperations />
       </div>
     </div>
   );

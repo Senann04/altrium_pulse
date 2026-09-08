@@ -31,7 +31,7 @@ function EmployeeMyFeedback({ onNavigate, onSignOut, profileData }) {
             initialAnswers={currentReview?.selfAssessment}
             submittedAt={currentReview?.employeeSubmittedAt}
           />
-          <EmployeePeerReview peerOptions={profileData?.teammates || []} />
+          <EmployeePeerReview />
         </div>
 
         <div className="employee-feedback-subheading">Feedback for Me</div>

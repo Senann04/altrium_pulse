@@ -6,9 +6,10 @@ import EmployeeDevelopmentGoals from "../components/EmployeeDevelopmentGoals.jsx
 import GoalEvidenceSubmission from "../components/GoalEvidenceSubmission.jsx";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 import { submitGoalEvidence } from "../services/goalEvidenceService.js";
+import { respondToPlanAgreement, updateDevelopmentActionStatus } from "../services/performanceWorkflowService.js";
 import "../styles/employeemyprogress.css";
 
-function EmployeeMyProgress({ onNavigate, onSignOut, profileData }) {
+function EmployeeMyProgress({ onNavigate, onSignOut, profileData, onProfileRefresh }) {
   const [selectedGoal, setSelectedGoal] = useState(null);
 
   const timeGoals = profileData?.goals || [];
@@ -22,9 +23,33 @@ function EmployeeMyProgress({ onNavigate, onSignOut, profileData }) {
   const handleEvidenceSubmitted = async (goalId, files) => {
     await submitGoalEvidence({
       planId: goalId,
+      actionId: files.actionId,
       actionItemFile: files.actionItemFile,
       evidenceFile: files.evidenceFile,
     });
+  };
+
+  const handleAgreement = async (goalId, decision, explanation) => {
+    const saved = await respondToPlanAgreement(goalId, decision, explanation);
+    setSelectedGoal((goal) => goal?.id === goalId ? {
+      ...goal,
+      employeeAgreementStatus: saved.employee_agreement_status,
+      employeeAgreementNote: saved.employee_agreement_note,
+      supervisorAgreementNote: saved.supervisor_agreement_note,
+      supervisorAgreementStatus: saved.supervisor_agreement_status,
+    } : goal);
+    await onProfileRefresh?.();
+  };
+
+  const handleActionStatus = async (actionId, status) => {
+    const saved = await updateDevelopmentActionStatus(actionId, status);
+    setSelectedGoal((goal) => {
+      if (!goal) return goal;
+      const actions = goal.actions.map((action) => action.id === actionId ? { ...action, status: saved.status, completedAt: saved.completed_at } : action);
+      const completed = actions.filter((action) => action.status === "completed").length;
+      return { ...goal, actions, progress: actions.length ? Math.round((completed / actions.length) * 100) : 0 };
+    });
+    await onProfileRefresh?.();
   };
 
   return (
@@ -44,17 +69,17 @@ function EmployeeMyProgress({ onNavigate, onSignOut, profileData }) {
           <div className="employee-progress-time-column">
             <div className="employee-progress-time-title">Weekly</div>
             {!weekly.length && <p className="employee-progress-empty">No weekly goals assigned.</p>}
-            {weekly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} />)}
+            {weekly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} onSaved={onProfileRefresh} />)}
           </div>
           <div className="employee-progress-time-column">
             <div className="employee-progress-time-title">Monthly</div>
             {!monthly.length && <p className="employee-progress-empty">No monthly goals assigned.</p>}
-            {monthly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} />)}
+            {monthly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} onSaved={onProfileRefresh} />)}
           </div>
           <div className="employee-progress-time-column">
             <div className="employee-progress-time-title">Yearly</div>
             {!yearly.length && <p className="employee-progress-empty">No yearly goals assigned.</p>}
-            {yearly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} />)}
+            {yearly.map((goal) => <AssignedGoalRow key={goal.id} goal={goal} onSaved={onProfileRefresh} />)}
           </div>
         </div>
 
@@ -66,6 +91,8 @@ function EmployeeMyProgress({ onNavigate, onSignOut, profileData }) {
         goal={selectedGoal}
         onClose={() => setSelectedGoal(null)}
         onSubmitEvidence={handleEvidenceSubmitted}
+        onAgreement={handleAgreement}
+        onActionStatus={handleActionStatus}
       />
     </div>
   );
