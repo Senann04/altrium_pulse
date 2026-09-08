@@ -78,7 +78,7 @@ export async function loadPeopleDirectory({ includeSupervisors = true, managedOn
   const user = managedOnly ? await requireCurrentUser() : null;
   let query = client
     .from("profiles")
-    .select("id, employee_number, full_name, role, manager_id, hr_partner_id, department:departments(name)")
+    .select("id, employee_number, full_name, role, manager_id, hr_partner_id, department:departments!profiles_department_id_fkey(name)")
     .eq("is_active", true)
     .order("full_name");
 
@@ -115,7 +115,7 @@ const assignedPlanSelect = `
     id,
     employee_number,
     full_name,
-    department:departments(name)
+    department:departments!profiles_department_id_fkey(name)
   ),
   actions:development_plan_actions(id, title, description, status, completed_at)
 `;
@@ -295,7 +295,7 @@ export async function loadTimeGoals() {
         employee_number,
         full_name,
         role,
-        department:departments(name)
+        department:departments!profiles_department_id_fkey(name)
       )
     `)
     .not("period", "is", null)
@@ -331,7 +331,7 @@ export async function createTimeGoal(goal) {
         employee_number,
         full_name,
         role,
-        department:departments(name)
+        department:departments!profiles_department_id_fkey(name)
       )
     `)
     .single();
@@ -509,7 +509,7 @@ export async function loadHrReviewOperations() {
           employee_number,
           full_name,
           department_id,
-          department:departments(name)
+          department:departments!profiles_department_id_fkey(name)
         )
       `)
       .eq("hr_partner_id", user.id)
