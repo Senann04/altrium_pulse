@@ -31,6 +31,7 @@ import {
 } from "./pages/LeadershipWorkspacePages";
 import Login from "./pages/Login";
 import MyTeam from "./pages/MyTeam";
+import SupervisorAnnualReviews from "./pages/SupervisorAnnualReviews";
 import logo from "./assets/altriumlogo.svg";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import { loadProfileView } from "./services/profileAdapter";
@@ -58,6 +59,7 @@ const rolePages = {
     projects: SupervisorProjects,
     progress: ImmediateSupervisorMyProgress,
     team: MyTeam,
+    "annual-reviews": SupervisorAnnualReviews,
     history: SupervisorPerformanceHistory,
     calendar: SupervisorCalendar,
     profile: ImmediateSupervisorProfile,

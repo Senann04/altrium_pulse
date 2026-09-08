@@ -3,6 +3,7 @@ import Header from "../components/header.jsx";
 import ReviewCycleSection from "../components/ReviewCycleSection";
 import HRReviewOperations from "../components/HRReviewOperations";
 import WorkspaceHeading from "../components/WorkspaceHeading";
+import EmployeeJoiningDates from "../components/EmployeeJoiningDates";
 import "../styles/hrreviewcycle.css";
 
 function HRReviewCycle({ onNavigate, onSignOut, profileData }) {
@@ -17,6 +18,7 @@ function HRReviewCycle({ onNavigate, onSignOut, profileData }) {
           title="Review Cycles"
           description="Create, activate and monitor organisation-wide performance review periods."
         />
+        <EmployeeJoiningDates />
         <ReviewCycleSection />
         <HRReviewOperations scopeLabel={profileData?.department || "Assigned business unit"} />
       </div>

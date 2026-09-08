@@ -101,7 +101,13 @@ const MENUS = {
         { key: "progress", label: "My Progress", icon: "progress" },
       ],
     },
-    { label: "People", items: [{ key: "team", label: "My Team", icon: "team" }] },
+    {
+      label: "People",
+      items: [
+        { key: "team", label: "My Team", icon: "team" },
+        { key: "annual-reviews", label: "Annual Reviews", icon: "history" },
+      ],
+    },
     {
       label: "Workspace",
       items: [

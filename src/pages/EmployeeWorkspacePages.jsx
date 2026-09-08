@@ -1,6 +1,8 @@
+import { useMemo, useState } from "react";
 import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import WorkspaceHeading from "../components/WorkspaceHeading";
+import { SELF_ASSESSMENT_QUESTIONS } from "../services/reviewService";
 import "../styles/appshell.css";
 import "../styles/employeeworkspacepages.css";
 
@@ -84,12 +86,117 @@ function EmployeeWorkspacePage({ view, role = "employee", onNavigate, onSignOut,
   );
 }
 
+function EmployeeAchievementJourney({ onNavigate, onSignOut, profileData }) {
+  const journey = useMemo(() => profileData?.performanceJourney || [], [profileData?.performanceJourney]);
+  const years = useMemo(
+    () => [...new Set(journey.map((cycle) => cycle.year))].sort((left, right) => right - left),
+    [journey],
+  );
+  const [selectedYear, setSelectedYear] = useState(years[0] || new Date().getFullYear());
+  const [expandedId, setExpandedId] = useState(journey[0]?.id || null);
+  const visibleCycles = journey.filter((cycle) => cycle.year === Number(selectedYear));
+  const goals = visibleCycles.flatMap((cycle) => cycle.goals);
+  const completedGoals = goals.filter((goal) => goal.status === "completed").length;
+  const evidenceCount = visibleCycles.reduce((sum, cycle) => sum + cycle.evidence.length, 0);
+
+  return (
+    <div className="app-shell">
+      <Sidebar role="employee" activeItem="history" onNavigate={onNavigate} onSignOut={onSignOut} profileData={profileData} />
+      <main className="app-main employee-workspace-page employee-journey-page">
+        <Header title="Performance History" profileData={profileData} />
+        <WorkspaceHeading
+          eyebrow="Achievement record"
+          title="My Performance Journey"
+          description="Follow your review cycles, self-assessments, goals and submitted evidence as one year-by-year achievement roadmap."
+          meta={profileData?.joinedOn ? `Joined ${profileData.joinedOnLabel}` : "Joining date pending"}
+        />
+
+        <section className="employee-journey-toolbar">
+          <label>Review year<select value={selectedYear} onChange={(event) => setSelectedYear(event.target.value)}>{years.map((year) => <option key={year}>{year}</option>)}</select></label>
+          <div className="employee-journey-stats">
+            <span><strong>{visibleCycles.length}</strong>Cycles</span>
+            <span><strong>{completedGoals}/{goals.length}</strong>Goals achieved</span>
+            <span><strong>{evidenceCount}</strong>Evidence files</span>
+          </div>
+          <button type="button" className="employee-journey-print" onClick={() => window.print()}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z" /></svg>
+            Print year summary
+          </button>
+        </section>
+
+        {visibleCycles.length ? (
+          <section className="employee-journey-timeline" aria-label={`${selectedYear} performance journey`}>
+            {visibleCycles.map((cycle, index) => {
+              const expanded = expandedId === cycle.id;
+              return (
+                <article className={`employee-journey-cycle status-${cycle.statusKey}`} key={cycle.id}>
+                  <span className="employee-journey-marker"><strong>{String(index + 1).padStart(2, "0")}</strong></span>
+                  <div className="employee-journey-card">
+                    <button type="button" className="employee-journey-summary" onClick={() => setExpandedId(expanded ? null : cycle.id)} aria-expanded={expanded}>
+                      <span><small>{cycle.reviewType}</small><strong>{cycle.cycleName}</strong><em>{cycle.startDate} – {cycle.endDate}</em></span>
+                      <span className={`employee-journey-status ${cycle.statusKey}`}>{cycle.status}</span>
+                      <span><small>Final rating</small><strong className="employee-journey-rating">{cycle.rating ?? "–"}</strong></span>
+                      <svg className={expanded ? "expanded" : ""} viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5" /></svg>
+                    </button>
+
+                    {expanded && (
+                      <div className="employee-journey-details">
+                        <section className="employee-journey-section">
+                          <div className="employee-journey-section-title"><span>01</span><div><small>Reflection</small><h3>Self-assessment</h3></div></div>
+                          <div className="employee-journey-answer-grid">
+                            {cycle.selfAssessment.some(Boolean) ? cycle.selfAssessment.map((answer, answerIndex) => answer && (
+                              <article key={SELF_ASSESSMENT_QUESTIONS[answerIndex]}><strong>{SELF_ASSESSMENT_QUESTIONS[answerIndex]}</strong><p>{answer}</p></article>
+                            )) : <p className="employee-journey-empty-copy">No self-assessment has been submitted for this cycle.</p>}
+                          </div>
+                        </section>
+
+                        <section className="employee-journey-section">
+                          <div className="employee-journey-section-title"><span>02</span><div><small>Achievement roadmap</small><h3>Goals and development</h3></div></div>
+                          <div className="employee-journey-goals">
+                            {[...cycle.goals, ...cycle.developmentPlans].length ? [...cycle.goals, ...cycle.developmentPlans].map((goal) => (
+                              <article key={`${goal.id}-${goal.title}`}>
+                                <div><strong>{goal.title}</strong><span>{goal.type || goal.status}{goal.targetDate ? ` · ${goal.targetDate}` : ""}</span></div>
+                                <div className="employee-journey-progress"><span style={{ width: `${Math.min(100, Math.max(0, Number(goal.progress) || 0))}%` }} /></div>
+                                <strong>{goal.progress ?? 0}%</strong>
+                              </article>
+                            )) : <p className="employee-journey-empty-copy">No goals or development plans were connected to this cycle.</p>}
+                          </div>
+                        </section>
+
+                        <section className="employee-journey-section">
+                          <div className="employee-journey-section-title"><span>03</span><div><small>Supporting record</small><h3>Submitted evidence</h3></div></div>
+                          <div className="employee-journey-files">
+                            {cycle.evidence.length ? cycle.evidence.map((file) => (
+                              <article key={file.id}>
+                                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></svg></span>
+                                <div><strong>{file.fileName}</strong><small>{file.kind === "action_item" ? "Action item" : "Supporting evidence"} · {file.uploadedAt}</small></div>
+                              </article>
+                            )) : <p className="employee-journey-empty-copy">No evidence files have been submitted for this cycle.</p>}
+                          </div>
+                        </section>
+                      </div>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </section>
+        ) : (
+          <section className="employee-workspace-panel">
+            <div className="employee-workspace-empty"><span className="employee-workspace-empty-icon"><PageIcon type="history" /></span><div><h3>No cycle record for {selectedYear}</h3><p>Once you are eligible and enrolled in a review cycle, its roadmap will appear here automatically.</p></div></div>
+          </section>
+        )}
+      </main>
+    </div>
+  );
+}
+
 function EmployeeProjects(props) {
   return <EmployeeWorkspacePage {...props} view="projects" />;
 }
 
 function EmployeePerformanceHistory(props) {
-  return <EmployeeWorkspacePage {...props} view="history" />;
+  return <EmployeeAchievementJourney {...props} />;
 }
 
 function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileData }) {

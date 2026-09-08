@@ -1,0 +1,27 @@
+.employee-joining-dates { margin-bottom: 18px; padding: 22px; border: 1px solid var(--ap-line); border-radius: 18px; background: var(--ap-surface); }
+.employee-joining-dates > header { display: flex; padding-bottom: 17px; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--ap-line); }
+.employee-joining-dates > header > div { display: flex; flex-direction: column; gap: 4px; }
+.employee-joining-dates > header span { color: var(--ap-gold); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.employee-joining-dates h2 { margin: 0; color: var(--ap-text); font-size: 19px; }
+.employee-joining-dates header p { margin: 2px 0 0; color: var(--ap-text-muted); font-size: 12px; }
+.employee-joining-dates header > strong { padding: 7px 9px; border: 1px solid var(--ap-line); border-radius: 8px; font-size: 10px; }
+.employee-joining-dates header > strong.needs-attention { border-color: rgba(255,128,103,.25); color: #ff9b87; background: rgba(255,128,103,.07); }
+.employee-joining-dates header > strong.complete { border-color: rgba(103,211,145,.22); color: var(--ap-success); background: rgba(103,211,145,.07); }
+.employee-joining-list { display: flex; padding-top: 12px; flex-direction: column; gap: 8px; }
+.employee-joining-list article { display: grid; min-height: 66px; padding: 10px 12px; grid-template-columns: 38px minmax(160px,1fr) minmax(190px,.5fr) auto; align-items: center; gap: 12px; border: 1px solid var(--ap-line); border-radius: 12px; background: #0d0f13; }
+.employee-joining-list article.missing { border-left: 3px solid #ff8067; }
+.employee-joining-avatar { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 10px; color: #111318; background: var(--ap-gold); font-size: 12px; font-weight: 900; }
+.employee-joining-person { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+.employee-joining-person strong { overflow: hidden; color: var(--ap-text); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.employee-joining-person span { color: var(--ap-text-soft); font-size: 10px; }
+.employee-joining-list label { display: flex; align-items: center; gap: 8px; color: var(--ap-text-muted); font-size: 10px; font-weight: 700; }
+.employee-joining-list input { padding: 8px 9px; border: 1px solid var(--ap-line); border-radius: 8px; color: var(--ap-text); color-scheme: dark; background: var(--ap-bg); font: inherit; }
+.employee-joining-list button { padding: 8px 10px; border: 1px solid rgba(252,180,0,.25); border-radius: 8px; color: var(--ap-gold); background: var(--ap-gold-soft); font: inherit; font-size: 10px; font-weight: 800; cursor: pointer; }
+.employee-joining-list button:disabled { opacity: .42; cursor: not-allowed; }
+.employee-joining-state, .employee-joining-message { margin: 12px 0 0; color: var(--ap-text-muted); font-size: 11px; }
+.employee-joining-message:empty { display: none; }
+@media (max-width: 760px) {
+  .employee-joining-dates > header { align-items: flex-start; flex-direction: column; }
+  .employee-joining-list article { grid-template-columns: 38px minmax(0,1fr); }
+  .employee-joining-list label, .employee-joining-list button { grid-column: 2; justify-self: start; }
+}

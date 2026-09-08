@@ -2,6 +2,11 @@ import { supabase } from "../lib/supabase";
 
 const BUCKET = "goal-evidence";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_FILE_TYPES = new Map([
+  ["pdf", ["application/pdf"]],
+  ["docx", ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]],
+  ["txt", ["text/plain"]],
+]);
 
 function requireSupabase() {
   if (!supabase) throw new Error("Supabase is not configured.");
@@ -24,14 +29,20 @@ function safeFileName(name) {
     .slice(0, 120) || "file";
 }
 
-function validateFile(file) {
+export function validateEvidenceFile(file) {
   if (!file) return;
   if (file.size > MAX_FILE_SIZE) throw new Error("Each evidence file must be 10 MB or smaller.");
+
+  const extension = String(file.name || "").split(".").pop()?.toLowerCase();
+  const allowedMimeTypes = ALLOWED_FILE_TYPES.get(extension);
+  if (!allowedMimeTypes || (file.type && !allowedMimeTypes.includes(file.type))) {
+    throw new Error("Evidence must be a PDF, DOCX or TXT file.");
+  }
 }
 
 async function uploadOne({ planId, actionId = null, kind, file, userId }) {
   const client = requireSupabase();
-  validateFile(file);
+  validateEvidenceFile(file);
   const objectPath = `${planId}/${userId}/${kind}-${crypto.randomUUID()}-${safeFileName(file.name)}`;
 
   const { error: uploadError } = await client.storage.from(BUCKET).upload(objectPath, file, {
@@ -73,6 +84,8 @@ export async function submitGoalEvidence({
 }) {
   if (!planId) throw new Error("A development plan is required.");
   if (!actionItemFile && !evidenceFile) throw new Error("Choose at least one file to upload.");
+  validateEvidenceFile(actionItemFile);
+  validateEvidenceFile(evidenceFile);
 
   const client = requireSupabase();
   const user = await requireCurrentUser();

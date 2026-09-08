@@ -22,6 +22,7 @@ function ProfileDetailsCard({ profileData, showSupervisor = false, showHrPartner
         <ProfileField label="Work email" value={profileData.workEmail} />
         <ProfileField label="Job title" value={profileData.jobTitle} />
         <ProfileField label="Team" value={profileData.department} />
+        <ProfileField label="Joined company" value={profileData.joinedOnLabel} />
         {showSupervisor && <ProfileField label="Immediate supervisor" value={profileData.immediateSupervisor} />}
         {showHrPartner && <ProfileField label="HR business partner" value={profileData.hrBusinessPartner} />}
         <ProfileField label="Current review cycle" value={profileData.parCycle} />

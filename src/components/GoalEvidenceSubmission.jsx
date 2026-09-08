@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { validateEvidenceFile } from "../services/goalEvidenceService";
 import "../styles/goalevidencesubmission.css";
+
+const ACCEPTED_EVIDENCE = ".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
 
 /* reused for both PDP and PIP goals — the goal itself is passed in via props */
 function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
@@ -34,7 +37,20 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
 
   const goalType = goal.type || "PDP";
   const progress = Math.min(100, Math.max(0, Number(goal.progress) || 0));
-  const filesReady = Boolean(actionItemFile && evidenceFile);
+  const filesReady = Boolean(actionItemFile || evidenceFile);
+
+  const chooseFile = (setter) => (event) => {
+    const file = event.target.files[0] || null;
+    try {
+      validateEvidenceFile(file);
+      setter(file);
+      setError("");
+    } catch (fileError) {
+      event.target.value = "";
+      setter(null);
+      setError(fileError.message);
+    }
+  };
 
   const handleSubmitEvidence = async () => {
     if (!filesReady || isSubmitting) return;
@@ -92,8 +108,8 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
         </div>
 
         <p className="goal-evidence-instruction">
-          Add the completed action item and supporting evidence for this {goalType} goal. Both files are
-          required before you can submit.
+          Upload an action item, supporting evidence, or both for this {goalType} goal. For security,
+          only PDF, DOCX and TXT files are accepted (maximum 10 MB each).
         </p>
 
         <div className="goal-evidence-file-grid">
@@ -102,7 +118,8 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
               id="goal-action-item-file"
               className="goal-evidence-native-input"
               type="file"
-              onChange={(event) => setActionItemFile(event.target.files[0] || null)}
+              accept={ACCEPTED_EVIDENCE}
+              onChange={chooseFile(setActionItemFile)}
             />
             <span className="goal-evidence-file-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
@@ -112,7 +129,7 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
             </span>
             <span className="goal-evidence-file-copy">
               <strong>1. Action item</strong>
-              <small>{actionItemFile?.name || "PDF, document or image"}</small>
+              <small>{actionItemFile?.name || "PDF, DOCX or TXT · optional"}</small>
             </span>
             <span className="goal-evidence-choose">{actionItemFile ? "Change" : "Choose file"}</span>
           </label>
@@ -122,7 +139,8 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
               id="goal-evidence-file"
               className="goal-evidence-native-input"
               type="file"
-              onChange={(event) => setEvidenceFile(event.target.files[0] || null)}
+              accept={ACCEPTED_EVIDENCE}
+              onChange={chooseFile(setEvidenceFile)}
             />
             <span className="goal-evidence-file-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
@@ -132,14 +150,14 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence }) {
             </span>
             <span className="goal-evidence-file-copy">
               <strong>2. Supporting evidence</strong>
-              <small>{evidenceFile?.name || "PDF, document or image"}</small>
+              <small>{evidenceFile?.name || "PDF, DOCX or TXT · optional"}</small>
             </span>
             <span className="goal-evidence-choose">{evidenceFile ? "Change" : "Choose file"}</span>
           </label>
         </div>
 
         <footer className="goal-evidence-footer">
-          <span className={error ? "goal-evidence-error" : ""}>{error || (filesReady ? "Both files are ready" : "Select both files to continue")}</span>
+          <span className={error ? "goal-evidence-error" : ""}>{error || (filesReady ? "Evidence ready to upload" : "Choose at least one file")}</span>
           <button
             type="button"
             className="goal-evidence-submit-button"

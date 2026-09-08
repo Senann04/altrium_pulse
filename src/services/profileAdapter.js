@@ -74,6 +74,21 @@ function planStatus(row) {
   return "Pending";
 }
 
+function reviewDueState(dueDate, status) {
+  if (status === "completed") return { key: "completed", label: "Completed", priority: 4 };
+  if (status === "hr_review") return { key: "submitted", label: "Submitted to HR", priority: 3 };
+  if (!dueDate) return { key: "scheduled", label: "No deadline scheduled", priority: 2 };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const deadline = new Date(`${dueDate}T00:00:00`);
+  const days = Math.ceil((deadline - today) / 86400000);
+  if (days < 0) return { key: "overdue", label: `${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} overdue`, priority: 0 };
+  if (days === 0) return { key: "due", label: "Due today", priority: 0 };
+  if (days <= 30) return { key: "due-soon", label: `Due in ${days} day${days === 1 ? "" : "s"}`, priority: 1 };
+  return { key: "on-track", label: "On track", priority: 2 };
+}
+
 function average(rows, field) {
   if (!rows.length) return 0;
   return Math.round(rows.reduce((sum, row) => sum + (Number(row[field]) || 0), 0) / rows.length);
@@ -120,7 +135,7 @@ function dashboardTasks(role, cycle, meeting) {
     return [
       makeTask(cycle.self_review_due, "Team self-assessments due", "Check that every direct report has responded", "team"),
       makeTask(cycle.feedback_due, "Feedback window closes", "Complete outstanding team feedback", "feedback"),
-      makeTask(cycle.supervisor_review_due, "Supervisor reviews due", "Submit your assessments for this cycle", "current-review"),
+      makeTask(cycle.supervisor_review_due, "Supervisor reviews due", "Submit your employee assessments for this cycle", "annual-reviews"),
     ];
   }
 
@@ -197,7 +212,7 @@ export async function loadProfileView(userId) {
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id, employee_number, full_name, email, role, job_title, department_id, manager_id, hr_partner_id")
+    .select("id, employee_number, full_name, email, role, job_title, department_id, manager_id, hr_partner_id, joined_on")
     .eq("id", userId)
     .single();
   if (profileError) throw profileError;
@@ -206,25 +221,31 @@ export async function loadProfileView(userId) {
     ? "id, cycle_id, employee_id, status, overall_rating, completed_at, due_date"
     : "id, cycle_id, employee_id, supervisor_id, hr_partner_id, status, employee_summary, employee_submitted_at, supervisor_summary, supervisor_rating, supervisor_submitted_at, hr_comments, overall_rating, completed_at, due_date";
 
-  const [departmentResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, managementMetricsResult] = await Promise.all([
+  const [departmentResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, evidenceResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, reminderResult, managementMetricsResult] = await Promise.all([
     profile.department_id
       ? supabase.from("departments").select("id, name").eq("id", profile.department_id).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
-    supabase.from("profiles").select("id, employee_number, full_name, email, role, job_title, department_id, manager_id, hr_partner_id").eq("is_active", true).order("full_name"),
-    supabase.from("review_cycles").select("id, name, start_date, end_date, self_review_due, feedback_due, supervisor_review_due, status").order("start_date", { ascending: false }),
+    supabase.from("profiles").select("id, employee_number, full_name, email, role, job_title, department_id, manager_id, hr_partner_id, joined_on").eq("is_active", true).order("full_name"),
+    supabase.from("review_cycles").select("id, name, review_type, start_date, end_date, self_review_due, feedback_due, supervisor_review_due, status, minimum_service_days").order("start_date", { ascending: false }),
     supabase.from("reviews").select(reviewColumns).order("created_at", { ascending: false }),
     supabase.from("goals").select("id, review_id, employee_id, title, description, target_date, status, progress, period").order("created_at", { ascending: false }),
     supabase.from("development_plans").select("id, review_id, employee_id, type, title, reason, start_date, end_date, status, progress").order("created_at", { ascending: false }),
+    profile.role === "senior_management"
+      ? Promise.resolve({ data: [], error: null })
+      : supabase.from("development_plan_evidence").select("id, plan_id, uploaded_by, kind, file_name, mime_type, size_bytes, created_at").order("created_at", { ascending: false }),
     supabase.from("notifications").select("id, type, title, message, read_at, created_at").eq("recipient_id", userId).order("created_at", { ascending: false }).limit(12),
     supabase.from("feedback_requests").select("id, review_id, reviewer_id, status, due_date").order("created_at", { ascending: false }),
     supabase.from("review_feedback").select("id, review_id, subject_id, strengths, improvements, comments, rating, submitted_at").eq("subject_id", userId).order("submitted_at", { ascending: false }),
     supabase.from("par_meetings").select("id, review_id, employee_id, scheduled_at, status").order("scheduled_at", { ascending: true }),
+    profile.role === "supervisor"
+      ? supabase.from("review_reminder_deliveries").select("id, review_id, reminder_type, channel, subject, message, scheduled_for, status, sent_at").eq("recipient_id", userId).order("scheduled_for", { ascending: false }).limit(40)
+      : Promise.resolve({ data: [], error: null }),
     profile.role === "senior_management"
       ? supabase.rpc("get_senior_management_metrics")
       : Promise.resolve({ data: null, error: null }),
   ]);
 
-  const results = [departmentResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, managementMetricsResult];
+  const results = [departmentResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, evidenceResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, reminderResult, managementMetricsResult];
   const failed = results.find((result) => result.error);
   if (failed) throw failed.error;
 
@@ -253,6 +274,7 @@ export async function loadProfileView(userId) {
   const allScopedReviews = visibleReviews.filter((review) => scopedIds.has(review.employee_id));
   const scopedGoals = (goalsResult.data || []).filter((goal) => scopedIds.has(goal.employee_id));
   const scopedPlans = (plansResult.data || []).filter((plan) => scopedIds.has(plan.employee_id));
+  const evidence = evidenceResult.data || [];
   const teamMembers = scopedEmployees.map((employee) => {
     const employeeReview = scopedReviews.find((review) => review.employee_id === employee.id);
     const employeeGoals = scopedGoals.filter((goal) => goal.employee_id === employee.id);
@@ -314,6 +336,84 @@ export async function loadProfileView(userId) {
         rating: review.overall_rating === null ? null : Number(review.overall_rating).toFixed(1),
       };
     });
+
+  const performanceJourney = visibleReviews
+    .filter((review) => review.employee_id === userId)
+    .map((review) => {
+      const cycle = cycles.find((item) => item.id === review.cycle_id);
+      const reviewGoals = (goalsResult.data || []).filter((goal) => goal.review_id === review.id);
+      const reviewPlans = (plansResult.data || []).filter((plan) => plan.review_id === review.id);
+      const planIds = new Set(reviewPlans.map((plan) => plan.id));
+      const reviewEvidence = evidence.filter((item) => planIds.has(item.plan_id));
+      return {
+        id: review.id,
+        year: Number((cycle?.end_date || cycle?.start_date || new Date().toISOString()).slice(0, 4)),
+        cycleName: cycle?.name || "Performance review",
+        reviewType: cycle?.review_type || "Performance Review",
+        status: REVIEW_STATUS_LABELS[review.status] || review.status,
+        statusKey: review.status,
+        startDate: formatDate(cycle?.start_date),
+        endDate: formatDate(cycle?.end_date),
+        completedAt: formatDate(review.completed_at?.slice(0, 10)),
+        rating: review.overall_rating === null ? null : Number(review.overall_rating).toFixed(1),
+        selfAssessment: parseSelfAssessment(review.employee_summary),
+        goals: reviewGoals.map((goal) => ({
+          id: goal.id,
+          title: goal.title,
+          progress: goal.progress ?? 0,
+          status: goal.status,
+          targetDate: formatDate(goal.target_date),
+        })),
+        developmentPlans: reviewPlans.map((plan) => ({
+          id: plan.id,
+          title: plan.title,
+          type: plan.type.toUpperCase(),
+          progress: plan.progress ?? 0,
+          status: planStatus(plan),
+        })),
+        evidence: reviewEvidence.map((item) => ({
+          id: item.id,
+          fileName: item.file_name,
+          kind: item.kind,
+          sizeBytes: item.size_bytes,
+          uploadedAt: formatDateTime(item.created_at),
+        })),
+      };
+    })
+    .sort((left, right) => right.year - left.year || left.cycleName.localeCompare(right.cycleName));
+
+  const teamAnnualReviews = profile.role === "supervisor"
+    ? allScopedReviews.map((review) => {
+        const cycle = cycles.find((item) => item.id === review.cycle_id);
+        const employee = people.get(review.employee_id);
+        const reviewGoals = scopedGoals.filter((goal) => goal.review_id === review.id);
+        const reviewPlans = scopedPlans.filter((plan) => plan.review_id === review.id);
+        const planIds = new Set(reviewPlans.map((plan) => plan.id));
+        const dueDate = cycle?.supervisor_review_due || review.due_date || cycle?.end_date || null;
+        return {
+          id: review.id,
+          year: Number((cycle?.end_date || cycle?.start_date || new Date().toISOString()).slice(0, 4)),
+          employeeId: review.employee_id,
+          employeeNumber: employee?.employee_number || review.employee_id,
+          employeeName: employee?.full_name || "Employee",
+          jobTitle: employee?.job_title || "Employee",
+          cycleName: cycle?.name || "Performance review",
+          reviewType: cycle?.review_type || "Performance Review",
+          status: REVIEW_STATUS_LABELS[review.status] || review.status,
+          statusKey: review.status,
+          dueDate,
+          dueDateLabel: formatDate(dueDate),
+          dueState: reviewDueState(dueDate, review.status),
+          selfAssessment: parseSelfAssessment(review.employee_summary),
+          supervisorSummary: review.supervisor_summary || "",
+          supervisorRating: review.supervisor_rating,
+          supervisorSubmittedAt: review.supervisor_submitted_at,
+          canAssess: ["supervisor_review", "reopened"].includes(review.status),
+          goalCount: reviewGoals.length,
+          evidenceCount: evidence.filter((item) => planIds.has(item.plan_id)).length,
+        };
+      }).sort((left, right) => left.dueState.priority - right.dueState.priority || (left.dueDate || "9999").localeCompare(right.dueDate || "9999"))
+    : [];
   const latestCompletedReview = visibleReviews.find((review) => review.employee_id === userId && review.status === "completed");
   const latestFeedback = (feedbackResult.data || [])[0];
 
@@ -358,6 +458,8 @@ export async function loadProfileView(userId) {
       parCycle: activeCycle?.name || "No active review cycle",
       name: profile.full_name || "",
       workEmail: profile.email || "",
+      joinedOn: profile.joined_on || null,
+      joinedOnLabel: profile.joined_on ? formatDate(profile.joined_on) : "Not recorded",
       immediateSupervisor: people.get(profile.manager_id)?.full_name || "Not assigned",
       hrBusinessPartner: people.get(profile.hr_partner_id)?.full_name || "Not assigned",
       jobTitle: profile.job_title || "Not assigned",
@@ -388,6 +490,12 @@ export async function loadProfileView(userId) {
         : null,
       meeting,
       completedReviews,
+      performanceJourney,
+      teamAnnualReviews,
+      reviewReminders: (reminderResult.data || []).map((reminder) => ({
+        ...reminder,
+        scheduledLabel: formatDate(reminder.scheduled_for),
+      })),
       calendarEvents,
       organisationMetrics: managementMetrics,
       feedback: {
