@@ -93,6 +93,8 @@ function AssignedGoalCard({ goal, onUpdate }) {
         <div><span>Supervisor agreement</span><strong>{statusLabel(goal.supervisorAgreementStatus)}</strong></div>
       </section>
 
+      {goal.employeeAgreementNote && <p>Employee requested changes: {goal.employeeAgreementNote}</p>}
+      {goal.supervisorAgreementNote && <p>Supervisor requested changes: {goal.supervisorAgreementNote}</p>}
       <PlanEvidenceList planId={goal.id} />
 
       <footer className="assigned-goal-footer">

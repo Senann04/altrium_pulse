@@ -82,6 +82,8 @@ function mapAssignedPlan(row) {
     reason: row.reason || "",
     startDate: row.start_date || "",
     endDate: row.end_date || "",
+    employeeAgreementNote: row.employee_agreement_note,
+    supervisorAgreementNote: row.supervisor_agreement_note,
     employeeAgreementStatus: row.employee_agreement_status || "pending",
     employeeAgreedAt: row.employee_agreed_at,
     supervisorAgreementStatus: row.supervisor_agreement_status || "pending",
@@ -133,6 +135,8 @@ const assignedPlanSelect = `
   employee_agreed_at,
   supervisor_agreement_status,
   supervisor_agreed_at,
+  employee_agreement_note,
+  supervisor_agreement_note,
   employee_id,
   employee:profiles!development_plans_employee_id_fkey(
     id,
@@ -210,7 +214,7 @@ export async function loadMyDevelopmentPlans(type) {
   const user = await requireCurrentUser();
   const { data, error } = await client
     .from("development_plans")
-    .select("id, title, reason, start_date, end_date, status, progress, employee_agreement_status, employee_agreed_at, supervisor_agreement_status, supervisor_agreed_at, actions:development_plan_actions(id, title, description, owner_id, due_date, status, completed_at)")
+    .select("id, title, reason, start_date, end_date, status, progress, employee_agreement_status, employee_agreed_at, supervisor_agreement_status, supervisor_agreed_at, employee_agreement_note, supervisor_agreement_note, actions:development_plan_actions(id, title, description, owner_id, due_date, status, completed_at)")
     .eq("employee_id", user.id)
     .eq("type", type.toLowerCase())
     .order("created_at", { ascending: false });
@@ -225,6 +229,8 @@ export async function loadMyDevelopmentPlans(type) {
     target_date: row.end_date || "",
     progress: row.progress ?? 0,
     reason: row.reason || "",
+    employeeAgreementNote: row.employee_agreement_note,
+    supervisorAgreementNote: row.supervisor_agreement_note,
     employeeAgreementStatus: row.employee_agreement_status || "pending",
     employeeAgreedAt: row.employee_agreed_at,
     supervisorAgreementStatus: row.supervisor_agreement_status || "pending",

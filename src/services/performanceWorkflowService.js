@@ -136,7 +136,7 @@ export async function loadSupervisorReviewOperations() {
       .in("review_id", reviewIds),
     client
       .from("development_plans")
-      .select("id, review_id, employee_id, type, title, reason, start_date, end_date, status, progress, employee_agreement_status, employee_agreed_at, supervisor_agreement_status, supervisor_agreed_at, actions:development_plan_actions(id, title, description, owner_id, due_date, status, completed_at)")
+      .select("id, review_id, employee_id, type, title, reason, start_date, end_date, status, progress, employee_agreement_status, employee_agreed_at, supervisor_agreement_status, supervisor_agreed_at, employee_agreement_note, supervisor_agreement_note, actions:development_plan_actions(id, title, description, owner_id, due_date, status, completed_at)")
       .in("employee_id", employeeIds)
       .order("created_at", { ascending: false }),
     client
@@ -206,12 +206,13 @@ export async function loadSupervisorReviewOperations() {
   });
 }
 
-export async function respondToPlanAgreement(planId, decision) {
+export async function respondToPlanAgreement(planId, decision, explanation = "") {
   const client = requireSupabase();
   await requireCurrentUser();
   const { data, error } = await client.rpc("respond_to_plan_agreement", {
     p_plan_id: planId,
     p_decision: decision,
+    p_explanation: explanation.trim() || null,
   });
   if (error) throw error;
   return firstRelation(data);
@@ -300,4 +301,15 @@ export async function loadWorkflowAudit(reviewId) {
   const { data, error } = await query;
   if (error) throw error;
   return data || [];
+}
+
+export async function updateOwnGoalProgress(goalId, progress) {
+  const client = requireSupabase();
+  const user = await requireCurrentUser();
+  if (!Number.isInteger(progress) || progress < 0 || progress > 100) throw new Error("Enter a whole percentage from 0 to 100.");
+  const { data, error } = await client.from("goals")
+    .update({ progress, status: progress === 100 ? "completed" : progress === 0 ? "not_started" : "in_progress" })
+    .eq("id", goalId).eq("employee_id", user.id).select("id, progress, status").single();
+  if (error) throw error;
+  return data;
 }

@@ -8,6 +8,8 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
   const [selectedActionId, setSelectedActionId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [requestingChanges, setRequestingChanges] = useState(false);
+  const [explanation, setExplanation] = useState("");
   const [agreementBusy, setAgreementBusy] = useState(false);
   const [busyActionId, setBusyActionId] = useState("");
 
@@ -16,6 +18,7 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
     setEvidenceFile(null);
     setSelectedActionId("");
     setError("");
+    setRequestingChanges(false); setExplanation("");
     onClose();
   };
 
@@ -59,7 +62,8 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
     setAgreementBusy(true);
     setError("");
     try {
-      await onAgreement(goal.id, decision);
+      await onAgreement(goal.id, decision, decision === "changes_requested" ? explanation : "");
+      setRequestingChanges(false); setExplanation("");
     } catch (agreementError) {
       setError(agreementError.message || "Unable to record your plan response.");
     } finally {
@@ -129,11 +133,19 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
           </div>
           {goal.employeeAgreementStatus !== "agreed" && onAgreement && (
             <div>
-              <button type="button" onClick={() => handleAgreement("changes_requested")} disabled={agreementBusy}>Request changes</button>
+              <button type="button" onClick={() => setRequestingChanges(true)} disabled={agreementBusy}>Request changes</button>
               <button type="button" onClick={() => handleAgreement("agreed")} disabled={agreementBusy}>Agree to plan</button>
             </div>
           )}
         </section>
+
+        {requestingChanges && <section className="plan-change-request">
+          <label>Changes requested<textarea maxLength={2000} value={explanation} onChange={e=>setExplanation(e.target.value)} disabled={agreementBusy} /></label>
+          <button type="button" disabled={agreementBusy || !explanation.trim()} onClick={()=>handleAgreement("changes_requested")}>Send change request</button>
+          <button type="button" disabled={agreementBusy} onClick={()=>setRequestingChanges(false)}>Cancel request</button>
+        </section>}
+        {goal.employeeAgreementNote && <p>Employee requested changes: {goal.employeeAgreementNote}</p>}
+        {goal.supervisorAgreementNote && <p>Supervisor requested changes: {goal.supervisorAgreementNote}</p>}
 
         <p className="goal-evidence-instruction">
           Add the completed action item and supporting evidence for this {goalType} plan. Both files are

@@ -162,7 +162,7 @@ const SIDEBAR_COLLAPSED_KEY = "altrium-pulse:sidebar-collapsed";
 
 function Sidebar({ role, activeItem, onNavigate, onSignOut, profileData }) {
   const menuGroups = MENUS[role] || [];
-  const roleLabel = ROLE_LABELS[role] || "Team member";
+  const roleLabel = role === "hrbp" && profileData?.canManageHRAssignments ? "Head of HR" : ROLE_LABELS[role] || "Team member";
   const displayName = profileData?.name || roleLabel;
   const [isCollapsed, setIsCollapsed] = useState(
     () => window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true",

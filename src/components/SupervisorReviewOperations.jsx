@@ -32,6 +32,8 @@ function statusLabel(value) {
 }
 
 function PlanAgreementRow({ plan, onRespond, busyPlan }) {
+  const [requesting, setRequesting] = useState(false);
+  const [explanation, setExplanation] = useState("");
   const supervisorDecision = plan.supervisor_agreement_status || "pending";
   return (
     <article className="workflow-plan-row">
@@ -46,7 +48,7 @@ function PlanAgreementRow({ plan, onRespond, busyPlan }) {
       </div>
       {supervisorDecision === "pending" && (
         <div className="workflow-inline-actions">
-          <button type="button" onClick={() => onRespond(plan.id, "changes_requested")} disabled={busyPlan === plan.id}>
+          <button type="button" onClick={() => setRequesting(true)} disabled={busyPlan === plan.id}>
             Request changes
           </button>
           <button type="button" className="is-primary" onClick={() => onRespond(plan.id, "agreed")} disabled={busyPlan === plan.id}>
@@ -54,6 +56,13 @@ function PlanAgreementRow({ plan, onRespond, busyPlan }) {
           </button>
         </div>
       )}
+      {requesting && <section className="plan-change-request">
+        <label>Changes requested<textarea maxLength={2000} value={explanation} onChange={e=>setExplanation(e.target.value)} /></label>
+        <button type="button" disabled={busyPlan === plan.id || !explanation.trim()} onClick={async()=>{await onRespond(plan.id,"changes_requested",explanation);setRequesting(false);}}>Send change request</button>
+        <button type="button" onClick={()=>setRequesting(false)}>Cancel request</button>
+      </section>}
+      {plan.employee_agreement_note && <p>Employee requested changes: {plan.employee_agreement_note}</p>}
+      {plan.supervisor_agreement_note && <p>Supervisor requested changes: {plan.supervisor_agreement_note}</p>}
       <PlanEvidenceList planId={plan.id} />
     </article>
   );
@@ -110,11 +119,11 @@ function SupervisorReviewCard({ review, onRefresh }) {
     }
   };
 
-  const handlePlanAgreement = async (planId, decision) => {
+  const handlePlanAgreement = async (planId, decision, explanation) => {
     setBusyPlan(planId);
     setError("");
     try {
-      await respondToPlanAgreement(planId, decision);
+      await respondToPlanAgreement(planId, decision, explanation);
       await onRefresh();
     } catch (agreementError) {
       setError(agreementError.message || "Unable to record the plan decision.");

@@ -9,7 +9,7 @@ import { submitGoalEvidence } from "../services/goalEvidenceService.js";
 import { respondToPlanAgreement, updateDevelopmentActionStatus } from "../services/performanceWorkflowService.js";
 import "../styles/immediatesupervisormyprogress.css";
 
-function SupervisorMyProgress({ onNavigate, onSignOut, profileData }) {
+function SupervisorMyProgress({ onNavigate, onSignOut, profileData, onProfileRefresh }) {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const timeGoals = profileData?.goals || [];
   const plans = profileData?.developmentPlans || [];
@@ -28,13 +28,16 @@ function SupervisorMyProgress({ onNavigate, onSignOut, profileData }) {
     });
   };
 
-  const handleAgreement = async (goalId, decision) => {
-    const saved = await respondToPlanAgreement(goalId, decision);
+  const handleAgreement = async (goalId, decision, explanation) => {
+    const saved = await respondToPlanAgreement(goalId, decision, explanation);
     setSelectedGoal((goal) => goal?.id === goalId ? {
       ...goal,
       employeeAgreementStatus: saved.employee_agreement_status,
+      employeeAgreementNote: saved.employee_agreement_note,
+      supervisorAgreementNote: saved.supervisor_agreement_note,
       supervisorAgreementStatus: saved.supervisor_agreement_status,
     } : goal);
+    await onProfileRefresh?.();
   };
 
   const handleActionStatus = async (actionId, status) => {
@@ -45,6 +48,7 @@ function SupervisorMyProgress({ onNavigate, onSignOut, profileData }) {
       const completed = actions.filter((action) => action.status === "completed").length;
       return { ...goal, actions, progress: actions.length ? Math.round((completed / actions.length) * 100) : 0 };
     });
+    await onProfileRefresh?.();
   };
 
   return (
@@ -64,19 +68,19 @@ function SupervisorMyProgress({ onNavigate, onSignOut, profileData }) {
           <div className="supervisor-progress-column">
             <div className="supervisor-progress-column-title">Weekly</div>
             {!weekly.length && <p className="supervisor-progress-empty">No weekly goals assigned.</p>}
-            {weekly.map((g) => <AssignedGoalRow key={g.id} goal={g} />)}
+            {weekly.map((g) => <AssignedGoalRow key={g.id} goal={g} onSaved={onProfileRefresh} />)}
           </div>
 
           <div className="supervisor-progress-column">
             <div className="supervisor-progress-column-title">Monthly</div>
             {!monthly.length && <p className="supervisor-progress-empty">No monthly goals assigned.</p>}
-            {monthly.map((g) => <AssignedGoalRow key={g.id} goal={g} />)}
+            {monthly.map((g) => <AssignedGoalRow key={g.id} goal={g} onSaved={onProfileRefresh} />)}
           </div>
 
           <div className="supervisor-progress-column">
             <div className="supervisor-progress-column-title">Yearly</div>
             {!yearly.length && <p className="supervisor-progress-empty">No yearly goals assigned.</p>}
-            {yearly.map((g) => <AssignedGoalRow key={g.id} goal={g} />)}
+            {yearly.map((g) => <AssignedGoalRow key={g.id} goal={g} onSaved={onProfileRefresh} />)}
           </div>
         </div>
 

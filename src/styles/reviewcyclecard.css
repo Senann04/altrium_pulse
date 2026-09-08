@@ -75,3 +75,10 @@
   .review-cycle-card-header, .review-cycle-footer { align-items: flex-start; flex-direction: column; }
   .review-cycle-footer button { width: 100%; }
 }
+
+.review-cycle-card .review-cycle-details-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); }
+.review-cycle-card .review-cycle-window-dates { grid-template-columns: minmax(0, 1fr) minmax(24px, .5fr) minmax(0, 1fr); }
+.review-cycle-card .review-cycle-window-dates strong { overflow-wrap: anywhere; }
+@container (max-width:420px) {
+ .review-cycle-card .review-cycle-window-dates { grid-template-columns:minmax(0,1fr); }
+}

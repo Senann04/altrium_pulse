@@ -1556,3 +1556,5 @@
   .review-cycle-window-line { display: none; }
   .review-cycle-phase-dates { grid-template-columns: minmax(0, 1fr); }
 }
+.plan-change-request{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;padding:14px;border:1px solid var(--ap-line);border-radius:10px}.plan-change-request label{display:grid;gap:8px;flex-basis:100%;font-size:12px}.plan-change-request textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--ap-line);border-radius:8px;background:var(--ap-surface);color:var(--ap-text);font:inherit}.plan-change-request button{padding:8px 12px;border:1px solid rgba(252,180,0,.25);border-radius:8px;background:rgba(252,180,0,.04);color:var(--ap-gold);cursor:pointer}.plan-change-request button:disabled{opacity:.5;cursor:default}
+.hr-head-actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}.hr-head-actions button{padding:12px 16px;border:1px solid rgba(252,180,0,.3);border-radius:10px;background:rgba(252,180,0,.06);color:var(--ap-gold);font:inherit;cursor:pointer}.hr-head-actions+p{color:var(--ap-text-muted);line-height:1.7;max-width:760px}

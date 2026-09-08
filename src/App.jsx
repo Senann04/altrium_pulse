@@ -258,6 +258,7 @@ function App() {
     <Page
       profileData={profileView.data}
       onNavigate={handleNavigate}
+      onProfileRefresh={async () => { const view = await loadProfileView(claims.sub); setProfileView(view); }}
       onSignOut={handleSignOut}
     />
   );

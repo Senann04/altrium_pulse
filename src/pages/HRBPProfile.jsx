@@ -27,7 +27,7 @@ function HRBPProfile({ onNavigate, onSignOut, profileData = emptyProfile }) {
         <WorkspaceHeading
           eyebrow="Account"
           title="My Profile"
-          description="Review your HR partner profile and current organisational details."
+          description={profileData.canManageHRAssignments ? "Review your Head of HR profile and assignment-administration access." : "Review your HR partner profile and current organisational details."}
           meta={profileData.identifier || "HR partner record"}
         />
 

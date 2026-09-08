@@ -47,7 +47,7 @@
 .review-cycle-footer button:focus-visible { outline: 2px solid #d5a13e; outline-offset: 2px; }
 .review-cycle-footer button:disabled { cursor: wait; opacity: 0.55; }
 
-.review-cycle-list { display: grid; gap: 1rem; }
+.review-cycle-section > .review-cycle-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 
 @media (max-width: 720px) {
   .review-cycle-add-row { align-items: flex-start; flex-direction: column; }

@@ -210,7 +210,7 @@ export async function loadProfileView(userId) {
     ? "id, cycle_id, employee_id, status, overall_rating, completed_at, due_date"
     : "id, cycle_id, employee_id, supervisor_id, hr_partner_id, status, employee_summary, employee_submitted_at, supervisor_summary, supervisor_rating, supervisor_submitted_at, hr_comments, overall_rating, completed_at, due_date, department_name_snapshot";
 
-  const [departmentResult, assignedDepartmentsResult, assignedProjectsResult, cycleAdministratorResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, managementMetricsResult] = await Promise.all([
+  const [departmentResult, assignedDepartmentsResult, assignedProjectsResult, cycleAdministratorResult, assignmentAdministratorResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, managementMetricsResult] = await Promise.all([
     profile.department_id
       ? supabase.from("departments").select("id, name").eq("id", profile.department_id).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
@@ -233,11 +233,14 @@ export async function loadProfileView(userId) {
           .eq("user_id", userId)
           .maybeSingle()
       : Promise.resolve({ data: null, error: null }),
+    profile.role === "hr_partner"
+      ? supabase.from("hr_assignment_administrators").select("user_id").eq("user_id", userId).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
     supabase.from("profiles").select("id, employee_number, full_name, email, role, job_title, department_id, manager_id, hr_partner_id, department:departments!profiles_department_id_fkey(name)").eq("is_active", true).order("full_name"),
     supabase.from("review_cycles").select("id, name, start_date, end_date, self_review_due, feedback_due, supervisor_review_due, status").order("start_date", { ascending: false }),
     supabase.from("reviews").select(reviewColumns).order("created_at", { ascending: false }),
     supabase.from("goals").select("id, review_id, employee_id, title, description, target_date, status, progress, period").order("created_at", { ascending: false }),
-    supabase.from("development_plans").select("id, review_id, employee_id, type, title, reason, start_date, end_date, status, progress, employee_agreement_status, employee_agreed_at, supervisor_agreement_status, supervisor_agreed_at, actions:development_plan_actions(id, title, description, owner_id, due_date, status, completed_at)").order("created_at", { ascending: false }),
+    supabase.from("development_plans").select("id, review_id, employee_id, type, title, reason, start_date, end_date, status, progress, employee_agreement_status, employee_agreed_at, supervisor_agreement_status, supervisor_agreed_at, employee_agreement_note, supervisor_agreement_note, actions:development_plan_actions(id, title, description, owner_id, due_date, status, completed_at)").order("created_at", { ascending: false }),
     supabase.from("notifications").select("id, type, title, message, read_at, created_at").eq("recipient_id", userId).order("created_at", { ascending: false }).limit(12),
     supabase.from("feedback_requests").select("id, review_id, reviewer_id, status, due_date").order("created_at", { ascending: false }),
     profile.role === "employee" || profile.role === "supervisor"
@@ -249,7 +252,7 @@ export async function loadProfileView(userId) {
       : Promise.resolve({ data: null, error: null }),
   ]);
 
-  const results = [departmentResult, assignedDepartmentsResult, assignedProjectsResult, cycleAdministratorResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, managementMetricsResult];
+  const results = [departmentResult, assignedDepartmentsResult, assignedProjectsResult, cycleAdministratorResult, assignmentAdministratorResult, directoryResult, cyclesResult, reviewsResult, goalsResult, plansResult, notificationsResult, feedbackRequestsResult, feedbackResult, meetingsResult, managementMetricsResult];
   const failed = results.find((result) => result.error);
   if (failed) throw failed.error;
 
@@ -332,6 +335,8 @@ export async function loadProfileView(userId) {
       progress: plan.progress ?? 0,
       employeeAgreementStatus: plan.employee_agreement_status || "pending",
       employeeAgreedAt: plan.employee_agreed_at,
+      employeeAgreementNote: plan.employee_agreement_note,
+      supervisorAgreementNote: plan.supervisor_agreement_note,
       supervisorAgreementStatus: plan.supervisor_agreement_status || "pending",
       supervisorAgreedAt: plan.supervisor_agreed_at,
       actions: (plan.actions || []).map((action) => ({
@@ -403,6 +408,7 @@ export async function loadProfileView(userId) {
       department: departmentResult.data?.name || "Unassigned team",
       assignedTeams: [...new Set(scopedReviews.map((review) => review.department_name_snapshot).filter(Boolean))],
       assignedProjects: assignedProjects.map((project) => project.name),
+      canManageHRAssignments: Boolean(assignmentAdministratorResult.data),
       canManageReviewCycles: Boolean(cycleAdministratorResult.data),
       parCycle: activeCycle?.name || "No active review cycle",
       name: profile.full_name || "",

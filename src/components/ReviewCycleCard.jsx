@@ -19,7 +19,7 @@ function ReviewCycleCard({ cycle, canManage = false, busy = false, onStatusChang
         </div>
         <span className={`review-cycle-active-label${cycle.active ? " is-active" : ""}`}>
           <i aria-hidden="true" />
-          {cycle.active ? "Active" : "Inactive"}
+          {cycle.status}
         </span>
       </header>
 
