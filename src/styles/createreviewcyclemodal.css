@@ -1,101 +1,52 @@
 .create-cycle-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 999;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.76);
+  backdrop-filter: blur(7px);
 }
-
 .create-cycle-modal {
-  background: #111111;
-  border: 2px solid #fcb400;
+  width: min(100%, 720px);
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 1.35rem;
+  border: 1px solid rgba(218, 163, 56, 0.27);
   border-radius: 20px;
-  padding: 1.5rem;
-  width: 90%;
-  max-width: 480px;
+  background: radial-gradient(circle at 100% 0%, rgba(210, 157, 51, 0.1), transparent 32%), #101112;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
+}
+.create-cycle-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.2rem; }
+.create-cycle-header > div { display: grid; gap: 0.25rem; }
+.create-cycle-header span, .create-cycle-phases legend { color: #c99838; font-size: 0.69rem; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; }
+.create-cycle-title { margin: 0; color: #f5f2e9; font-size: 1.2rem; }
+.create-cycle-close { width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; color: #aaa69e; background: rgba(255,255,255,.03); font: inherit; font-size: 1.2rem; cursor: pointer; }
+.create-cycle-field { display: grid; gap: 0.4rem; margin-bottom: 0.85rem; }
+.create-cycle-field label { color: #b8b5ae; font-size: 0.76rem; font-weight: 650; }
+.create-cycle-field input, .create-cycle-field select, .create-cycle-field textarea {
+  width: 100%;
   box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 11px;
+  color: #ece8df;
+  background: rgba(255, 255, 255, 0.045);
+  font: inherit;
+  font-size: 0.84rem;
+  padding: 0.72rem 0.8rem;
 }
-
-.create-cycle-title {
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 20px;
-  text-align: center;
-  margin: 0 0 1rem 0;
-}
-
-.create-cycle-field {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.9rem;
-}
-
-.create-cycle-field label {
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 0.3rem;
-}
-
-.create-cycle-field input,
-.create-cycle-field select {
-  background: #ffffff;
-  color: #111111;
-  border: none;
-  border-radius: 999px;
-  padding: 0.5rem 0.9rem;
-  font-family: inherit;
-  font-size: 13px;
-}
-
-.create-cycle-field textarea {
-  background: #ffffff;
-  color: #111111;
-  border: none;
-  border-radius: 12px;
-  padding: 0.6rem 0.9rem;
-  min-height: 80px;
-  resize: vertical;
-  font-family: inherit;
-  font-size: 13px;
-  box-sizing: border-box;
-}
-
-.create-cycle-date-row {
-  display: flex;
-  gap: 1rem;
-}
-
-.create-cycle-date-row .create-cycle-field {
-  flex: 1;
-}
-
-.create-cycle-bottom-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 1rem;
-}
-
-.create-cycle-type-field {
-  flex: 1;
-}
-
-.create-cycle-button {
-  background: #fcb400;
-  color: #111111;
-  border: none;
-  border-radius: 999px;
-  padding: 0.5rem 1.5rem;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-bottom: 0.9rem;
-}
-
-.create-cycle-button:hover {
-  background: #e0a30b;
-}
+.create-cycle-field textarea { min-height: 84px; resize: vertical; }
+.create-cycle-field input:focus, .create-cycle-field select:focus, .create-cycle-field textarea:focus { outline: none; border-color: rgba(215, 162, 58, 0.58); box-shadow: 0 0 0 3px rgba(215,162,58,.08); }
+.create-cycle-date-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+.create-cycle-date-row:first-of-type { grid-template-columns: repeat(2, 1fr); }
+.create-cycle-phases { margin: 0 0 0.9rem; padding: 0.85rem; border: 1px solid rgba(255,255,255,.075); border-radius: 14px; }
+.create-cycle-phases legend { padding: 0 0.4rem; }
+.create-cycle-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.65rem; margin-top: 1rem; }
+.create-cycle-actions button { min-height: 40px; padding: 0 1rem; border-radius: 11px; font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
+.create-cycle-cancel { border: 1px solid rgba(255,255,255,.11); color: #aaa79f; background: rgba(255,255,255,.03); }
+.create-cycle-button { border: 1px solid rgba(214,162,59,.45); color: #f1c66f; background: rgba(214,162,59,.1); }
+.create-cycle-button:disabled { opacity: .42; cursor: not-allowed; }
+.hr-admin-inline-error { margin-right: auto; color: #e99b9b; font-size: .76rem; }
+@media (max-width: 680px) { .create-cycle-date-row, .create-cycle-date-row:first-of-type { grid-template-columns: 1fr; } .create-cycle-actions { flex-wrap: wrap; } .hr-admin-inline-error { width: 100%; } }

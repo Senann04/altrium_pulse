@@ -15,10 +15,10 @@ function HRReviewCycle({ onNavigate, onSignOut, profileData }) {
         <WorkspaceHeading
           eyebrow="Performance administration"
           title="Review Cycles"
-          description="Create, activate and monitor organisation-wide performance review periods."
+          description={profileData?.canManageHRAssignments ? "Manage company review schedules and approve cycle HRBP allocations." : "Monitor company review schedules and administer PAR activity across your assigned teams."}
         />
-        <ReviewCycleSection />
-        <HRReviewOperations scopeLabel={profileData?.department || "Assigned business unit"} />
+        <ReviewCycleSection canManage={profileData?.canManageReviewCycles} />
+        <HRReviewOperations assignedTeams={profileData?.assignedTeams || []} assignedProjects={profileData?.assignedProjects || []} />
       </div>
     </div>
   );

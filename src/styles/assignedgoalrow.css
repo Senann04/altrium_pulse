@@ -25,4 +25,4 @@
   font-family: inherit;
   font-size: 11px;
   font-weight: 700;
-}
+}.time-goal-progress{display:grid;gap:8px;margin-bottom:12px;min-width:0}.time-goal-progress>button{justify-self:start}.time-goal-progress button{padding:7px 10px;border:1px solid rgba(252,180,0,.25);border-radius:8px;background:rgba(252,180,0,.04);color:var(--ap-gold);font:inherit;font-size:12px;cursor:pointer}.time-goal-progress button:disabled{opacity:.5;cursor:default}.time-goal-editor{display:flex;gap:8px;flex-wrap:wrap;align-items:end}.time-goal-editor label{display:grid;gap:5px;color:var(--ap-text-muted);font-size:12px}.time-goal-editor input{width:90px;padding:8px;color:var(--ap-text);background:var(--ap-surface);border:1px solid var(--ap-line);border-radius:8px}.time-goal-progress p{font-size:12px;color:var(--ap-text-muted)}

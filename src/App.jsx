@@ -24,6 +24,7 @@ import ImmediateSupervisorMyProgress from "./pages/ImmediateSupervisorMyProgress
 import ImmediateSupervisorProfile from "./pages/ImmediateSupervisorProfile";
 import LeadershipDashboard from "./pages/LeadershipDashboard";
 import LeadershipProfile from "./pages/LeadershipProfile";
+import LeadershipNormalization from "./pages/LeadershipNormalization";
 import {
   LeadershipCalendar,
   LeadershipFeedback,
@@ -72,6 +73,7 @@ const rolePages = {
   },
   senior_management: {
     dashboard: LeadershipDashboard,
+    normalization: LeadershipNormalization,
     feedback: LeadershipFeedback,
     projects: LeadershipProjects,
     calendar: LeadershipCalendar,
@@ -256,6 +258,7 @@ function App() {
     <Page
       profileData={profileView.data}
       onNavigate={handleNavigate}
+      onProfileRefresh={async () => { const view = await loadProfileView(claims.sub); setProfileView(view); }}
       onSignOut={handleSignOut}
     />
   );

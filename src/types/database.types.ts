@@ -549,6 +549,49 @@ export type Database = {
           },
         ]
       }
+      hr_partner_departments: {
+        Row: {
+          assigned_by: string | null
+          created_at: string
+          department_id: string
+          hr_partner_id: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          created_at?: string
+          department_id: string
+          hr_partner_id: string
+        }
+        Update: {
+          assigned_by?: string | null
+          created_at?: string
+          department_id?: string
+          hr_partner_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hr_partner_departments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hr_partner_departments_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hr_partner_departments_hr_partner_id_fkey"
+            columns: ["hr_partner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       review_cycles: {
         Row: {
           applies_to: string
