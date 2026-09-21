@@ -39,7 +39,16 @@ export async function createPersonalCalendarEvent(event) {
 async function invokeGoogleCalendar(body) {
   if (!supabase) throw new Error("Supabase is not configured.");
   const { data, error } = await supabase.functions.invoke("google-calendar-events", { body });
-  if (error) throw error;
+  if (error) {
+    let message = error.message;
+    try {
+      const responseBody = await error.context?.json();
+      if (responseBody?.error) message = responseBody.error;
+    } catch {
+      // Keep Supabase's fallback error when the response body is unavailable.
+    }
+    throw new Error(message);
+  }
   if (data?.error) throw new Error(data.error);
   return data;
 }
