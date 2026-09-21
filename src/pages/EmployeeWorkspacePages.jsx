@@ -281,7 +281,7 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
           <aside className="employee-calendar-agenda">
             <div className="calendar-agenda-heading"><div><span>Schedule</span><h2>Upcoming</h2></div><button type="button" onClick={() => setFormOpen((open) => !open)}>{formOpen ? "Cancel" : "+ Schedule"}</button></div>
             <section className="google-calendar-connection" aria-label="Google Calendar connection">
-              <div><strong>{googleConnection.connected ? "Google Calendar connected" : "Connect Google Calendar"}</strong><span>{googleConnection.connected ? googleConnection.email : "Choose a personal or company Google account."}</span></div>
+              <div><strong>{googleConnection.connected ? "Google Calendar connected" : "Connect Google Calendar"}</strong><span>{googleConnection.connected ? googleConnection.email : googleConnection.message || "Choose a personal or company Google account."}</span></div>
               {googleConnection.connected
                 ? <button type="button" onClick={disconnectGoogle} disabled={busy}>Disconnect</button>
                 : <button type="button" onClick={beginGoogleCalendarConnection} disabled={googleConnection.loading || googleConnection.configured === false}>{googleConnection.loading ? "Checking…" : "Connect Google"}</button>}
