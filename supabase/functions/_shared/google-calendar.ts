@@ -19,7 +19,9 @@ export function env(name: string) {
 }
 
 export function errorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Unexpected calendar integration error";
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "message" in error) return String((error as { message?: unknown }).message || "Unexpected calendar integration error");
+  return "Unexpected calendar integration error";
 }
 
 export function adminClient() {
