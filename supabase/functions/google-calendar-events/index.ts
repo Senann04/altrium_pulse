@@ -2,6 +2,8 @@ import { adminClient, authenticatedUser, corsHeaders, decrypt, encrypt, errorMes
 
 declare const Deno: { serve(handler: (req: Request) => Response | Promise<Response>): void };
 
+const CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.events";
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
@@ -10,7 +12,13 @@ Deno.serve(async (req) => {
     const admin = adminClient();
     const { data: connection, error: connectionError } = await admin.from("google_calendar_connections").select("*").eq("user_id", user.id).maybeSingle();
     if (connectionError) throw connectionError;
-    if (body.action === "status") return json({ configured: true, connected: Boolean(connection), email: connection?.google_email || null });
+    const hasCalendarScope = Boolean(connection?.scopes?.includes(CALENDAR_SCOPE));
+    if (body.action === "status") return json({
+      configured: true,
+      connected: Boolean(connection && hasCalendarScope),
+      email: connection?.google_email || null,
+      message: connection && !hasCalendarScope ? "Reconnect and grant Google Calendar event access." : null,
+    });
     if (body.action === "disconnect") {
       if (connection) {
         const accessToken = await decrypt(connection.access_token_ciphertext);
@@ -21,6 +29,7 @@ Deno.serve(async (req) => {
     }
     if (body.action !== "sync" || !body.eventId) return json({ error: "Unsupported calendar action" }, 400);
     if (!connection) return json({ error: "Connect Google Calendar first" }, 409);
+    if (!hasCalendarScope) return json({ error: "Reconnect Google Calendar and grant permission to manage calendar events." }, 403);
     const { data: event, error: eventError } = await admin.from("personal_calendar_events").select("*").eq("id", body.eventId).eq("owner_id", user.id).single();
     if (eventError) throw eventError;
     if (event.google_event_id) return json({ googleEventId: event.google_event_id, htmlLink: event.google_html_link });
