@@ -71,17 +71,23 @@ export async function disconnectGoogleCalendar() {
 }
 
 function googleDate(value) {
-  return new Date(value).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
 }
 
 export function googleCalendarUrl(event) {
   const start = event.starts_at || event.startsAt;
-  const end = event.ends_at || event.endsAt || new Date(new Date(start).getTime() + 60 * 60 * 1000).toISOString();
+  const startDate = new Date(start);
+  const fallbackEnd = Number.isNaN(startDate.getTime()) ? "" : new Date(startDate.getTime() + 60 * 60 * 1000).toISOString();
+  const end = event.ends_at || event.endsAt || fallbackEnd;
   const params = new URLSearchParams({
     action: "TEMPLATE",
     text: event.title,
-    dates: `${googleDate(start)}/${googleDate(end)}`,
     details: event.description || "Scheduled from Altrium Pulse",
   });
+  const googleStart = googleDate(start);
+  const googleEnd = googleDate(end);
+  if (googleStart && googleEnd) params.set("dates", `${googleStart}/${googleEnd}`);
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
