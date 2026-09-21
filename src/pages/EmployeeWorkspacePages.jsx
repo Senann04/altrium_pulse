@@ -153,6 +153,19 @@ function EmployeePerformanceHistory(props) {
   return <EmployeeWorkspacePage {...props} view="history" />;
 }
 
+function calendarDateTime(date, time = "09:00") {
+  if (!date) return "";
+  const twelveHour = String(time).trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (twelveHour) {
+    let hour = Number(twelveHour[1]) % 12;
+    if (twelveHour[3].toUpperCase() === "PM") hour += 12;
+    return `${date}T${String(hour).padStart(2, "0")}:${twelveHour[2]}:00`;
+  }
+  const twentyFourHour = String(time).trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (twentyFourHour) return `${date}T${String(Number(twentyFourHour[1])).padStart(2, "0")}:${twentyFourHour[2]}:00`;
+  return `${date}T09:00:00`;
+}
+
 function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileData }) {
   const today = useMemo(() => new Date(), []);
   const [shownMonth, setShownMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
@@ -183,7 +196,7 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
     return () => { active = false; };
   }, []);
   const events = useMemo(() => [
-    ...(profileData?.calendarEvents || []).map((event) => ({ ...event, starts_at: `${event.date}T${event.time || "09:00"}:00`, type: event.type || "Review milestone", system: true })),
+    ...(profileData?.calendarEvents || []).map((event) => ({ ...event, starts_at: calendarDateTime(event.date, event.time), type: event.type || "Review milestone", system: true })),
     ...savedEvents,
   ].map((event) => ({
     ...event,
