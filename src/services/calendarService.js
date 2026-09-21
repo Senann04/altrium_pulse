@@ -12,7 +12,7 @@ export async function listPersonalCalendarEvents() {
   const user = await currentUser();
   const { data, error } = await supabase
     .from("personal_calendar_events")
-    .select("id, title, description, starts_at, ends_at")
+    .select("id, title, description, starts_at, ends_at, google_event_id, google_html_link")
     .eq("owner_id", user.id)
     .order("starts_at");
   if (error) throw error;
@@ -31,9 +31,43 @@ export async function createPersonalCalendarEvent(event) {
     description: event.description?.trim() || null,
     starts_at: startsAt.toISOString(),
     ends_at: endsAt.toISOString(),
-  }).select("id, title, description, starts_at, ends_at").single();
+  }).select("id, title, description, starts_at, ends_at, google_event_id, google_html_link").single();
   if (error) throw error;
   return data;
+}
+
+async function invokeGoogleCalendar(body) {
+  if (!supabase) throw new Error("Supabase is not configured.");
+  const { data, error } = await supabase.functions.invoke("google-calendar-events", { body });
+  if (error) throw error;
+  if (data?.error) throw new Error(data.error);
+  return data;
+}
+
+export async function getGoogleCalendarConnection() {
+  try {
+    return await invokeGoogleCalendar({ action: "status" });
+  } catch (error) {
+    return { connected: false, configured: false, error: error.message };
+  }
+}
+
+export async function beginGoogleCalendarConnection() {
+  if (!supabase) throw new Error("Supabase is not configured.");
+  const { data, error } = await supabase.functions.invoke("google-calendar-auth", {
+    body: { returnOrigin: window.location.origin },
+  });
+  if (error) throw error;
+  if (!data?.url) throw new Error(data?.error || "Google Calendar connection is unavailable.");
+  window.location.assign(data.url);
+}
+
+export async function syncEventToGoogle(eventId) {
+  return invokeGoogleCalendar({ action: "sync", eventId });
+}
+
+export async function disconnectGoogleCalendar() {
+  return invokeGoogleCalendar({ action: "disconnect" });
 }
 
 function googleDate(value) {

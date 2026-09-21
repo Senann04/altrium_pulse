@@ -76,6 +76,12 @@
 .calendar-event-form { display:grid; gap:10px; margin-top:14px; padding:14px; border:1px solid var(--ap-line); border-radius:12px; background:#0d0f13; }
 .calendar-event-form label { display:grid; gap:5px; color:var(--ap-text-soft); font-size:10px; text-transform:uppercase; }
 .calendar-event-form input,.calendar-event-form textarea { box-sizing:border-box; width:100%; padding:9px; border:1px solid var(--ap-line); border-radius:8px; color:var(--ap-text); background:#11141a; font:inherit; color-scheme:dark; }
+.google-calendar-connection { display:flex; margin-top:14px; padding:12px; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(66,133,244,.24); border-radius:12px; background:rgba(66,133,244,.06); }
+.google-calendar-connection div { display:grid; gap:3px; }
+.google-calendar-connection strong { color:var(--ap-text); font-size:12px; }
+.google-calendar-connection span { color:var(--ap-text-soft); font-size:10px; }
+.google-calendar-connection button,.calendar-sync-link { padding:7px 9px; border:1px solid rgba(66,133,244,.32); border-radius:8px; color:#8ab4f8; background:rgba(66,133,244,.08); font-size:10px; cursor:pointer; }
+.calendar-sync-link { width:fit-content; padding:0; border:0; background:transparent; }
 
 @media (max-width: 1050px) {
   .employee-calendar-layout { grid-template-columns: 1fr; }

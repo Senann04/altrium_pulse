@@ -3,7 +3,7 @@ import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 import { loadVisibleProjects } from "../services/performanceWorkflowService";
-import { createPersonalCalendarEvent, googleCalendarUrl, listPersonalCalendarEvents } from "../services/calendarService";
+import { beginGoogleCalendarConnection, createPersonalCalendarEvent, disconnectGoogleCalendar, getGoogleCalendarConnection, googleCalendarUrl, listPersonalCalendarEvents, syncEventToGoogle } from "../services/calendarService";
 import "../styles/appshell.css";
 import "../styles/employeeworkspacepages.css";
 
@@ -161,6 +161,8 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
   const [draft, setDraft] = useState({ title: "", description: "", startsAt: "", endsAt: "" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [googleConnection, setGoogleConnection] = useState({ connected: false, loading: true });
+  const [syncingId, setSyncingId] = useState("");
   const year = shownMonth.getFullYear();
   const month = shownMonth.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -173,6 +175,11 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
   useEffect(() => {
     let active = true;
     listPersonalCalendarEvents().then((rows) => { if (active) setSavedEvents(rows); }).catch((loadError) => { if (active) setError(loadError.message || "Unable to load your calendar."); });
+    return () => { active = false; };
+  }, []);
+  useEffect(() => {
+    let active = true;
+    getGoogleCalendarConnection().then((status) => { if (active) setGoogleConnection({ ...status, loading: false }); });
     return () => { active = false; };
   }, []);
   const events = useMemo(() => [
@@ -201,9 +208,31 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
     try {
       const saved = await createPersonalCalendarEvent(draft);
       setSavedEvents((items) => [...items, saved].sort((a, b) => a.starts_at.localeCompare(b.starts_at)));
+      if (googleConnection.connected) {
+        try {
+          const synced = await syncEventToGoogle(saved.id);
+          setSavedEvents((items) => items.map((item) => item.id === saved.id ? { ...item, google_event_id: synced.googleEventId, google_html_link: synced.htmlLink } : item));
+        } catch (syncError) {
+          setError(`Event saved in Altrium, but Google Calendar could not sync it: ${syncError.message}`);
+        }
+      }
       setDraft({ title: "", description: "", startsAt: "", endsAt: "" });
       setFormOpen(false);
     } catch (saveError) { setError(saveError.message || "Unable to schedule this event."); }
+    finally { setBusy(false); }
+  };
+  const syncEvent = async (eventId) => {
+    setSyncingId(eventId); setError("");
+    try {
+      const synced = await syncEventToGoogle(eventId);
+      setSavedEvents((items) => items.map((item) => item.id === eventId ? { ...item, google_event_id: synced.googleEventId, google_html_link: synced.htmlLink } : item));
+    } catch (syncError) { setError(syncError.message || "Unable to add this event to Google Calendar."); }
+    finally { setSyncingId(""); }
+  };
+  const disconnectGoogle = async () => {
+    setBusy(true); setError("");
+    try { await disconnectGoogleCalendar(); setGoogleConnection({ connected: false, configured: true, loading: false }); }
+    catch (disconnectError) { setError(disconnectError.message || "Unable to disconnect Google Calendar."); }
     finally { setBusy(false); }
   };
 
@@ -238,6 +267,12 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
 
           <aside className="employee-calendar-agenda">
             <div className="calendar-agenda-heading"><div><span>Schedule</span><h2>Upcoming</h2></div><button type="button" onClick={() => setFormOpen((open) => !open)}>{formOpen ? "Cancel" : "+ Schedule"}</button></div>
+            <section className="google-calendar-connection" aria-label="Google Calendar connection">
+              <div><strong>{googleConnection.connected ? "Google Calendar connected" : "Connect Google Calendar"}</strong><span>{googleConnection.connected ? googleConnection.email : "Choose a personal or company Google account."}</span></div>
+              {googleConnection.connected
+                ? <button type="button" onClick={disconnectGoogle} disabled={busy}>Disconnect</button>
+                : <button type="button" onClick={beginGoogleCalendarConnection} disabled={googleConnection.loading || googleConnection.configured === false}>{googleConnection.loading ? "Checking…" : "Connect Google"}</button>}
+            </section>
             {formOpen && <form className="calendar-event-form" onSubmit={saveEvent}>
               <label>Event title<input required value={draft.title} onChange={(event) => setDraft((value) => ({ ...value, title: event.target.value }))} /></label>
               <label>Starts<input required type="datetime-local" value={draft.startsAt} onChange={(event) => setDraft((value) => ({ ...value, startsAt: event.target.value }))} /></label>
@@ -254,7 +289,7 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
                       <strong>{event.date.slice(-2)}</strong>
                       <span>{new Date(`${event.date}T00:00:00`).toLocaleDateString("en", { month: "short" }).toUpperCase()}</span>
                     </time>
-                    <div><strong>{event.title}</strong><span>{event.type}{event.time ? ` · ${event.time}` : ""}</span><a href={googleCalendarUrl(event)} target="_blank" rel="noopener noreferrer">Add to Google Calendar</a></div>
+                    <div><strong>{event.title}</strong><span>{event.type}{event.time ? ` · ${event.time}` : ""}</span>{event.google_html_link ? <a href={event.google_html_link} target="_blank" rel="noopener noreferrer">Open in Google Calendar</a> : googleConnection.connected && !event.system ? <button type="button" className="calendar-sync-link" onClick={() => syncEvent(event.id)} disabled={syncingId === event.id}>{syncingId === event.id ? "Adding…" : "Add to connected calendar"}</button> : <a href={googleCalendarUrl(event)} target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>}</div>
                   </article>
                 ))}
               </div>
