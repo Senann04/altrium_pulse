@@ -288,8 +288,8 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
             </section>
             {formOpen && <form className="calendar-event-form" onSubmit={saveEvent}>
               <label>Event title<input required value={draft.title} onChange={(event) => setDraft((value) => ({ ...value, title: event.target.value }))} /></label>
-              <label>Starts<input required type="datetime-local" value={draft.startsAt} onChange={(event) => setDraft((value) => ({ ...value, startsAt: event.target.value }))} /></label>
-              <label>Ends<input type="datetime-local" value={draft.endsAt} onChange={(event) => setDraft((value) => ({ ...value, endsAt: event.target.value }))} /></label>
+              <label>Starts<input required type="datetime-local" value={draft.startsAt} onInput={(event) => setDraft((value) => ({ ...value, startsAt: event.currentTarget.value }))} /></label>
+              <label>Ends<input type="datetime-local" value={draft.endsAt} onInput={(event) => setDraft((value) => ({ ...value, endsAt: event.currentTarget.value }))} /></label>
               <label>Notes<textarea value={draft.description} onChange={(event) => setDraft((value) => ({ ...value, description: event.target.value }))} /></label>
               <button type="submit" disabled={busy}>{busy ? "Scheduling…" : "Save event"}</button>
             </form>}
