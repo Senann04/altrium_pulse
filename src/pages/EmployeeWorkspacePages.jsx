@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 import { loadVisibleProjects } from "../services/performanceWorkflowService";
+import { createPersonalCalendarEvent, googleCalendarUrl, listPersonalCalendarEvents } from "../services/calendarService";
 import "../styles/appshell.css";
 import "../styles/employeeworkspacepages.css";
 
@@ -153,17 +154,36 @@ function EmployeePerformanceHistory(props) {
 }
 
 function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileData }) {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  const today = useMemo(() => new Date(), []);
+  const [shownMonth, setShownMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
+  const [savedEvents, setSavedEvents] = useState([]);
+  const [formOpen, setFormOpen] = useState(false);
+  const [draft, setDraft] = useState({ title: "", description: "", startsAt: "", endsAt: "" });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const year = shownMonth.getFullYear();
+  const month = shownMonth.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const leadingDays = new Date(year, month, 1).getDay();
-  const monthLabel = today.toLocaleDateString("en", { month: "long", year: "numeric" });
+  const monthLabel = shownMonth.toLocaleDateString("en", { month: "long", year: "numeric" });
   const calendarDays = [
     ...Array.from({ length: leadingDays }, (_, index) => `empty-${index}`),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
   ];
-  const events = profileData?.calendarEvents || [];
+  useEffect(() => {
+    let active = true;
+    listPersonalCalendarEvents().then((rows) => { if (active) setSavedEvents(rows); }).catch((loadError) => { if (active) setError(loadError.message || "Unable to load your calendar."); });
+    return () => { active = false; };
+  }, []);
+  const events = useMemo(() => [
+    ...(profileData?.calendarEvents || []).map((event) => ({ ...event, starts_at: `${event.date}T${event.time || "09:00"}:00`, type: event.type || "Review milestone", system: true })),
+    ...savedEvents,
+  ].map((event) => ({
+    ...event,
+    date: event.date || event.starts_at.slice(0, 10),
+    time: event.time || new Date(event.starts_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }),
+    type: event.type || "Personal event",
+  })), [profileData?.calendarEvents, savedEvents]);
   const todayValue = today.toISOString().slice(0, 10);
   const upcomingEvents = events.filter((event) => event.date >= todayValue);
   const eventDays = new Set(
@@ -175,6 +195,17 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
       .map((event) => Number(event.date.slice(-2))),
   );
   const isLeadership = role === "leadership";
+  const saveEvent = async (event) => {
+    event.preventDefault();
+    setBusy(true); setError("");
+    try {
+      const saved = await createPersonalCalendarEvent(draft);
+      setSavedEvents((items) => [...items, saved].sort((a, b) => a.starts_at.localeCompare(b.starts_at)));
+      setDraft({ title: "", description: "", startsAt: "", endsAt: "" });
+      setFormOpen(false);
+    } catch (saveError) { setError(saveError.message || "Unable to schedule this event."); }
+    finally { setBusy(false); }
+  };
 
   return (
     <div className="app-shell">
@@ -191,19 +222,30 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
 
         <div className="employee-calendar-layout">
           <section className="employee-calendar-card" aria-label={monthLabel}>
-            <div className="employee-calendar-heading"><span>Current month</span><h2>{monthLabel}</h2></div>
+            <div className="employee-calendar-heading calendar-heading-actions">
+              <div><span>Schedule</span><h2>{monthLabel}</h2></div>
+              <div><button type="button" aria-label="Previous month" onClick={() => setShownMonth(new Date(year, month - 1, 1))}>‹</button><button type="button" onClick={() => setShownMonth(new Date(today.getFullYear(), today.getMonth(), 1))}>Today</button><button type="button" aria-label="Next month" onClick={() => setShownMonth(new Date(year, month + 1, 1))}>›</button></div>
+            </div>
             <div className="employee-calendar-weekdays" aria-hidden="true">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => <span key={day}>{day}</span>)}
             </div>
             <div className="employee-calendar-grid">
               {calendarDays.map((day) => typeof day === "string" ? <span key={day} /> : (
-                <span className={`${day === today.getDate() ? "is-today " : ""}${eventDays.has(day) ? "has-event" : ""}`.trim()} key={day}>{day}</span>
+                <span className={`${day === today.getDate() && month === today.getMonth() && year === today.getFullYear() ? "is-today " : ""}${eventDays.has(day) ? "has-event" : ""}`.trim()} key={day}>{day}</span>
               ))}
             </div>
           </section>
 
           <aside className="employee-calendar-agenda">
-            <div><span>Schedule</span><h2>Upcoming</h2></div>
+            <div className="calendar-agenda-heading"><div><span>Schedule</span><h2>Upcoming</h2></div><button type="button" onClick={() => setFormOpen((open) => !open)}>{formOpen ? "Cancel" : "+ Schedule"}</button></div>
+            {formOpen && <form className="calendar-event-form" onSubmit={saveEvent}>
+              <label>Event title<input required value={draft.title} onChange={(event) => setDraft((value) => ({ ...value, title: event.target.value }))} /></label>
+              <label>Starts<input required type="datetime-local" value={draft.startsAt} onChange={(event) => setDraft((value) => ({ ...value, startsAt: event.target.value }))} /></label>
+              <label>Ends<input type="datetime-local" value={draft.endsAt} onChange={(event) => setDraft((value) => ({ ...value, endsAt: event.target.value }))} /></label>
+              <label>Notes<textarea value={draft.description} onChange={(event) => setDraft((value) => ({ ...value, description: event.target.value }))} /></label>
+              <button type="submit" disabled={busy}>{busy ? "Scheduling…" : "Save event"}</button>
+            </form>}
+            {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}
             {upcomingEvents.length ? (
               <div className="employee-calendar-event-list">
                 {upcomingEvents.map((event) => (
@@ -212,7 +254,7 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
                       <strong>{event.date.slice(-2)}</strong>
                       <span>{new Date(`${event.date}T00:00:00`).toLocaleDateString("en", { month: "short" }).toUpperCase()}</span>
                     </time>
-                    <div><strong>{event.title}</strong><span>{event.type}{event.time ? ` · ${event.time}` : ""}</span></div>
+                    <div><strong>{event.title}</strong><span>{event.type}{event.time ? ` · ${event.time}` : ""}</span><a href={googleCalendarUrl(event)} target="_blank" rel="noopener noreferrer">Add to Google Calendar</a></div>
                   </article>
                 ))}
               </div>

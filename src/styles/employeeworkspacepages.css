@@ -69,6 +69,13 @@
 .employee-calendar-event > div { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
 .employee-calendar-event > div strong { overflow: hidden; color: var(--ap-text); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .employee-calendar-event > div span { color: var(--ap-text-soft); font-size: 10px; }
+.employee-calendar-event > div a { color: var(--ap-gold); font-size: 10px; text-decoration: none; }
+.calendar-heading-actions,.calendar-agenda-heading { display:flex!important; flex-direction:row!important; align-items:center; justify-content:space-between; gap:12px; }
+.calendar-heading-actions > div:first-child,.calendar-agenda-heading > div:first-child { display:grid; gap:5px; }
+.calendar-heading-actions button,.calendar-agenda-heading button,.calendar-event-form button { padding:8px 11px; border:1px solid rgba(252,180,0,.3); border-radius:9px; color:var(--ap-gold); background:var(--ap-gold-soft); cursor:pointer; }
+.calendar-event-form { display:grid; gap:10px; margin-top:14px; padding:14px; border:1px solid var(--ap-line); border-radius:12px; background:#0d0f13; }
+.calendar-event-form label { display:grid; gap:5px; color:var(--ap-text-soft); font-size:10px; text-transform:uppercase; }
+.calendar-event-form input,.calendar-event-form textarea { box-sizing:border-box; width:100%; padding:9px; border:1px solid var(--ap-line); border-radius:8px; color:var(--ap-text); background:#11141a; font:inherit; color-scheme:dark; }
 
 @media (max-width: 1050px) {
   .employee-calendar-layout { grid-template-columns: 1fr; }

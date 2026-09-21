@@ -32,6 +32,7 @@ function TimeGoalAssignmentModal({ period, isOpen, onClose, onAssign, personDire
   };
 
   const canAssign = Boolean(team && personId && personName && targetUserId && goalText.trim());
+  const missing = [!team && "team", !personId && "employee or supervisor", !goalText.trim() && "goal"].filter(Boolean);
 
   const handleAssign = async () => {
     if (!team || !personId || !personName || !goalText.trim()) return;
@@ -111,6 +112,7 @@ function TimeGoalAssignmentModal({ period, isOpen, onClose, onAssign, personDire
         </div>
 
         <div className="time-goal-assignment-actions">
+          {!canAssign && <p className="workflow-help">Complete: {missing.join(", ")}.</p>}
           {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}
           <button type="button" className="time-goal-assignment-cancel" onClick={onClose}>Cancel</button>
           <button type="button" className="time-goal-assignment-button" onClick={handleAssign} disabled={!canAssign || submitting}>

@@ -23,6 +23,7 @@ function NormalizationCard({ review, onSaved }) {
   const [rationale, setRationale] = useState(review.rationale || "");
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
+  const canDecide = review.can_decide !== false;
 
   const handleDecision = async (status) => {
     if (!rationale.trim() || (status === "approved" && !rating)) return;
@@ -58,25 +59,26 @@ function NormalizationCard({ review, onSaved }) {
       <div className="workflow-form-grid">
         <label className="workflow-field">
           <span>Normalized rating</span>
-          <select value={rating} onChange={(event) => setRating(event.target.value)}>
+          <select value={rating} onChange={(event) => setRating(event.target.value)} disabled={!canDecide}>
             <option value="">Choose rating</option>
             {[1, 2, 3, 4, 5].map((value) => <option key={value} value={value}>{value} / 5</option>)}
           </select>
         </label>
         <label className="workflow-field workflow-field-wide">
           <span>Decision rationale</span>
-          <textarea value={rationale} onChange={(event) => setRationale(event.target.value)} />
+          <textarea value={rationale} onChange={(event) => setRationale(event.target.value)} disabled={!canDecide} />
         </label>
       </div>
       {error && <p className="workflow-error" role="alert">{error}</p>}
       <footer className="workflow-inline-actions workflow-actions-end">
-        <button type="button" onClick={() => handleDecision("changes_requested")} disabled={!rationale.trim() || Boolean(busy)}>
+        <button type="button" onClick={() => handleDecision("changes_requested")} disabled={!canDecide || !rationale.trim() || Boolean(busy)}>
           {busy === "changes_requested" ? "Saving…" : "Request changes"}
         </button>
-        <button type="button" className="is-primary" onClick={() => handleDecision("approved")} disabled={!rating || !rationale.trim() || Boolean(busy)}>
+        <button type="button" className="is-primary" onClick={() => handleDecision("approved")} disabled={!canDecide || !rating || !rationale.trim() || Boolean(busy)}>
           {busy === "approved" ? "Approving…" : "Approve normalization"}
         </button>
       </footer>
+      {!canDecide && <p className="workflow-help">This is a historical decision. Reopen the review through HR before changing normalization.</p>}
     </article>
   );
 }

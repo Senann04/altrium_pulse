@@ -101,6 +101,7 @@ function AssignedGoalSection({ type, title }) {
             key={goal.id}
             goal={goal}
             onUpdate={handleUpdate}
+            onRefresh={refresh}
           />
         ))}
       </div>

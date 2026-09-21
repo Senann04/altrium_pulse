@@ -43,7 +43,10 @@ function SelfAssessmentForm({ reviewId, initialAnswers, submittedAt }) {
       await saveSelfAssessment(reviewId, answers, { submit: true });
       setSubmitted(true);
     } catch (submissionError) {
-      setError(submissionError.message || "Unable to submit this assessment.");
+      const message = submissionError.message || "Unable to submit this assessment.";
+      setError(message.includes("cannot be edited at this stage")
+        ? "This assessment is locked because it was already submitted or the review has moved forward. Ask HR to reopen it if a correction is required."
+        : message);
     } finally {
       setSubmitting(false);
     }

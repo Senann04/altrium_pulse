@@ -1,16 +1,19 @@
 import PlanEvidenceList from "./PlanEvidenceList";
 import { useState } from "react";
+import { reopenDevelopmentPlan } from "../services/performanceWorkflowService";
 import "../styles/assignedgoalcard.css";
 
 function statusLabel(value) {
   return String(value || "pending").replaceAll("_", " ").replace(/^./, (character) => character.toUpperCase());
 }
 
-function AssignedGoalCard({ goal, onUpdate }) {
+function AssignedGoalCard({ goal, onUpdate, onRefresh }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(goal);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [reopening, setReopening] = useState(false);
+  const [reopenReason, setReopenReason] = useState("");
   const agreementsPending = goal.employeeAgreementStatus === "pending" && goal.supervisorAgreementStatus === "pending";
   const canEdit = goal.status === "Pending" && agreementsPending;
 
@@ -36,6 +39,17 @@ function AssignedGoalCard({ goal, onUpdate }) {
 
   const updateDraft = (key, value) => setDraft((current) => ({ ...current, [key]: value }));
   const progress = isEditing ? draft.progress : goal.progress;
+  const canReopen = !agreementsPending;
+  const handleReopen = async () => {
+    if (!reopenReason.trim()) return;
+    setBusy(true); setError("");
+    try {
+      await reopenDevelopmentPlan(goal.id, reopenReason);
+      setReopening(false); setReopenReason("");
+      await onRefresh?.();
+    } catch (reopenError) { setError(reopenError.message || "Unable to reopen this agreement."); }
+    finally { setBusy(false); }
+  };
 
   return (
     <article className="assigned-goal-card">
@@ -95,6 +109,7 @@ function AssignedGoalCard({ goal, onUpdate }) {
 
       {goal.employeeAgreementNote && <p>Employee requested changes: {goal.employeeAgreementNote}</p>}
       {goal.supervisorAgreementNote && <p>Supervisor requested changes: {goal.supervisorAgreementNote}</p>}
+      {reopening && <section className="plan-change-request"><label>Reason for reopening<textarea value={reopenReason} maxLength={2000} onChange={(event) => setReopenReason(event.target.value)} /></label><button type="button" disabled={busy || !reopenReason.trim()} onClick={handleReopen}>Reopen for revision</button><button type="button" disabled={busy} onClick={() => setReopening(false)}>Cancel</button></section>}
       <PlanEvidenceList planId={goal.id} />
 
       <footer className="assigned-goal-footer">
@@ -105,6 +120,7 @@ function AssignedGoalCard({ goal, onUpdate }) {
             {busy ? "Saving…" : isEditing ? "Save changes" : "Edit draft"}
           </button>
         )}
+        {canReopen && !reopening && <button type="button" className="assigned-goal-edit-button" onClick={() => setReopening(true)} disabled={busy}>Reopen agreement</button>}
       </footer>
     </article>
   );

@@ -79,7 +79,7 @@ function SupervisorReviewCard({ review, onRefresh }) {
   const [busyPlan, setBusyPlan] = useState("");
   const [error, setError] = useState("");
   const canEvaluate = ["supervisor_review", "reopened"].includes(review.status);
-  const canRecordMeeting = ["hr_review", "reopened", "completed"].includes(review.status);
+  const canRecordMeeting = ["supervisor_review", "hr_review", "reopened"].includes(review.status);
 
   const handleEvaluation = async (submit) => {
     setBusy(submit ? "submit-review" : "save-review");
@@ -204,6 +204,7 @@ function SupervisorReviewCard({ review, onRefresh }) {
               {busy === "submit-review" ? "Submitting…" : "Submit for normalization"}
             </button>
           </div>
+          {canEvaluate && (!summary.trim() || !rating) && <p className="workflow-help">Add both an evaluation summary and rating to enable saving and normalization submission.</p>}
         </section>
 
         <section className="workflow-section">
@@ -229,6 +230,7 @@ function SupervisorReviewCard({ review, onRefresh }) {
               {busy === "complete-meeting" ? "Recording…" : "Record completed meeting"}
             </button>
           </div>
+          {!canRecordMeeting && <p className="workflow-help">PAR scheduling opens when this review reaches the supervisor-review stage.</p>}
         </section>
 
         <section className="workflow-section">
