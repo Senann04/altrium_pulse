@@ -82,6 +82,17 @@
 .google-calendar-connection span { color:var(--ap-text-soft); font-size:10px; }
 .google-calendar-connection button,.calendar-sync-link { padding:7px 9px; border:1px solid rgba(66,133,244,.32); border-radius:8px; color:#8ab4f8; background:rgba(66,133,244,.08); font-size:10px; cursor:pointer; }
 .calendar-sync-link { width:fit-content; padding:0; border:0; background:transparent; }
+.calendar-confirm-overlay { position:fixed; z-index:1200; inset:0; display:grid; padding:20px; place-items:center; background:rgba(2,3,5,.76); backdrop-filter:blur(10px); }
+.calendar-confirm-modal { display:grid; width:min(440px,100%); box-sizing:border-box; padding:26px; gap:18px; border:1px solid rgba(252,180,0,.22); border-radius:20px; color:var(--ap-text); background:linear-gradient(145deg,#15181e,#0e1014); box-shadow:0 24px 70px rgba(0,0,0,.5); }
+.calendar-confirm-icon { display:grid; width:42px; height:42px; place-items:center; border:1px solid rgba(66,133,244,.36); border-radius:12px; color:#8ab4f8; background:rgba(66,133,244,.1); font-size:18px; font-weight:700; }
+.calendar-confirm-modal > div:not(.calendar-confirm-actions) { display:grid; gap:7px; }
+.calendar-confirm-kicker { color:var(--ap-gold); font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+.calendar-confirm-modal h2 { margin:0; font-size:22px; }
+.calendar-confirm-modal p { margin:0; color:var(--ap-text-soft); font-size:12px; line-height:1.65; }
+.calendar-confirm-actions { display:flex; justify-content:flex-end; gap:10px; }
+.calendar-confirm-actions button { padding:9px 12px; border:1px solid var(--ap-line); border-radius:9px; color:var(--ap-text); background:#171a20; cursor:pointer; }
+.calendar-confirm-actions button.is-danger { border-color:rgba(239,83,80,.38); color:#ffaaa8; background:rgba(239,83,80,.09); }
+.calendar-confirm-actions button:disabled { cursor:not-allowed; opacity:.55; }
 
 @media (max-width: 1050px) {
   .employee-calendar-layout { grid-template-columns: 1fr; }
@@ -94,6 +105,8 @@
   .employee-workspace-panel-heading { align-items: flex-start; flex-direction: column; }
   .employee-calendar-grid > span { min-height: 42px; }
   .employee-workspace-empty { min-height: 190px; flex-direction: column; text-align: center; }
+  .calendar-confirm-modal { padding:20px; }
+  .calendar-confirm-actions { align-items:stretch; flex-direction:column-reverse; }
 }
 
 .project-portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 14px; padding-top: 18px; }

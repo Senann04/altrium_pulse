@@ -189,6 +189,7 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
   const [googleConnection, setGoogleConnection] = useState({ connected: false, loading: true });
   const [syncingId, setSyncingId] = useState("");
   const [syncingAssigned, setSyncingAssigned] = useState(false);
+  const [disconnectConfirmOpen, setDisconnectConfirmOpen] = useState(false);
   const autoSyncSignature = useRef("");
   const year = shownMonth.getFullYear();
   const month = shownMonth.getMonth();
@@ -285,9 +286,19 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
   }, [googleConnection.connected, systemEvents, syncAssignedEvents]);
   const disconnectGoogle = async () => {
     setBusy(true); setError("");
-    try { await disconnectGoogleCalendar(); setGoogleConnection({ connected: false, configured: true, loading: false }); }
+    try {
+      await disconnectGoogleCalendar();
+      autoSyncSignature.current = "";
+      setGoogleConnection({ connected: false, configured: true, loading: false });
+      setDisconnectConfirmOpen(false);
+    }
     catch (disconnectError) { setError(disconnectError.message || "Unable to disconnect Google Calendar."); }
     finally { setBusy(false); }
+  };
+  const connectGoogle = async () => {
+    setBusy(true); setError("");
+    try { await beginGoogleCalendarConnection(); }
+    catch (connectError) { setError(connectError.message || "Unable to connect Google Calendar."); setBusy(false); }
   };
 
   return (
@@ -324,8 +335,8 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
             <section className="google-calendar-connection" aria-label="Google Calendar connection">
               <div><strong>{googleConnection.connected ? "Google Calendar connected" : "Connect Google Calendar"}</strong><span>{googleConnection.connected ? googleConnection.email : googleConnection.message || "Choose a personal or company Google account."}</span></div>
               {googleConnection.connected
-                ? <div className="google-calendar-actions"><button type="button" onClick={() => syncAssignedEvents()} disabled={syncingAssigned}>{syncingAssigned ? "Syncing…" : "Sync assigned events"}</button><button type="button" onClick={disconnectGoogle} disabled={busy}>Disconnect</button></div>
-                : <button type="button" onClick={beginGoogleCalendarConnection} disabled={googleConnection.loading || googleConnection.configured === false}>{googleConnection.loading ? "Checking…" : "Connect Google"}</button>}
+                ? <div className="google-calendar-actions"><button type="button" onClick={() => syncAssignedEvents()} disabled={syncingAssigned}>{syncingAssigned ? "Syncing…" : "Sync assigned events"}</button><button type="button" onClick={() => setDisconnectConfirmOpen(true)} disabled={busy}>Disconnect</button></div>
+                : <button type="button" onClick={connectGoogle} disabled={busy || googleConnection.loading || googleConnection.configured === false}>{busy ? "Connecting…" : googleConnection.loading ? "Checking…" : "Connect Google"}</button>}
             </section>
             {formOpen && <form className="calendar-event-form" onSubmit={saveEvent}>
               <label>Event title<input required value={draft.title} onChange={(event) => setDraft((value) => ({ ...value, title: event.target.value }))} /></label>
@@ -356,6 +367,22 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
           </aside>
         </div>
       </main>
+      {disconnectConfirmOpen && (
+        <div className="calendar-confirm-overlay" onClick={() => !busy && setDisconnectConfirmOpen(false)}>
+          <section className="calendar-confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="calendar-disconnect-title" aria-describedby="calendar-disconnect-description" onClick={(event) => event.stopPropagation()}>
+            <span className="calendar-confirm-icon" aria-hidden="true">G</span>
+            <div>
+              <span className="calendar-confirm-kicker">Google Calendar</span>
+              <h2 id="calendar-disconnect-title">Disconnect this calendar?</h2>
+              <p id="calendar-disconnect-description">Altrium will stop syncing newly assigned goals, review deadlines and meetings. Events already added to Google Calendar will remain there.</p>
+            </div>
+            <div className="calendar-confirm-actions">
+              <button type="button" onClick={() => setDisconnectConfirmOpen(false)} disabled={busy}>Keep connected</button>
+              <button type="button" className="is-danger" onClick={disconnectGoogle} disabled={busy}>{busy ? "Disconnecting…" : "Disconnect Google Calendar"}</button>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
