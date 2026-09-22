@@ -389,10 +389,16 @@ export async function loadProfileView(userId) {
   const planEvents = ownPlans
     .filter((plan) => plan.targetDateValue && plan.status !== "Completed")
     .map((plan) => ({ id: `plan-${plan.id}`, date: plan.targetDateValue, title: plan.title, type: plan.type }));
+  const planActionEvents = ownPlans.flatMap((plan) => plan.actions
+    .filter((action) => action.dueDate && action.status !== "completed")
+    .map((action) => ({ id: `plan-action-${action.id}`, date: action.dueDate, title: action.title, type: `${plan.type} action` })));
+  const goalEvents = ownGoals
+    .filter((goal) => goal.targetDate && goal.status !== "Completed")
+    .map((goal) => ({ id: `goal-${goal.id}`, date: goal.targetDate, title: goal.goal, type: `${goal.period} goal` }));
   const meetingEvents = meeting
     ? [{ id: `meeting-${meeting.id}`, date: meeting.scheduledAt.slice(0, 10), title: "PAR meeting", type: "Meeting", time: meeting.time }]
     : [];
-  const calendarEvents = [...cycleEvents, ...planEvents, ...meetingEvents].sort((left, right) => left.date.localeCompare(right.date));
+  const calendarEvents = [...cycleEvents, ...goalEvents, ...planEvents, ...planActionEvents, ...meetingEvents].sort((left, right) => left.date.localeCompare(right.date));
 
   const stages = currentReview ? reviewStages(currentReview.status) : REVIEW_STAGE_ORDER.map((stage) => ({ ...stage, status: "Pending" }));
   const latestRating = latestCompletedReview?.overall_rating === null || latestCompletedReview?.overall_rating === undefined

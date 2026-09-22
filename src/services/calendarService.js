@@ -12,7 +12,7 @@ export async function listPersonalCalendarEvents() {
   const user = await currentUser();
   const { data, error } = await supabase
     .from("personal_calendar_events")
-    .select("id, title, description, starts_at, ends_at, google_event_id, google_html_link")
+    .select("id, title, description, starts_at, ends_at, google_event_id, google_html_link, source_key, source_type, is_system")
     .eq("owner_id", user.id)
     .order("starts_at");
   if (error) throw error;
@@ -73,6 +73,20 @@ export async function beginGoogleCalendarConnection() {
 
 export async function syncEventToGoogle(eventId) {
   return invokeGoogleCalendar({ action: "sync", eventId });
+}
+
+export async function syncAssignedEventsToGoogle(events) {
+  return invokeGoogleCalendar({
+    action: "sync-system",
+    events: events.map((event) => ({
+      sourceKey: event.id,
+      sourceType: event.type || "Assignment",
+      title: event.title,
+      description: event.description || `${event.type || "Assignment"} from Altrium Pulse`,
+      startsAt: event.starts_at,
+      endsAt: event.ends_at,
+    })),
+  });
 }
 
 export async function disconnectGoogleCalendar() {

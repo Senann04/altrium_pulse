@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import WorkspaceHeading from "../components/WorkspaceHeading";
 import { loadVisibleProjects } from "../services/performanceWorkflowService";
-import { beginGoogleCalendarConnection, createPersonalCalendarEvent, disconnectGoogleCalendar, getGoogleCalendarConnection, googleCalendarUrl, listPersonalCalendarEvents, syncEventToGoogle } from "../services/calendarService";
+import { beginGoogleCalendarConnection, createPersonalCalendarEvent, disconnectGoogleCalendar, getGoogleCalendarConnection, googleCalendarUrl, listPersonalCalendarEvents, syncAssignedEventsToGoogle, syncEventToGoogle } from "../services/calendarService";
 import "../styles/appshell.css";
 import "../styles/employeeworkspacepages.css";
 
@@ -166,6 +166,18 @@ function calendarDateTime(date, time = "09:00") {
   return `${date}T09:00:00`;
 }
 
+function systemCalendarEvent(event) {
+  const start = new Date(calendarDateTime(event.date, event.time));
+  const startsAt = start.toISOString();
+  return {
+    ...event,
+    starts_at: startsAt,
+    ends_at: new Date(start.getTime() + 60 * 60 * 1000).toISOString(),
+    type: event.type || "Review milestone",
+    system: true,
+  };
+}
+
 function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileData }) {
   const today = useMemo(() => new Date(), []);
   const [shownMonth, setShownMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
@@ -176,6 +188,8 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
   const [error, setError] = useState("");
   const [googleConnection, setGoogleConnection] = useState({ connected: false, loading: true });
   const [syncingId, setSyncingId] = useState("");
+  const [syncingAssigned, setSyncingAssigned] = useState(false);
+  const autoSyncSignature = useRef("");
   const year = shownMonth.getFullYear();
   const month = shownMonth.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -195,15 +209,19 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
     getGoogleCalendarConnection().then((status) => { if (active) setGoogleConnection({ ...status, loading: false }); });
     return () => { active = false; };
   }, []);
+  const systemEvents = useMemo(() => (profileData?.calendarEvents || []).map(systemCalendarEvent), [profileData?.calendarEvents]);
   const events = useMemo(() => [
-    ...(profileData?.calendarEvents || []).map((event) => ({ ...event, starts_at: calendarDateTime(event.date, event.time), type: event.type || "Review milestone", system: true })),
-    ...savedEvents,
+    ...systemEvents.map((event) => {
+      const synced = savedEvents.find((saved) => saved.is_system && saved.source_key === event.id);
+      return synced ? { ...event, id: event.id, google_event_id: synced.google_event_id, google_html_link: synced.google_html_link } : event;
+    }),
+    ...savedEvents.filter((event) => !event.is_system),
   ].map((event) => ({
     ...event,
     date: event.date || event.starts_at.slice(0, 10),
     time: event.time || new Date(event.starts_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }),
     type: event.type || "Personal event",
-  })), [profileData?.calendarEvents, savedEvents]);
+  })), [systemEvents, savedEvents]);
   const todayValue = today.toISOString().slice(0, 10);
   const upcomingEvents = events.filter((event) => event.date >= todayValue);
   const eventDays = new Set(
@@ -242,6 +260,29 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
     } catch (syncError) { setError(syncError.message || "Unable to add this event to Google Calendar."); }
     finally { setSyncingId(""); }
   };
+  const syncAssignedEvents = useCallback(async ({ automatic = false } = {}) => {
+    if (!googleConnection.connected || !systemEvents.length) return;
+    setSyncingAssigned(true); if (!automatic) setError("");
+    try {
+      const result = await syncAssignedEventsToGoogle(systemEvents);
+      if (result.events) {
+        setSavedEvents((items) => [
+          ...items.filter((item) => !item.is_system),
+          ...result.events,
+        ]);
+      }
+      if (result.failed?.length) setError(`${result.failed.length} assigned event${result.failed.length === 1 ? "" : "s"} could not be synced. Try again.`);
+    } catch (syncError) {
+      setError(syncError.message || "Unable to sync assigned events to Google Calendar.");
+    } finally { setSyncingAssigned(false); }
+  }, [googleConnection.connected, systemEvents]);
+  useEffect(() => {
+    if (!googleConnection.connected || !systemEvents.length) return;
+    const signature = systemEvents.map((event) => `${event.id}:${event.starts_at}:${event.ends_at}`).join("|");
+    if (autoSyncSignature.current === signature) return;
+    autoSyncSignature.current = signature;
+    syncAssignedEvents({ automatic: true });
+  }, [googleConnection.connected, systemEvents, syncAssignedEvents]);
   const disconnectGoogle = async () => {
     setBusy(true); setError("");
     try { await disconnectGoogleCalendar(); setGoogleConnection({ connected: false, configured: true, loading: false }); }
@@ -283,7 +324,7 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
             <section className="google-calendar-connection" aria-label="Google Calendar connection">
               <div><strong>{googleConnection.connected ? "Google Calendar connected" : "Connect Google Calendar"}</strong><span>{googleConnection.connected ? googleConnection.email : googleConnection.message || "Choose a personal or company Google account."}</span></div>
               {googleConnection.connected
-                ? <button type="button" onClick={disconnectGoogle} disabled={busy}>Disconnect</button>
+                ? <div className="google-calendar-actions"><button type="button" onClick={() => syncAssignedEvents()} disabled={syncingAssigned}>{syncingAssigned ? "Syncing…" : "Sync assigned events"}</button><button type="button" onClick={disconnectGoogle} disabled={busy}>Disconnect</button></div>
                 : <button type="button" onClick={beginGoogleCalendarConnection} disabled={googleConnection.loading || googleConnection.configured === false}>{googleConnection.loading ? "Checking…" : "Connect Google"}</button>}
             </section>
             {formOpen && <form className="calendar-event-form" onSubmit={saveEvent}>
