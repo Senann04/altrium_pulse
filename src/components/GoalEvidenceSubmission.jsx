@@ -41,7 +41,9 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
 
   const goalType = goal.type || "PDP";
   const progress = Math.min(100, Math.max(0, Number(goal.progress) || 0));
-  const filesReady = Boolean(actionItemFile && evidenceFile);
+  const agreementsComplete = goal.employeeAgreementStatus === "agreed" && goal.supervisorAgreementStatus === "agreed";
+  const filesReady = agreementsComplete && Boolean(actionItemFile && evidenceFile);
+  const acceptedEvidenceTypes = ".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
 
   const handleSubmitEvidence = async () => {
     if (!filesReady || isSubmitting) return;
@@ -147,9 +149,10 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
         {goal.employeeAgreementNote && <p>Employee requested changes: {goal.employeeAgreementNote}</p>}
         {goal.supervisorAgreementNote && <p>Supervisor requested changes: {goal.supervisorAgreementNote}</p>}
 
-        <p className="goal-evidence-instruction">
-          Add the completed action item and supporting evidence for this {goalType} plan. Both files are
-          required before you can submit evidence.
+        <p className={`goal-evidence-instruction${agreementsComplete ? "" : " is-locked"}`}>
+          {agreementsComplete
+            ? `Add the completed action item and supporting evidence for this ${goalType} plan. Both files are required before you can submit evidence.`
+            : "Evidence upload unlocks after both the employee and supervisor agree to this plan."}
         </p>
 
         {goal.actions?.length > 0 && (
@@ -173,7 +176,7 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
             </section>
             <label className="goal-evidence-action-select">
               <span>Link evidence to action</span>
-              <select value={selectedActionId} onChange={(event) => setSelectedActionId(event.target.value)}>
+              <select value={selectedActionId} onChange={(event) => setSelectedActionId(event.target.value)} disabled={!agreementsComplete}>
                 <option value="">General plan evidence</option>
                 {goal.actions.map((action) => <option key={action.id} value={action.id}>{action.title}</option>)}
               </select>
@@ -182,11 +185,13 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
         )}
 
         <div className="goal-evidence-file-grid">
-          <label className={`goal-evidence-file-card${actionItemFile ? " has-file" : ""}`} htmlFor="goal-action-item-file">
+          <label className={`goal-evidence-file-card${actionItemFile ? " has-file" : ""}${agreementsComplete ? "" : " is-disabled"}`} htmlFor="goal-action-item-file" aria-disabled={!agreementsComplete}>
             <input
               id="goal-action-item-file"
               className="goal-evidence-native-input"
               type="file"
+              accept={acceptedEvidenceTypes}
+              disabled={!agreementsComplete}
               onChange={(event) => setActionItemFile(event.target.files[0] || null)}
             />
             <span className="goal-evidence-file-icon" aria-hidden="true">
@@ -197,16 +202,18 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
             </span>
             <span className="goal-evidence-file-copy">
               <strong>1. Action item</strong>
-              <small>{actionItemFile?.name || "PDF, document or image"}</small>
+              <small>{actionItemFile?.name || "PDF, DOC, DOCX or TXT"}</small>
             </span>
             <span className="goal-evidence-choose">{actionItemFile ? "Change" : "Choose file"}</span>
           </label>
 
-          <label className={`goal-evidence-file-card${evidenceFile ? " has-file" : ""}`} htmlFor="goal-evidence-file">
+          <label className={`goal-evidence-file-card${evidenceFile ? " has-file" : ""}${agreementsComplete ? "" : " is-disabled"}`} htmlFor="goal-evidence-file" aria-disabled={!agreementsComplete}>
             <input
               id="goal-evidence-file"
               className="goal-evidence-native-input"
               type="file"
+              accept={acceptedEvidenceTypes}
+              disabled={!agreementsComplete}
               onChange={(event) => setEvidenceFile(event.target.files[0] || null)}
             />
             <span className="goal-evidence-file-icon" aria-hidden="true">
@@ -217,14 +224,14 @@ function GoalEvidenceSubmission({ goal, onClose, onSubmitEvidence, onAgreement, 
             </span>
             <span className="goal-evidence-file-copy">
               <strong>2. Supporting evidence</strong>
-              <small>{evidenceFile?.name || "PDF, document or image"}</small>
+              <small>{evidenceFile?.name || "PDF, DOC, DOCX or TXT"}</small>
             </span>
             <span className="goal-evidence-choose">{evidenceFile ? "Change" : "Choose file"}</span>
           </label>
         </div>
 
         <footer className="goal-evidence-footer">
-          <span className={error ? "goal-evidence-error" : ""}>{error || (filesReady ? "Both files are ready" : "Select both files to continue")}</span>
+          <span className={error ? "goal-evidence-error" : ""}>{error || (!agreementsComplete ? "Waiting for both plan agreements" : filesReady ? "Both files are ready" : "Select both files to continue")}</span>
           <button
             type="button"
             className="goal-evidence-submit-button"

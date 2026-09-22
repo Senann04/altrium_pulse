@@ -234,6 +234,7 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
       .map((event) => Number(event.date.slice(-2))),
   );
   const isLeadership = role === "leadership";
+  const isHeadOfHr = role === "hrbp" && profileData?.canManageHRAssignments;
   const saveEvent = async (event) => {
     event.preventDefault();
     setBusy(true); setError("");
@@ -307,11 +308,17 @@ function EmployeeCalendar({ role = "employee", onNavigate, onSignOut, profileDat
       <main className="app-main employee-workspace-page">
         <Header title="Calendar" profileData={profileData} />
         <WorkspaceHeading
-          eyebrow={isLeadership ? "Organisation schedule" : "Schedule"}
+          eyebrow={isLeadership || isHeadOfHr ? "Organisation schedule" : role === "hrbp" ? "Assigned-team schedule" : "Schedule"}
           title="Calendar"
           description={isLeadership
-            ? "Track organisation-wide review checkpoints and reporting deadlines."
-            : "Keep review milestones, meetings and goal deadlines in one place."}
+            ? "Track normalization deadlines and permitted organisation milestones."
+            : isHeadOfHr
+              ? "Track review-cycle administration and HRBP allocation deadlines without opening confidential employee records."
+              : role === "hrbp"
+                ? "Track review deadlines, meetings and HR actions for your assigned teams and projects."
+                : role === "supervisor"
+                  ? "Track direct-report deadlines, reviews and meetings in one place."
+                  : "Keep your review milestones, meetings and goal deadlines in one place."}
         />
 
         <div className="employee-calendar-layout">
@@ -444,10 +451,15 @@ function SupervisorCalendar(props) {
   return <EmployeeCalendar {...props} role="supervisor" />;
 }
 
+function HRBPCalendar(props) {
+  return <EmployeeCalendar {...props} role="hrbp" />;
+}
+
 export {
   EmployeeCalendar,
   EmployeePerformanceHistory,
   EmployeeProjects,
+  HRBPCalendar,
   HRBPProjects,
   SupervisorCalendar,
   SupervisorPerformanceHistory,
