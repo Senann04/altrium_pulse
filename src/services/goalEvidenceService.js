@@ -2,6 +2,12 @@ import { supabase } from "../lib/supabase";
 
 const BUCKET = "goal-evidence";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_EVIDENCE_TYPES = new Map([
+  ["pdf", new Set(["application/pdf"])],
+  ["doc", new Set(["application/msword"])],
+  ["docx", new Set(["application/vnd.openxmlformats-officedocument.wordprocessingml.document"])],
+  ["txt", new Set(["text/plain"])],
+]);
 
 function requireSupabase() {
   if (!supabase) throw new Error("Supabase is not configured.");
@@ -27,6 +33,11 @@ function safeFileName(name) {
 function validateFile(file) {
   if (!file) return;
   if (file.size > MAX_FILE_SIZE) throw new Error("Each evidence file must be 10 MB or smaller.");
+  const extension = String(file.name || "").split(".").pop()?.toLowerCase();
+  const allowedMimeTypes = ALLOWED_EVIDENCE_TYPES.get(extension);
+  if (!allowedMimeTypes || !allowedMimeTypes.has(file.type)) {
+    throw new Error("Evidence must be a PDF, DOC, DOCX or TXT file.");
+  }
 }
 
 async function uploadOne({ planId, actionId = null, kind, file, userId }) {
@@ -76,6 +87,16 @@ export async function submitGoalEvidence({
 
   const client = requireSupabase();
   const user = await requireCurrentUser();
+  const { data: plan, error: planError } = await client
+    .from("development_plans")
+    .select("employee_id, employee_agreement_status, supervisor_agreement_status")
+    .eq("id", planId)
+    .single();
+  if (planError) throw planError;
+  if (plan.employee_id !== user.id) throw new Error("Only the plan owner can submit evidence.");
+  if (plan.employee_agreement_status !== "agreed" || plan.supervisor_agreement_status !== "agreed") {
+    throw new Error("Evidence upload unlocks after both the employee and supervisor agree to this plan.");
+  }
   const uploaded = [];
 
   try {

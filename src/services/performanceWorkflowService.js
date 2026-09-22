@@ -313,3 +313,15 @@ export async function updateOwnGoalProgress(goalId, progress) {
   if (error) throw error;
   return data;
 }
+
+export async function reopenDevelopmentPlan(planId, reason) {
+  const client = requireSupabase();
+  await requireCurrentUser();
+  if (!reason?.trim()) throw new Error("Explain why the agreement is being reopened.");
+  const { data, error } = await client.rpc("reopen_development_plan_for_revision", {
+    p_plan_id: planId,
+    p_reason: reason.trim(),
+  });
+  if (error) throw error;
+  return firstRelation(data);
+}

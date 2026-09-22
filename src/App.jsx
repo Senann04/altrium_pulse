@@ -9,6 +9,7 @@ import {
   EmployeeCalendar,
   EmployeePerformanceHistory,
   EmployeeProjects,
+  HRBPCalendar,
   HRBPProjects,
   SupervisorCalendar,
   SupervisorPerformanceHistory,
@@ -69,6 +70,7 @@ const rolePages = {
     feedback: HRBPFeedback,
     projects: HRBPProjects,
     "assign-goals": AssignGoals,
+    calendar: HRBPCalendar,
     profile: HRBPProfile,
   },
   senior_management: {

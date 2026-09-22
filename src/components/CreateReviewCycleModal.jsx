@@ -23,6 +23,7 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
     && supervisorReviewDue <= endDate
   );
   const canCreate = Boolean(name.trim() && description.trim() && datesValid && reviewType.trim());
+  const missing = [!name.trim() && "cycle name", !description.trim() && "description", !reviewType.trim() && "review type", !datesValid && "ordered workflow dates"].filter(Boolean);
 
   if (!isOpen) return null;
 
@@ -134,6 +135,7 @@ function CreateReviewCycleModal({ isOpen, onClose, onCreate }) {
         </div>
 
         <div className="create-cycle-actions">
+          {!canCreate && <p className="workflow-help">Complete: {missing.join(", ")}.</p>}
           {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}
           <button type="button" className="create-cycle-cancel" onClick={onClose}>Cancel</button>
           <button type="button" className="create-cycle-button" onClick={handleCreate} disabled={!canCreate || submitting}>

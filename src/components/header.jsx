@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { markNotificationsRead } from "../services/notificationService";
 import "../styles/header.css";
 
 function formatClock(date) {
@@ -12,6 +13,7 @@ function formatClock(date) {
 function Header({ title = "Performance workspace", profileData }) {
   const [now, setNow] = useState(() => new Date());
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState(() => profileData?.notifications || []);
   const notificationAreaRef = useRef(null);
 
   useEffect(() => {
@@ -39,8 +41,18 @@ function Header({ title = "Performance workspace", profileData }) {
   const day = String(now.getDate()).padStart(2, "0");
   const month = now.toLocaleDateString("en", { month: "short" });
   const weekday = now.toLocaleDateString("en", { weekday: "long" });
-  const notifications = profileData?.notifications || [];
   const unreadCount = notifications.filter((notification) => !notification.read_at).length;
+
+  const toggleNotifications = async () => {
+    const opening = !notificationsOpen;
+    setNotificationsOpen(opening);
+    if (!opening) return;
+    const unreadIds = notifications.filter((item) => !item.read_at).map((item) => item.id);
+    if (!unreadIds.length) return;
+    const readAt = new Date().toISOString();
+    setNotifications((items) => items.map((item) => unreadIds.includes(item.id) ? { ...item, read_at: readAt } : item));
+    try { await markNotificationsRead(unreadIds); } catch { /* restore on the next profile refresh */ }
+  };
 
   return (
     <header className="header">
@@ -66,7 +78,7 @@ function Header({ title = "Performance workspace", profileData }) {
             aria-expanded={notificationsOpen}
             aria-controls="notification-panel"
             title={unreadCount ? `${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}` : "No unread notifications"}
-            onClick={() => setNotificationsOpen((open) => !open)}
+            onClick={toggleNotifications}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />

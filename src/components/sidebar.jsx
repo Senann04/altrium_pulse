@@ -140,7 +140,13 @@ const MENUS = {
         { key: "assign-goals", label: "Assign Goals", icon: "goals" },
       ],
     },
-    { label: "Account", items: [{ key: "profile", label: "My Profile", icon: "profile" }] },
+    {
+      label: "Workspace",
+      items: [
+        { key: "calendar", label: "Calendar", icon: "calendar" },
+        { key: "profile", label: "My Profile", icon: "profile" },
+      ],
+    },
   ],
 };
 

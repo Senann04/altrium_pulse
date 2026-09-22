@@ -386,13 +386,53 @@ export async function loadProfileView(userId) {
         { id: "cycle-end", date: activeCycle.end_date, title: "Review cycle closes", type: "Cycle" },
       ].filter((event) => event.date)
     : [];
-  const planEvents = ownPlans
+  const ownPlanEvents = ownPlans
     .filter((plan) => plan.targetDateValue && plan.status !== "Completed")
     .map((plan) => ({ id: `plan-${plan.id}`, date: plan.targetDateValue, title: plan.title, type: plan.type }));
-  const meetingEvents = meeting
+  const ownPlanActionEvents = ownPlans.flatMap((plan) => plan.actions
+    .filter((action) => action.dueDate && action.status !== "completed")
+    .map((action) => ({ id: `plan-action-${action.id}`, date: action.dueDate, title: action.title, type: `${plan.type} action` })));
+  const ownGoalEvents = ownGoals
+    .filter((goal) => goal.targetDate && goal.status !== "Completed")
+    .map((goal) => ({ id: `goal-${goal.id}`, date: goal.targetDate, title: goal.goal, type: `${goal.period} goal` }));
+  const ownMeetingEvents = meeting
     ? [{ id: `meeting-${meeting.id}`, date: meeting.scheduledAt.slice(0, 10), title: "PAR meeting", type: "Meeting", time: meeting.time }]
     : [];
-  const calendarEvents = [...cycleEvents, ...planEvents, ...meetingEvents].sort((left, right) => left.date.localeCompare(right.date));
+  const employeeName = (employeeId) => people.get(employeeId)?.full_name || "Employee";
+  const scopedGoalEvents = scopedGoals
+    .filter((goal) => goal.target_date && goal.status !== "completed")
+    .map((goal) => ({ id: `goal-${goal.id}`, date: goal.target_date, title: `${employeeName(goal.employee_id)} · ${goal.title}`, type: profile.role === "supervisor" ? "Direct-report goal" : "Assigned-team goal" }));
+  const scopedPlanEvents = scopedPlans
+    .filter((plan) => plan.end_date && plan.status !== "completed")
+    .map((plan) => ({ id: `plan-${plan.id}`, date: plan.end_date, title: `${employeeName(plan.employee_id)} · ${plan.title}`, type: `${String(plan.type).toUpperCase()} plan` }));
+  const scopedPlanActionEvents = scopedPlans.flatMap((plan) => (plan.actions || [])
+    .filter((action) => action.due_date && action.status !== "completed")
+    .map((action) => ({ id: `plan-action-${action.id}`, date: action.due_date, title: `${employeeName(plan.employee_id)} · ${action.title}`, type: `${String(plan.type).toUpperCase()} action` })));
+  const scopedReviewIds = new Set(scopedReviews.map((review) => review.id));
+  const reviewEmployees = new Map(scopedReviews.map((review) => [review.id, review.employee_id]));
+  const scopedMeetingEvents = (meetingsResult.data || [])
+    .filter((item) => scopedReviewIds.has(item.review_id) && item.scheduled_at)
+    .map((item) => ({ id: `meeting-${item.id}`, date: item.scheduled_at.slice(0, 10), title: `${employeeName(reviewEmployees.get(item.review_id))} · PAR meeting`, type: "Meeting", time: new Intl.DateTimeFormat("en", { hour: "2-digit", minute: "2-digit", hour12: true }).format(new Date(item.scheduled_at)) }));
+  const headOfHrEvents = cycles
+    .filter((cycle) => cycle.status !== "closed")
+    .flatMap((cycle) => [
+      cycle.status === "draft" && cycle.start_date ? { id: `allocation-${cycle.id}`, date: cycle.start_date, title: `${cycle.name} · HRBP allocation deadline`, type: "HR allocation" } : null,
+      cycle.end_date ? { id: `cycle-admin-${cycle.id}`, date: cycle.end_date, title: `${cycle.name} · administration closes`, type: "Cycle administration" } : null,
+    ].filter(Boolean));
+  const leadershipEvents = activeCycle ? [
+    activeCycle.supervisor_review_due ? { id: `normalization-open-${activeCycle.id}`, date: activeCycle.supervisor_review_due, title: "Normalization window opens", type: "Normalization" } : null,
+    activeCycle.end_date ? { id: `normalization-due-${activeCycle.id}`, date: activeCycle.end_date, title: "Normalization decisions due", type: "Organisation milestone" } : null,
+  ].filter(Boolean) : [];
+  const calendarEvents = (profile.role === "employee"
+    ? [...cycleEvents, ...ownGoalEvents, ...ownPlanEvents, ...ownPlanActionEvents, ...ownMeetingEvents]
+    : profile.role === "supervisor"
+      ? [...cycleEvents, ...scopedGoalEvents, ...scopedPlanEvents, ...scopedPlanActionEvents, ...scopedMeetingEvents]
+      : profile.role === "hr_partner"
+        ? assignmentAdministratorResult.data
+          ? headOfHrEvents
+          : [...cycleEvents, ...scopedGoalEvents, ...scopedPlanEvents, ...scopedPlanActionEvents, ...scopedMeetingEvents]
+        : leadershipEvents
+  ).sort((left, right) => left.date.localeCompare(right.date));
 
   const stages = currentReview ? reviewStages(currentReview.status) : REVIEW_STAGE_ORDER.map((stage) => ({ ...stage, status: "Pending" }));
   const latestRating = latestCompletedReview?.overall_rating === null || latestCompletedReview?.overall_rating === undefined

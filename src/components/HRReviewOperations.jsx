@@ -86,6 +86,7 @@ function ReviewOperationCard({ review, onAssign, onCompleted }) {
       </div>
 
       <label><input type="checkbox" checked={workedTogether} disabled={!canAssign || submitting} onChange={(e) => setWorkedTogether(e.target.checked)} /> I confirm this colleague worked closely with the employee.</label>
+      {!canAssign && <p className="workflow-help">Reviewer assignment is closed because this review has moved beyond peer feedback. Reopen the review before changing reviewers.</p>}
       <div className="hr-review-assignment-row">
         <label>
           <span>Select peer reviewer</span>
@@ -110,6 +111,7 @@ function ReviewOperationCard({ review, onAssign, onCompleted }) {
         <div className={meetingReady ? "is-ready" : ""}><span>PAR outcome</span><strong>{meetingReady ? "Recorded" : "Required"}</strong></div>
         <div><span>Final rating</span><strong>{review.overallRating ?? review.normalization?.normalized_rating ?? "–"}</strong></div>
       </div>
+      {!canComplete && review.statusKey !== "completed" && <p className="workflow-help">Completion unlocks after normalization is approved and a PAR meeting outcome with notes is recorded.</p>}
 
       {review.statusKey === "completed" ? (
         <div className="hr-review-complete-state"><strong>Review completed</strong><span>{review.hrComments || "No HR completion note was recorded."}</span></div>

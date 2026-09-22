@@ -599,7 +599,7 @@ export async function assignPeerReviewer(reviewId, reviewerId, dueDate = null) {
 
   const { data, error } = await client
     .from("feedback_requests")
-    .upsert({
+    .insert({
       review_id: reviewId,
       reviewer_id: reviewerId,
       feedback_type: "peer",
@@ -608,7 +608,7 @@ export async function assignPeerReviewer(reviewId, reviewerId, dueDate = null) {
       due_date: dueDate || null,
       assigned_by: user.id,
       responded_at: null,
-    }, { onConflict: "review_id,reviewer_id,feedback_type" })
+    })
     .select("id, review_id, reviewer_id, status, due_date")
     .single();
 

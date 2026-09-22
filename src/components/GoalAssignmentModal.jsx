@@ -42,6 +42,7 @@ function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirector
   ));
   const datesValid = Boolean(startDate && endDate && startDate <= endDate);
   const canAssign = Boolean(team && employeeId && employeeName && employeeUserId && goalText.trim() && reason.trim() && datesValid && actionsValid);
+  const missing = [!team && "team", !employeeId && "employee", !goalText.trim() && "goal", !reason.trim() && "reason", !datesValid && "valid plan dates", !actionsValid && "complete action items"].filter(Boolean);
 
   const updateAction = (index, field, value) => {
     setActionItems((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item));
@@ -173,6 +174,7 @@ function GoalAssignmentModal({ type, isOpen, onClose, onAssign, employeeDirector
         </fieldset>
 
         <div className="goal-assignment-actions">
+          {!canAssign && <p className="workflow-help">Complete: {missing.join(", ")}.</p>}
           {error && <p className="hr-admin-inline-error" role="alert">{error}</p>}
           <button type="button" className="goal-assignment-cancel" onClick={onClose}>Cancel</button>
           <button type="button" className="goal-assignment-button" onClick={handleAssign} disabled={!canAssign || submitting}>
