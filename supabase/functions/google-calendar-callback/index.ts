@@ -24,7 +24,12 @@ Deno.serve(async (req) => {
     });
     const tokens = await tokenResponse.json();
     if (!tokenResponse.ok) throw new Error(tokens.error_description || "Google authorization failed");
-    const grantedScopes = String(tokens.scope || "").split(" ").filter(Boolean);
+    let grantedScopes = String(tokens.scope || "").split(" ").filter(Boolean);
+    if (!grantedScopes.includes(CALENDAR_SCOPE)) {
+      const tokenInfoResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(tokens.access_token)}`);
+      const tokenInfo = await tokenInfoResponse.json();
+      if (tokenInfoResponse.ok) grantedScopes = String(tokenInfo.scope || "").split(" ").filter(Boolean);
+    }
     if (!grantedScopes.includes(CALENDAR_SCOPE)) throw new Error("Google Calendar event access was not granted. Add the Calendar events scope and reconnect.");
     const userResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", { headers: { Authorization: `Bearer ${tokens.access_token}` } });
     const googleUser = await userResponse.json();
